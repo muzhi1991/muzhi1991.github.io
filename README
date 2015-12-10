@@ -1,0 +1,4 @@
+1.next主题没有下载 在站点根目录下使用 
+git clone https://github.com/iissnan/hexo-theme-next themes/next
+
+2. 如何hexo命令没有用，尝试 npm install
