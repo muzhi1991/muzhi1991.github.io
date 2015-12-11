@@ -90,3 +90,10 @@ links:
 #comment
 disqus_shortname: muzhi1991
 #duoshuo_shortname: muzhi1991
+
+# hexo sitemap网站地图
+sitemap:
+path: sitemap.xml
+baidusitemap:
+path: baidusitemap.xml
+
