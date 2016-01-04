@@ -6,7 +6,7 @@
 favicon: /favicon.ico
 
 # Set default keywords (Use a comma to separate)
-keywords: "Hexo, NexT"
+keywords: "Android, Tech, IT, Hexo, NexT"
 
 # Set rss to false to disable feed link.
 # Leave rss as empty to use site's feed link.
@@ -27,9 +27,10 @@ rss:
 # Remove leading slashes ( "/archives" -> "archives" )
 menu:
   home: /
-  categories: /categories
-  about: /about
   archives: /archives
+  categories: /categories
+  tools: /tools
+  about: /about
   tags: /tags
   #commonweal: /404.html
 
@@ -232,3 +233,7 @@ images: images
 
 # Theme version
 version: 0.4.5.2
+
+auto_excerpt:
+  enable: true
+  length: 150

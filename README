@@ -1,5 +1,31 @@
-1.next主题没有下载 在站点根目录下使用 
-git clone https://github.com/iissnan/hexo-theme-next themes/next
-使用bac/themes/next/_config.yml 覆盖到themes/next下
+1.第一次下载，执行 sh ./init.sh ，该脚本执行了下面这些操作
+    next主题没有下载 在站点根目录下使用 
+    git clone https://github.com/iissnan/hexo-theme-next themes/next
+    如果hexo命令没有用，尝试 npm install
+    使用bac/themes/next/ 覆盖到themes/next下
 
-2. 如何hexo命令没有用，尝试 npm install
+2.部署时候，执行 sh ./delpoy.sh
+
+3.写作
+    hexo n [layout] title // n--new title--文章名称 ,layout--默认post
+    基本：https://hexo.io/zh-cn/docs/writing.html
+    文章头部：https://hexo.io/zh-cn/docs/front-matter.html
+
+
+4.debug
+hexo s // s--server
+
+5.其他命令
+hexo clean
+hexo generate 
+hexo deploy
+
+6.一些知识
+    source目录下面是写的文章
+
+7.不错的参考文章
+http://ibruce.info/2013/11/22/hexo-your-blog/
+http://www.selfrebuild.net/2015/06/24/Github-Hexo-Next%E4%B8%BB%E9%A2%98%E4%B8%AA%E6%80%A7%E5%8C%96%E5%AE%9A%E5%88%B6/
+
+
+

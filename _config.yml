@@ -3,12 +3,14 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: GAME START
-subtitle:
-description:
+title: Night Piece
+subtitle: white && black
+description: something about tech, android etc...
 author: limuzhi
+email: muzhi1991@gmail.com
 language: zh-Hans
 timezone:
+avatar: /images/avatar.jpg
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
@@ -75,11 +77,11 @@ deploy:
 
 # Social Links
 social:
-  github: https://github.com/your-user-name
-  twitter: https://twitter.com/your-user-name
-  weibo: http://weibo.com/your-user-name
-  douban: http://douban.com/people/your-user-name
-  zhihu: http://www.zhihu.com/people/your-user-name
+  github: https://github.com/muzhi1991
+  twitter: https://twitter.com/muzhi1991
+  weibo: http://weibo.com/muzhi1991
+#  douban: http://douban.com/people/your-user-name
+#  zhihu: http://www.zhihu.com/people/your-user-name
 
 # title, chinese available
 links_title: Links
@@ -88,8 +90,8 @@ links:
   MacTalk: http://macshuo.com/
 
 #comment
-disqus_shortname: muzhi1991
-#duoshuo_shortname: muzhi1991
+#disqus_shortname: muzhi1991
+duoshuo_shortname: muzhi1991
 
 # hexo sitemap网站地图
 sitemap:
