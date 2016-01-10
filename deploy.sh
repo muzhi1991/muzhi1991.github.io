@@ -1,4 +1,4 @@
-#hexo clean
+hexo clean
 hexo generate
 
 # seo优化
