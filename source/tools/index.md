@@ -6,8 +6,14 @@ type: "tools"
 介绍一些神器
 
 ## App
-* 即刻
+* 即刻 
 
 
 
 ## Mac
+* alfred
+* dash
+* iterm+zsh
+
+## 命令行
+* cheat
