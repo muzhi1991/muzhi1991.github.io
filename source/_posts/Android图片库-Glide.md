@@ -103,7 +103,7 @@ Glide.with(context)
 所有的这些key，以特定的顺序计算出hash值，并将这个值作为保存图片到磁盘上的唯一且安全的文件名。
 
 ### 自定义缓存失效
-通常情况下改版缓存的标志（key）是困难的。Glide提供了`signature()`API来混入其他数据，帮助你控制缓存的key。签名（Signature）对于多媒体内容以及你可以维护版本信息的任何内容来说都很有用。
+通常情况下改变缓存的标志（key）是困难的。Glide提供了`signature()`API来混入其他数据，帮助你控制缓存的key。签名（Signature）对于多媒体内容以及你可以维护版本信息的任何内容来说都很有用。
 
 * 媒体库内容 - 对于媒体库内容，你可以使用Glide的`MediaStoreSignature`类作为签名， MediaStoreSignature类允许你混入文件修改时间、mime类型、媒体库的方向(orientation?)这些值作为缓存的key，这三个值足以让你可靠的捕捉到任何修改和更新，使你可以缓存媒体库的缩略图.?
 * 文件 - 你可以使用`StringSignature`混入文件修改时间
@@ -476,3 +476,59 @@ adb shell setprop log.tag.RMRetriever VERBOSE
 adb shell setprop log.tag.StreamEncoder VERBOSE
 adb shell setprop log.tag.TransformationUtils VERBOSE
 ```
+
+## 使用Glide下载自定义大小的图片
+开发者可以通过Glide的ModelLoader接口获得图片大小，并根据这个大小来选择加载一个合适尺寸的图片url。
+使用合适尺寸的图片节约带宽，设备的存储空间，可以提升app性能。
+2014年的Google I/O app团队写了一篇关于如何使用ModelLoader接口调整加载的图片大小的文章。请在github上查看 [I/O app的源码](https://github.com/google/iosched/blob/master/doc/IMAGES.md)。
+为了实现自己的ModelLoader来通过http或者https下载图片，可以继承BaseGlideUrlLoader这个类
+
+```java
+public interface MyDataModel { 
+    public String buildUrl(int width, int height);
+}  
+ 
+public class MyUrlLoader extends BaseGlideUrlLoader<MyDataModel> { 
+    @Override 
+    protected String getUrl(MyDataModel model, int width, int height) {
+        // Construct the url for the correct size here. 
+        return model.buildUrl(width, height);
+    } 
+} 
+```
+
+然后，你就可以使用自定义的ModelLoader来加载图片了，其他的事情会自动完成:
+
+```java
+Glide.with(yourFragment)
+    .using(new MyUrlLoader())
+    .load(yourModel)
+    .into(yourView);
+```
+
+如果你想避免调用`.using(new  MyUrlLoader())`,你可以实现一个自定义的`ModelLoaderFactory`，并在`GlideModule`中注册它。
+
+```java
+public class MyGlideModule implements GlideModule { 
+    ... 
+    @Override 
+    public void registerComponents(Context context, Glide glide) {
+        glide.register(MyDataModel.class, InputStream.class, 
+            new MyUrlLoader.Factory()); 
+    } 
+} 
+```
+
+注册ModelLoaderFactory之后，你就不用调用`.using()`了：
+
+```java
+Glide.with(yourFragment)
+    .load(yourModel)
+    .into(yourView);
+```
+
+其他的例子，关于如何使用自定义ModelLoader加载各种尺寸的图片，请查看[Flicker示例应用](https://github.com/bumptech/glide/blob/master/samples/flickr/src/main/java/com/bumptech/glide/samples/flickr/FlickrModelLoader.java)，和[Giphy示例应用](https://github.com/bumptech/glide/blob/master/samples/giphy/src/main/java/com/bumptech/glide/samples/giphy/GiphyModelLoader.java)。
+
+## Integation库/与其他库整合
+
+### 介绍
