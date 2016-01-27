@@ -17,7 +17,7 @@ GitHub的README作为最简单的入门足够了，但是遇到具体问题还�
 * [Glide 一个专注于平滑滚动的图片加载和缓存库](http://www.jianshu.com/p/4a3177b57949)
 
 ### 名词解释
-Target
+Target与View
 Model
 Signature
 
@@ -40,7 +40,7 @@ Signature
 ### 3.0版本的新特性
 * 支持Gif动画播放解码 - 与加载图片相同，只有调用Glide.with(...).load(...)，如果你加载的是动画Gif，Glide会自动加载它并把gif显示在一个自定义的Drawable上（注：GifDrawable）。此外，你还可以控制的更多，比如
 
-```java
+	```java
 // 你想加载Gif为一张静态图片
 Glide.with(context).load(...).asBitmap()。
 // 或者你想只有加载对象是Gif时才能加载成功
@@ -50,7 +50,7 @@ Glide.with(context).load(...).asGif()。
 * 本地视频播放技术 - 除了解码Gif，Glide也能解码你设备上的视频（video）。使用方法和加载gif相同，Glide支持所有Android可以直接解码的视频。
 * 支持缩略图加载 - 有时我们希望减少用户等待的时间又不想牺牲图片的质量，我们可以同时加载多张图片到一个View中，先加载缩略图（只有view的1/10大小），然后再加载一个完整的图像覆盖在上面。使用下面的代码
 
-```java
+	```java
 Glide.with(yourFragment).load(yourUrl).thumbnail(0.1f).into(yourView)
 ```
 
@@ -59,7 +59,7 @@ Glide.with(yourFragment).load(yourUrl).thumbnail(0.1f).into(yourView)
 * 与生命周期相整合 - 加载请求现在会自动在onStop中暂停在，onStart中重新开始。为了节约电量，Gif动画也会在onStop中自动暂停。此外，当设备的连接状态改变时，所有失败的请求会自动重试，确保Glide不会因为临时性的连接问题，导致请求永远失败。
 * 转码 - 除了解码资源，Glide的`.toBytes()`和`.transcode()`方法允许你在后台正常地获取、解码、变换一张图片。而且，在这些调用中，你可以把图片转码成更有用的格式，比如，上传一张大小为250*250像素的用户头像的图片bytes数据，代码如下
 
-```java
+	```java
 Glide.with(context)
     .load(“/user/profile/photo/path”)
     .asBitmap()
@@ -577,14 +577,69 @@ Bitmap myBitmap = Glide.with(applicationContext)
 ## Glide中的资源复用
 ### 为什么
 Glide通过复用资源避免不必要的内存分配。Dalvik虚拟机（在Lollipop之前）有两种基本的垃圾回收方式，`GC_CONCURRENT` 和`GC_FOR_ALLOC`。每次`GC_CONCURRENT`会阻塞主线程5ms。由于每次操作的时间少于16ms（1帧的时间），`GC_CONCURRENT`并不会引起掉帧。相反的是`GC_FOR_ALLOC`，他会停止所有操作，阻塞主线程125+ms，事实上，GC_FOR_ALLOC总是会让你的app掉很多帧。尤其是在滑动时，导致明显的卡顿。
-很不幸，Dalvik即使只是分配适当的空间（比如16kb的buffer）表现的也很糟糕。不断的小内存分配，或者一次大的内存分配（比如说bitmap），将会引起GC_FOR_ALLOC。因此，你分配内存的越多，你会遇到垃圾回收器阻塞应用的情况就越多，应用掉帧就越严重。
+很不幸，即使只是分配适当的空间（比如16kb的buffer）Dalvik表现的也很糟糕。不断的小内存分配，或者一次大的内存分配（比如说bitmap），将会引起GC_FOR_ALLOC。因此，你分配内存的越多，你会遇到垃圾回收器阻塞应用的情况就越多，应用掉帧就越严重。
 通过适度复用大的资源，Glide可以避免内存抖动，减少垃圾回收器阻塞程序的次数。
 ### 怎么做
 Glide的资源复用策略比较宽松。这意味着，当Glide任务该资源可以被安全的复用时，才有几率去复用它，并不需要用户在每个request后面去手动释放资源。
-### 标志-哪些资源可复用
+#### 标志-哪些资源可复用
 Glide有两个简单的标志来识别可复用的资源。
 
-1. `Glide.clear()` 在`View`或者`Target`上调用`clear()`方法都表示，Glide要取消加载，可以安全地把Target占用的所有资源（Bitmap，bytes数组等）放入资源池中（pool）。使用者可以在任何时候安全地手动调用`clear()`方法，但是典型情况下，我们不需要这样做，看第二条。
-2. View或者Target的复用
+1. `Glide.clear()` 
+
+	在`View`或者`Target`上调用`clear()`方法都表示，Glide要取消加载，可以安全地把Target占用的所有资源（Bitmap，bytes数组等）放入资源池中（pool）。用户可以在任何时候安全地手动调用`clear()`方法，但是典型情况下，我们不需要这样做，看第二条。
+
+2. View或者Target的复用 
+
+	当用户把图片加载到一个已经存在的View或者Target上时，Glide会先调用`clear()`清空该View/Target上的加载请求并复用已经显示过的资源。因此，如果ListView或者RecyclerView中的view采用了复用机制，那么Glide会自动为他们缓存资源和管理加载请求。
  
-### 引用计数
+#### 引用计数
+如果两个请求指向同一个资源，为了避免不必要的工作，Glide会把单个资源分配给他们。这就导致一个问题，当Glide得知某个资源不被某个调用者使用，这并不表示它不会被其他调用者使用。为了避免回收调依旧被使用的资源，Glide使用引用计数来跟踪资源。
+当把资源提供给View/Target时，该资源的引用计数加1，当清空View/Target时，引用计数减1。当引用计数为0时，Glide会回收资源，并把它的内容放回可用内存池中。
+
+#### 放入缓存池
+Glide的Resource API有一个`recycle()`方法，当Glide认为资源不再被引用时，会调用该方法，资源会放入缓存池中。
+
+Glide提供的BitmapPool接口可以让Resource获取`Bitmap`和复用Bitmap对象。Glide的BitmapPool可以通过Glide单例获得：
+
+```java
+Glide.get(context).getBitmapPool();
+```
+ResourceDecoder可以返回Resource的任何实现。所有，开发者可以实现他们自己的Resource和ResourceDecoder来自定义地缓存一些特有类型的数据。
+同样地，开发者如果想更多地控制Bitmap缓存，可以实现自己的BitmapPool，然后通过GlideModule配置到Glide中。
+
+### 常见的错误
+不幸的是，缓存池使我们很难判断开发者是否误用了资源或者bitmap。但是，在Glide中有两个主要的现象告诉你某些地方可能出了问题。
+#### 现象
+
+1. `Cannot draw a recycled Bitmap`
+
+	Glide有个固定大小的Bitmap池。当Bitmap不再被复用（注：不是使用，区分使用和复用），会从池中移走。Glide会调用[`recycle()`](http://developer.android.com/reference/android/graphics/Bitmap.html#recycle())（注：指的是Bitmap真正的recycle，不是Resource类的recycle）。你告诉Glide放心地回收某个Bitmap，但是，你的应用不小心还持有这个Bitmap的引用，应用程序可能会绘制这个Bitmap，导致崩溃。
+
+2. View在多张图片之间闪烁，或者同样的图片出现在多个View中
+
+	如果一张图片被放入BitmapPool中多次。或者一张图片被放入了pool中，但是某个View依然持有这个图的引用，与此同时，另一张图片解析成了Bitmap。如果这个事情发生，Bitmap的内容就会被换成了新的图片内容。此时，View依然尝试着绘制Bitmap，导致原来的View中显示了一张新的图片！
+
+#### 原因
+这些问题主要有两个原因：
+
+1. 尝试加载两个不同的资源到同一Target中
+
+	在Glide中，没有安全的方法来加载多个资源到单一的Target中。开发者可以使用`thumbnail()`来加载一系列资源到到某个Target中，但是对于每一个资源来说，只有在下一个`onResourceReady()`被调用前，它的引用才是安全的。
+开发者如果想加载多个资源到同一个View中，可以使用两个独立的Target。为了确保加载过程不相互取消，开发者要么不使用ViewTarget的子类，要么在继承ViewTarget时，复写`setRequest()` 和 `getRequest()`，不要使用tag来存储Request。（需要一个demo)
+
+	**译者注：对于同一个view，调用两次Glide.xxx.into(view)，第二次调用会先清空第一个加载的图片（出现空白），再去下载新的图片，如果想要在第二张图片下载下来之前依旧显示之前的，需要一些技巧**
+2. 加载一个资源放入到Target，然后清空或者复用了Target，但是依然引用这这个资源。
+
+	最简单的避免这个错误的方法是在`onLoadCleared()`方法中把所有对资源的引用置null。一般情况下，加载一个Bitmap，然后引用它的Target是安全的。不安全的是，你清空了这个Target，却依然引用着这个Bitmap。
+	
+## 使用快照
+### 关于快照
+对于那些不想等待Glide下个正式版本而愿意尝鲜的用户，我们在[Sonatype](https://travis-ci.org/bumptech/glide)上部署了这个库的快照。
+每一次我们push代码待GitHub的master分支，[travis-ci](https://oss.sonatype.org/content/repositories/snapshots/)会构建Glide.如果构建成功，会自动部署最新版本的库到Sonatype上。
+和Glide主库一样，每个Intergration库也有自己的快照，如果你使用快照版本的Glide库，请使用快照版本的Intergration库，反之依然。
+
+### 获取快照
+Sonatype的快照库和其他的maven库一样，提供jar，maven，gradle等版本。
+#### Jar
+#### Gradle
+#### Maven
