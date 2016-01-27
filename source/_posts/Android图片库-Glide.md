@@ -529,6 +529,62 @@ Glide.with(yourFragment)
 
 其他的例子，关于如何使用自定义ModelLoader加载各种尺寸的图片，请查看[Flicker示例应用](https://github.com/bumptech/glide/blob/master/samples/flickr/src/main/java/com/bumptech/glide/samples/flickr/FlickrModelLoader.java)，和[Giphy示例应用](https://github.com/bumptech/glide/blob/master/samples/giphy/src/main/java/com/bumptech/glide/samples/giphy/GiphyModelLoader.java)。
 
-## Integation库/与其他库整合
+## Integation库-Glide与其他库整合
 
 ### 介绍
+
+## 在后台线程中加载和缓存
+为了使在后台线程加载资源和与媒体交互更加容易，Glide除了`Glide.with(fragment).load(url).into(view)`这个API外，提供了额外两个API。
+
+* `downloadOnly(int, int)`
+* `into(int, int)`
+
+### downloadOnly方法
+Glide的`downloadOnly(int, int)`方法允许你把图片bytes下载到磁盘缓存中，以便以后获取使用。你可以在UI线程异步地使用`downloadOnly()`,也可以在后台线程同步的使用。但是，注意他们的参数有些不同，异步api的参数是`Target`，同步api的参数是宽和高的整数值。	
+为了在后台线程下载图片，你必须使用同步方法
+
+```java
+FutureTarget<File> future = Glide.with(applicationContext)
+    .load(yourUrl)
+    .downloadOnly(500, 500);
+File cacheFile = future.get();
+```
+当future返回时，图片的bytes数据就在缓存中可用了。一种典型的情况是，你使用`downloadOnly()`API只是为了确保数据下载到了磁盘上，但是你一般情况下你不需要和它交互，虽然你有权访问底层的缓存文件。
+以后，当你想要获取这个图片时，你只要像平常加载图片那样调用就行，只有一点不同：
+
+```java
+Glide.with(yourFragment)
+    .load(yourUrl)
+    .diskCacheStrategy(DiskCacheStrategy.ALL)
+    .into(yourView);
+```
+通过传入 `DiskCacheStrategy.ALL`或者`DiskCacheStrategy.SOURCE`，确保Glide可以使用你通过`downloadOnly()`下载的数据。
+
+### into方法
+如果你想在一个**后台线程**与一张已经解码的图片交互。你可以使用这个版本的`into()`方法来返回一个`FutureTarget`。例如,获取一张中心剪裁后的500*500像素的图片：
+
+```java
+Bitmap myBitmap = Glide.with(applicationContext)
+    .load(yourUrl)
+    .asBitmap()
+    .centerCrop()
+    .into(500, 500)
+    .get()
+```
+虽然`into(int, int)`方法在后台线程中很有效，但是，你不能把它用在主线程中。即使这个同步方法在你的主线程中不会抛出异常，调用get()也会阻塞主线程。会使你的APP性能变差，反应迟钝。
+
+
+## Glide中的资源复用
+### 为什么
+Glide通过复用资源避免不必要的内存分配。Dalvik虚拟机（在Lollipop之前）有两种基本的垃圾回收方式，`GC_CONCURRENT` 和`GC_FOR_ALLOC`。每次`GC_CONCURRENT`会阻塞主线程5ms。由于每次操作的时间少于16ms（1帧的时间），`GC_CONCURRENT`并不会引起掉帧。相反的是`GC_FOR_ALLOC`，他会停止所有操作，阻塞主线程125+ms，事实上，GC_FOR_ALLOC总是会让你的app掉很多帧。尤其是在滑动时，导致明显的卡顿。
+很不幸，Dalvik即使只是分配适当的空间（比如16kb的buffer）表现的也很糟糕。不断的小内存分配，或者一次大的内存分配（比如说bitmap），将会引起GC_FOR_ALLOC。因此，你分配内存的越多，你会遇到垃圾回收器阻塞应用的情况就越多，应用掉帧就越严重。
+通过适度复用大的资源，Glide可以避免内存抖动，减少垃圾回收器阻塞程序的次数。
+### 怎么做
+Glide的资源复用策略比较宽松。这意味着，当Glide任务该资源可以被安全的复用时，才有几率去复用它，并不需要用户在每个request后面去手动释放资源。
+### 标志-哪些资源可复用
+Glide有两个简单的标志来识别可复用的资源。
+
+1. `Glide.clear()` 在`View`或者`Target`上调用`clear()`方法都表示，Glide要取消加载，可以安全地把Target占用的所有资源（Bitmap，bytes数组等）放入资源池中（pool）。使用者可以在任何时候安全地手动调用`clear()`方法，但是典型情况下，我们不需要这样做，看第二条。
+2. View或者Target的复用
+ 
+### 引用计数
