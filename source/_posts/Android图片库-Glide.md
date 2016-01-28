@@ -1,6 +1,6 @@
 title: Android图片库--Glide Wiki中文翻译
 date: 2016-01-24 10:32:54
-description: Glide Wiki中文翻译 Version 0.1。Glide是一个Android图片库，确切地说应当叫『媒体框架』。支持图片、Gif、原生视频的加载。使用简单，性能优异，Google推荐。
+description: Glide Wiki中文翻译 Version 1.0。Glide是一个Android图片库，确切地说应当叫『媒体框架』。支持图片、Gif、原生视频的加载。使用简单，性能优异，Google推荐。
 categories:
 - 技术
 tags:
@@ -28,7 +28,7 @@ Signature
 * 自定义Target
 * 调试与错误处理
 * 使用Glide下载自定义大小图片
-* 与其他库的整合
+* 集成库-与其他库相整合
 * 后台线程的加载与缓存
 * Glide中的资源复用
 * 快照（Snapshots）
@@ -74,7 +74,7 @@ Glide.with(context)
 ```
 
 * 动画 - Glide3.x支持cross fades动画（`.crossFade()`）和view的属性动画(`.animate(ViewPropertyAnimation.Animator)`)。此外，还有Glide2.0就支持的view动画。
-* 支持 OkHttp 和 Volley - 现在你可以选择用OkHttp、Volley或者默认的HttpUrlConnection作为网络栈。OkHttp和Volley可以通过添加对应的整合库(integration library)和注册相应的`ModelLoaderFactory`来引入。具体查看ReadMe文件。
+* 支持 OkHttp 和 Volley - 现在你可以选择用OkHttp、Volley或者默认的HttpUrlConnection作为网络栈。OkHttp和Volley可以通过添加对应的集成库(integration library)和注册相应的`ModelLoaderFactory`来引入。具体查看ReadMe文件。
 * 其他
 
 ### 从2.0迁移到3.0
@@ -529,9 +529,149 @@ Glide.with(yourFragment)
 
 其他的例子，关于如何使用自定义ModelLoader加载各种尺寸的图片，请查看[Flicker示例应用](https://github.com/bumptech/glide/blob/master/samples/flickr/src/main/java/com/bumptech/glide/samples/flickr/FlickrModelLoader.java)，和[Giphy示例应用](https://github.com/bumptech/glide/blob/master/samples/giphy/src/main/java/com/bumptech/glide/samples/giphy/GiphyModelLoader.java)。
 
-## Integation库-Glide与其他库整合
+## 集成（Integration）库-Glide与其他库整合
 
 ### 介绍
+####什么是集成库
+Glide包括一系列很小的可选的Integration库，这些库可以让Glide与外部的库相整合。现在集成库可以使Glide支持Volley和OkHttp的http/https网络请求。
+
+我们坚信，您所选择的客户端媒体库既不应该决定你在你的应用程序中使用的网络库，也不需要你仅仅为了加载图像额外添加网络库。集成库和Glide的ModelLoader系统，允许开发人员对所有网络请求使用统一的网络库。
+
+#### 为什么没有XXX库的实现
+因为我们还没有为这个库写集成库。OkHttp和Volley是十分流行的库，许多开发者都使用，但是，我们不是排斥其他库，如果你写了其他库的`ModelLoader`并且向开源它，我们很乐意看到这样的pull request。
+
+#### 我如何依赖一个集成库？
+依赖任何的集成库需要两部分。
+
+1. 包含相应的Maven/Gradle/jar依赖，因为作为可选项的集成库并不包含在glide的jar依赖中。
+2. 确保app包含了集成库的GlideModule，具体内容看[配置wiki](https://github.com/bumptech/glide/wiki/Configuration)部分。对于Glide集成库的具体说明见下面。
+
+#### 我应当选择哪个版本？
+集成库的版本跟随Glide的release版本。但是多了一个不同的数字，确保选择与所依赖的Glide对应的集成库。在[release页](https://github.com/bumptech/glide/releases)查看.
+网络库有自己的版本号。继承库会依赖的库就是你在Maven/Gradle中指定的库。你可以通过版本号来指定具体依赖的网络库。？？
+
+### Volley
+Volley是一个Http库，可以使Android上的网络请求更简单，更快速。
+
+#### Gradle中使用Volley
+
+```java
+dependencies {
+    compile 'com.github.bumptech.glide:volley-integration:1.3.1@aar'
+    //compile 'com.mcxiaoke.volley:library:1.0.8'
+}
+```
+集成库的`GlideModule`会自动合并到你app的manifest中。
+
+#### Maven中是Volley
+
+```xml
+<dependency>
+    <groupId>com.github.bumptech.glide</groupId>
+    <artifactId>volley-integration</artifactId>
+    <version>1.3.1</version>
+    <type>aar</type>
+</dependency>
+<dependency>
+    <groupId>com.mcxiaoke.volley</groupId>
+    <artifactId>library</artifactId>
+    <version>1.0.8</version>
+    <type>aar</type>
+</dependency>
+
+```
+请查看对应的manifest章节，了解如何添加对应的GlideModule。
+
+#### 手动添加Volley
+从[release页](https://github.com/bumptech/glide/releases)下载[glide-volley-integration-<version>.jar ](https://github.com/bumptech/glide/releases/download/v3.6.1/glide-volley-integration-1.3.1.jar)。并添加到你app的编译路径中(compile classpath)。
+
+请查看对应的manifest章节，了解如何添加对应的GlideModule。
+
+#### Volley的Manifest
+如果你使用那些不支持manifest合并的编译系统（如Maven，Ant），你必须手动添加`GlideModule`的metadata标签到`AndroidManifest.xml`中。
+
+```xml
+<meta-data
+    android:name="com.bumptech.glide.integration.volley.VolleyGlideModule"
+    android:value="GlideModule" />
+```
+
+#### Volley的混淆设置
+无论使用什么编译系统，不要混淆`VolleyGlideModule`类，它需要被反射来实例化。添加下面的代码到`proguard.cfg`文件（或者查看“通用部分”）。
+
+```java
+-keep class com.bumptech.glide.integration.volley.VolleyGlideModule
+```
+
+### OkHttp
+OKHttp是一个高效且易于使用的Http客户端。
+
+#### Gradle中使用OkHttp
+
+```java
+dependencies {
+    compile 'com.github.bumptech.glide:okhttp-integration:1.3.1@aar'
+    //compile 'com.squareup.okhttp:okhttp:2.2.0'
+}
+```
+集成库的`GlideModule`会自动合并到你app的manifest中。
+
+#### Maven中是OkHttp
+
+```xml
+<dependency>
+    <groupId>com.github.bumptech.glide</groupId>
+    <artifactId>okhttp-integration</artifactId>
+    <version>1.3.1</version>
+    <type>aar</type>
+</dependency>
+<!--
+<dependency>
+    <groupId>com.squareup.okhttp</groupId>
+    <artifactId>okhttp</artifactId>
+    <version>2.2.0</version>
+    <type>jar</type>
+</dependency>
+-->
+
+```
+请查看对应的manifest章节，了解如何添加对应的GlideModule。
+
+#### 手动添加OkHttp
+从[release页](https://github.com/bumptech/glide/releases)下载[glide-okhttp-integration-<version>.jar ](https://github.com/bumptech/glide/releases/download/v3.6.1/glide-okhttp-integration-1.3.1.jar)。并添加到你app的编译路径中(compile classpath)。
+
+请查看对应的manifest章节，了解如何添加对应的GlideModule。
+
+#### OkHttp的Manifest
+如果你使用那些不支持manifest合并的编译系统（如Maven，Ant），你必须手动添加`GlideModule`的metadata标签到`AndroidManifest.xml`中。
+
+```xml
+<meta-data
+    android:name="com.bumptech.glide.integration.okhttp.OkHttpGlideModule"
+    android:value="GlideModule" />
+```
+
+#### OkHttp的混淆设置
+无论使用什么编译系统，不要混淆`VolleyGlideModule`类，它需要被反射来实例化。添加下面的代码到`proguard.cfg`文件（或者查看“通用部分”）。
+
+```java
+-keep class com.bumptech.glide.integration.okhttp.OkHttpGlideModule
+```
+
+### 更多选项
+
+#### 通用的混淆配置
+你也可以使用下面的配置来避免混淆所有的`GlideModule`。
+
+```java
+-keep public class * implements com.bumptech.glide.module.GlideModule
+```
+这种方式有其他的好处，当修改集成库或者自定义集成库的行为时，不需要修改。当你添加或者移动其他module的时候，也不需要修改什么。
+
+#### 覆盖默认的行为
+如果默认配置无法满足你，所有的集成库还有一些额外的选项。比如添加重试行为，请查看集成库的`GlideModule`的源码（位于[/integration/<lib>/src/main/java/<package>](https://github.com/bumptech/glide/tree/3.0/integration)）了解默认的注册做了些什么。你可以通过在自定义的`GlideModule`中修改参数为`UrlLoader.Factory`类来改变默认行为。
+当你要覆盖默认行为时，请确保自定义的`GlideModule`被注册，且默认的GlideModule被排除在外。排除GlideModule可能意味着从manifest中移除相应的的metadata，或者使用jar包的依赖，而不是aar的依赖。关于`GlideModule`的更多信息请查看[配置的wiki页](https://github.com/bumptech/glide/wiki/Configuration)\
+
 
 ## 在后台线程中加载和缓存
 为了使在后台线程加载资源和与媒体交互更加容易，Glide除了`Glide.with(fragment).load(url).into(view)`这个API外，提供了额外两个API。
