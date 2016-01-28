@@ -641,5 +641,197 @@ ResourceDecoder可以返回Resource的任何实现。所有，开发者可以实
 ### 获取快照
 Sonatype的快照库和其他的maven库一样，提供jar，maven，gradle等版本。
 #### Jar
+Jar包可以直接从Sonatype上下载，在此检查一下日期，确保使用最新版本
 #### Gradle
+在仓库列表中添加快照仓库
+
+```xml
+repositories {
+  jcenter()
+  maven {
+    url 'http://oss.sonatype.org/content/repositories/snapshots'
+  }
+}
+```
+然后修改依赖为快照版本
+
+```xml
+dependencies {
+  compile "com.github.bumptech.glide:glide:3.6.0-SNAPSHOT"
+  compile "com.github.bumptech.glide:okhttp-integration:1.3.0-SNAPSHOT"
+}
+```
 #### Maven
+这种方式没有测试，直接从[StackOverflow](http://stackoverflow.com/questions/7715321/how-to-download-snapshot-version-from-maven-snapshot-repository)拷过来的。欢迎改进下面的内容。
+添加下面的代码到`~/.m2/settings.xml`中:
+
+```xml
+<profiles>
+  <profile>
+     <id>allow-snapshots</id>
+     <activation><activeByDefault>true</activeByDefault></activation>
+     <repositories>
+       <repository>
+         <id>snapshots-repo</id>
+         <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+         <releases><enabled>false</enabled></releases>
+         <snapshots><enabled>true</enabled></snapshots>
+       </repository>
+     </repositories>
+   </profile>
+</profiles>
+```
+修改依赖为快照版本
+
+```xml
+<dependency>
+  <groupId>com.github.bumptech.glide</groupId>
+  <artifactId>glide</artifactId>
+  <version>3.6.0-SNAPSHOT</version>
+</dependency>
+<dependency>
+  <groupId>com.github.bumptech.glide</groupId>
+  <artifactId>okhttp-integration</artifactId>
+  <version>1.3.0-SNAPSHOT</version>
+</dependency>
+```
+
+## 图形变换
+### 默认的变换
+Glide包含两种默认的变化方式，fitCenter和centerCrop。如果需要其他类型的变换，可以考虑使用这个独立的[变换库](https://github.com/wasabeef/glide-transformations)。
+
+#### Fit center
+FitCenter会按原始比例缩小图像，使图像可以在放在给定的宽高内。FitCenter会尽可能少地缩小图片，使宽或者高的一边等于给定的值。另外一边会等于或者小于给定值。
+FitCenter和Android中的ScaleType.FIT_CENTER效果相同。
+#### CenterCrop
+CenterCrop会按原始比例缩小图像，使宽或者高的一边等于给定的值，另外一边会等于或者大于给定值。CenterCrop会裁剪掉多余部分。
+CenterCrop和Android中的ScaleType.CENTER_CROP效果相同。
+
+### 使用
+fit center效果使用`.fitCenter()`:
+
+```java
+Glide.with(yourFragment)
+    .load(yourUrl)
+    .fitCenter()
+    .into(yourView);
+```
+center crop效果使用`.centerCrop()`:
+
+```java
+Glide.with(yourFragment)
+    .load(yourUrl)
+    . centerCrop()
+    .into(yourView);
+```
+如果你只加载Bitmap或者Gif，也可以使用这个变换：
+
+```java
+// For Bitmaps:
+Glide.with(yourFragment)
+    .load(yourUrl)
+    .asBitmap()
+    .centerCrop()
+    .into(yourView);
+
+// For gifs:
+Glide.with(yourFragment)
+    .load(yourUrl)
+    .asGif()
+    .fitCenter()
+    .into(yourView);
+```
+当在类型间转码时，也可以使用这些变换。例如，获取一个变形后的jpeg图片的bytes数据：
+
+```java
+Glide.with(yourFragment)
+    .load(yourUrl)
+    .asBitmap()
+    .toBytes()
+    .centerCrop()
+    .into(new SimpleTarget<byte[]>(...) { ... });
+
+```
+自定义变换
+除了两个内置的变换，你还可以自定义变换。
+最简单的方式是继承BitmapTransformation。
+
+```java
+private static class MyTransformation extends BitmapTransformation { 
+ 
+    public MyTransformation(Context context) {
+       super(context);
+    } 
+ 
+    @Override 
+    protected Bitmap transform(BitmapPool pool, Bitmap toTransform, 
+            int outWidth, int outHeight) {
+       Bitmap myTransformedBitmap = ... // apply some transformation here. 
+       return myTransformedBitmap; 
+    } 
+ 
+    @Override 
+    public String getId() {
+        // Return some id that uniquely identifies your transformation. 
+        return "com.example.myapp.MyTransformation"; 
+    } 
+} 
+```
+
+之后一就可以用同样的方式使用它。使用`.transform(...)`代替`.fitCenter()`/`.centerCrop()`。
+
+```java
+// For the default drawable type:
+Glide.with(yourFragment)
+    .load(yourUrl)
+    .transform(new MyTransformation(context))
+    .into(yourView);
+
+// For Bitmaps:
+Glide.with(yourFragment)
+    .load(yourUrl)
+    .asBitmap()
+    .transform(new MyTransformation(context))
+    .into(yourView);
+
+// For Gifs:
+Glide.with(yourFragment)
+    .load(yourUrl)
+    .asGif()
+    .transform(new MyTransformation(context))
+    .into(yourView);
+```
+
+#### 调整大小
+你可能注意到撒还能干嘛的例子没有包含具体的尺寸，那么，Glide传入Transformation的尺寸是如何获得的呢？
+Transformation中的尺寸就是View或者Target的大小。Glide会根据布局文件中的weight，match_parent或者具体值算出View的大小。，当你用于View/Target的具体大小，又拥有原始图片的大小时，就可以通过变换生成一个正确大小的图片。
+如果你想指定View/Target的自定义大小，可以使用`.override(int, int)`方法，如果你想加载一个图片有其他用途，而不是显示在View中，请查看『自定义Target』章节。
+
+#### Bitmap 复用
+为了减少垃圾回收，你可以说使用`BitmapPool`接口来释放不想要的Bitmap或者复用存在的Bitmap。一个在Transformation中复用Bitmap典型的例子，从pool中获取Bitmap，使用该Bitmap创建一个`Canvas`, 然后使用Matrix/Paint/Shader来变换图像并绘制到Canvas上。为了正确有效地在Transformation中复用Bitmap中，遵守下面的规则：
+
+1. 在`transform()`不要回收资源或者把Bitmap放入Bitmap池中，这些步骤会自动完成。
+2. 如果你从Bitmap池中获取了多个Bitmap，或者没有使用从pool中获取到的Bitmap，确保把多余的Bitmap'放回pool中。
+3. 如果你的Trasformation没有替换调原始图片（比如，图片已经满足你要求的大小，直接返回了），请在`transform()`方法中返回原始的资源或者Bitmap
+
+一个典型的用法如下：
+
+```java
+protected Bitmap transform(BitmapPool bitmapPool, Bitmap original, int width, int height) {
+    Bitmap result = bitmapPool.get(width, height, Bitmap.Config.ARGB_8888);
+    // If no matching Bitmap is in the pool, get will return null, so we should allocate. 
+    if (result == null) {
+        // Use ARGB_8888 since we're going to add alpha to the image. 
+        result = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+    } 
+    // Create a Canvas backed by the result Bitmap. 
+    Canvas canvas = new Canvas(result);
+    Paint paint = new Paint();
+    paint.setAlpha(128);
+    // Draw the original Bitmap onto the result Bitmap with a transformation. 
+    canvas.drawBitmap(original, 0, 0, paint);
+    // Since we've replaced our original Bitmap, we return our new Bitmap here. Glide will 
+    // will take care of returning our original Bitmap to the BitmapPool for us.  
+    return result;
+} 
+```
