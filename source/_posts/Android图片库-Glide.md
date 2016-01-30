@@ -44,10 +44,12 @@ Glide中有一部分单词，我不知道用什么中文可以确切的表达出
 * 快照（Snapshots）
 * 图形变换（Transformations）
 
+---------
+
 ## 主目录
 
 ### 报告问题
-如果你有任何问题，可以在[Github上提出](https://github.com/bumptech/glide/issues/new)或者发送e-mail到我们的[邮件列表](https://groups.google.com/forum/#!forum/glidelibrary)，也可以在IRC(Internet Relay Chat 网络中继聊天？)频道上联系我们：[irc.freenode.net#glide-library](http://webchat.freenode.net/?channels=glide-library)。
+如果你有任何问题，可以在[Github上提出](https://github.com/bumptech/glide/issues/)或者发送e-mail到我们的[邮件列表](https://groups.google.com/forum/#!forum/glidelibrary)，也可以在IRC(Internet Relay Chat 网络中继聊天？)频道上联系我们：[irc.freenode.net#glide-library](http://webchat.freenode.net/?channels=glide-library)。
 
 ### 3.0版本的新特性
 * 支持Gif动画的解码 - 与加载图片相同，只要调用Glide.with(...).load(...)，如果你加载的图片是一个可以播放的Gif，Glide会自动加载它并显示在一个自定义的Drawable上（注：GifDrawable）。此外，你还可以控制的更多，比如
@@ -101,6 +103,8 @@ Glide.with(context)
 * 内存和磁盘缓存
 * Bitmap和资源池来减少内存抖动
 * 支持任意的图像变换
+
+---------
 
 ## 缓存机制与缓存失效
 缓存失效是一个比较复杂的话题，理想情况下，你尽可能不要考虑这个问题。这一节主要是让你粗略的了解一下Glide中cache的key是如何生成，以及提供一些关于如何合理利用缓存的提示。
@@ -175,6 +179,8 @@ public class IntegerVersionSignature implements Key {
 请牢记：为了避免性能下降，请在后台线程中批量加载版本元数据(metaData，注：一般查询数据库获得)，只有这样，才能确保当你想加载图片的时候，这些值是可用的。
 
 如果这些方法都失败了，比如，你不能改变标识符，也不能跟踪一个合理的版本号。你还可以使用`diskCacheStrategy()`和`DiskCacheStrategy.NONE.`来完全关闭磁盘缓存。
+
+---------
 
 ## 配置
 
@@ -337,6 +343,8 @@ Glide默认使用RGB_565，因为它每个像素只需要2bytes（16bit）的空
 builder.setDecodeFormat(DecodeFormat.ALWAYS_ARGB_8888);
 ```
 
+---------
+
 ## 自定义目标（Targets）
 除了可以加载图像，视频剧照，gif动画到View中，你还可以加载他们到实现了Target接口的自定义目标中。
 
@@ -414,6 +422,8 @@ Glide.with(yourFragment)
     }); 
 ```
 虽然这个例子还不错，但是，通常情况下，我不推荐用这个方式生成调色板。请查看Glide的 `ResourceTranscoder` 接口和`.transcode()`方法，考虑返回一个包含Bitmap和调色板的自定义资源。调色板可在在后台线程生成。？？？？？更多内容会在以后推出。。。
+
+---------
 
 ## 调试和错误处理
 Glide在加载过程中出现异常默认情况下不会打日志。Glide为你提供了两种方式查看和处理这些异常。
@@ -501,6 +511,8 @@ adb shell setprop log.tag.StreamEncoder VERBOSE
 adb shell setprop log.tag.TransformationUtils VERBOSE
 ```
 
+---------
+
 ## 使用Glide下载自定义大小的图片
 开发者可以通过Glide的ModelLoader接口获得图片大小，并根据这个大小来加载一个合适尺寸的图片url。
 使用合适尺寸的图片可以节约带宽，设备的存储空间，还可以提升app性能。
@@ -552,6 +564,8 @@ Glide.with(yourFragment)
 ```
 
 其他的例子，关于如何使用自定义ModelLoader加载各种尺寸的图片，请查看[Flicker示例应用](https://github.com/bumptech/glide/blob/master/samples/flickr/src/main/java/com/bumptech/glide/samples/flickr/FlickrModelLoader.java)，和[Giphy示例应用](https://github.com/bumptech/glide/blob/master/samples/giphy/src/main/java/com/bumptech/glide/samples/giphy/GiphyModelLoader.java)。
+
+---------
 
 ## 集成（Integration）库-Glide与其他库整合
 
@@ -697,6 +711,7 @@ dependencies {
 如果默认配置无法满足你，所有的集成库还有一些额外的选项。比如添加重试行为，请查看集成库的`GlideModule`的源码（位于[/integration/<lib>/src/main/java/<package>](https://github.com/bumptech/glide/tree/3.0/integration)）了解默认的注册做了些什么。你可以通过在自定义的`GlideModule`中修改参数为`UrlLoader.Factory`类来改变默认行为。
 当你要覆盖默认行为时，请确保自定义的`GlideModule`被注册，且默认的GlideModule被排除在外。排除GlideModule可能是从manifest中移除相应的的metadata，或者使用jar包依赖代替aar依赖。关于`GlideModule`的更多信息请查看[配置的wiki页](https://github.com/bumptech/glide/wiki/Configuration)\
 
+---------
 
 ## 在后台线程中加载和缓存
 为了使后台加载资源和与媒体交互更加容易，除了`Glide.with(fragment).load(url).into(view)`这个API外，Glide还提供了额外两个API。
@@ -738,6 +753,7 @@ Bitmap myBitmap = Glide.with(applicationContext)
 ```
 虽然`into(int, int)`方法在后台线程中很有效，但是，你不能把它用在主线程中。即使这个同步方法在你的主线程中不会抛出异常，调用get()也会阻塞主线程。会使你的APP性能变差，反应迟钝。
 
+---------
 
 ## Glide中的资源复用
 
@@ -801,6 +817,7 @@ ResourceDecoder可以返回Resource的任何实现。所有，开发者可以实
 
 	最简单的避免这个错误的方法是在`onLoadCleared()`方法中把所有对资源对象的引用置null。一般情况下，加载一个Bitmap，然后引用它的Target是安全的。不安全的是，你清空了这个Target，却依然引用着这个Bitmap。
 	
+---------
 	
 ## 使用快照
 
@@ -869,6 +886,8 @@ dependencies {
   <version>1.3.0-SNAPSHOT</version>
 </dependency>
 ```
+
+---------
 
 ## 图形变换
 
