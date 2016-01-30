@@ -47,7 +47,7 @@ Glide中有一部分单词，我不知道用什么中文可以确切的表达出
 ## 主目录
 
 ### 报告问题
-如果你有任何问题，可以在[Github上提出](https://github.com/bumptech/glide/issues/new?body=**Glide%20Version/Integration%20library%20(if%20any)**:%0A**Device/Android%20Version**:%0A**Issue%20details/Repro%20steps**:%0A%0A**Glide%20load%20line**:%0A%60%60%60%0AGlide.with(context)...%3B%0A%60%60%60%0A%0A**Stack%20trace**:%0A%60%60%60%0Apaste%20stack%20trace%20here%0A%60%60%60)或者发送e-mail到我们的[邮件列表](https://groups.google.com/forum/#!forum/glidelibrary)，也可以在IRC(Internet Relay Chat 网络中继聊天？)频道上联系我们：[irc.freenode.net#glide-library](http://webchat.freenode.net/?channels=glide-library)。
+如果你有任何问题，可以在[Github上提出](https://github.com/bumptech/glide/issues/new)或者发送e-mail到我们的[邮件列表](https://groups.google.com/forum/#!forum/glidelibrary)，也可以在IRC(Internet Relay Chat 网络中继聊天？)频道上联系我们：[irc.freenode.net#glide-library](http://webchat.freenode.net/?channels=glide-library)。
 
 ### 3.0版本的新特性
 * 支持Gif动画的解码 - 与加载图片相同，只要调用Glide.with(...).load(...)，如果你加载的图片是一个可以播放的Gif，Glide会自动加载它并显示在一个自定义的Drawable上（注：GifDrawable）。此外，你还可以控制的更多，比如
