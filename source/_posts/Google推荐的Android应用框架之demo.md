@@ -43,10 +43,11 @@ tags:
 	* 测试
 * 其他
 	* 避免重复发送信息 
+* 版权许可
 
 ## 如何工作
 关于『离线设计』这个主题，许多解决方案都是依赖于特定的需求，如果想要运用到其他场景，需要一些修改。因此，这个demo的同步逻辑可能并不适合你的需求。你应当把它当做一个例子学习，然后找出适合你的应用的解决方案。不幸的是，没有设计离线应用的万金油。
-我们先解释一下这个应用的交互，帮助你理解。
+这里，我们会解释用户的交互流是如何工作的，会给你的应用提供一些不错的想法。
 这个例子没有严格依照任何的构架模式，它使用混合方法满足自己的需求。我们假设这个应用会不断成长为一个大的app（因此下面比较复杂）。尽管增加了复杂度，但是我没尽量是这个demo更加真实有用。
 
 ## 组件
@@ -82,9 +83,80 @@ tags:
 同步操作有下面三个组件负责：
 
 * FeedModel：
-
+	* 为每个feed流保存最后一条FeedItem（既发送的消息）的时间戳。这个时间戳有两个作用
+		* 当我们刷新feed流时，只接收最新的item。
+		* 创建保存在本地的消息。本地创建的消息会显示在feed查询中是很重要的。 客户端的时间戳可能与server不同，只有当消息与Server同步时，我们分配feed最新的时间戳给这个新的消息。？？？
+	* 给UI层提供从数据库获取feed流的方法。
 * FeedController：
-
+	* 负责创建`FetchFeedJob`
+	* 监听消息更新失败，使用系统的通知栏通知用户。除非其他的UI组件（如FeedActivity）已经处理了错误。
+	* 这个示例的app很基础，在真实环境中，它可能还要负责当有GCM推送到达时刷新feed流。以及包括一些防止用户频繁刷新的逻辑。
 * FetFeedJob：
+	* 发出API调用，获取某个feed流的最新消息列表。还负责更新model和发出event。
 
 ### 保持UI更新
+后台与UI的交互需要良好的定义。
+
+* 等界面需要做某件事情时，UI直接调用某个方法（如发送消息）。
+* 后台任务结束时发出event通知UI更新（如更新失败）。
+
+UI组件根据自身的生命周期负责注册/反注册EventBus，因为后台永远不会持有UI的引用，我们不想有内存泄漏的风险。
+
+* EventBus的使用可能引起一些特殊的情况：由于UI错过了一些event时，导致不同步。本Demo使用下面的规则避免这种清空。
+	* 当组件的生命周期开始时，先注册event，然后在再从model加载数据。
+	* 当正在加载数据时，如果有event到来，会在数据加载完成后再次触发一次同步。
+	* 所有的event都含有一个时间戳，它表示与该event相关的最老的item的时间。当UI访问model层时会使用这个时间戳，那么，如果item插入数据库时顺序不同，我们依然可以获取到这些item，因为我们使用了最老的时间戳。？？？
+	* 当组件的生命周期结束时（例如`Activity#onStop`）,停止监听event。如果，我们再返回应用，他会做一个完整的同步，确保不会丢失在这期间发生的event。
+
+**这不是唯一的办法**：示例中使用的是一个全局的EventBus，你也可以用Rx实现相似的功能，或者手动设置listener，以及其他相似的技术。总之，你需要根据自己的应用来评估。
+
+## 安装&&运行&&测试
+### 安装
+demo包含一个简单的server，你需要安装Ruby On Rails来运行它。建议你通过[Ruby Version Manager](https://rvm.io/)来安装。安装完之后，使用下面命令启动server：
+
+```xml
+> cd server;
+> bundle install;
+> rake db:migrate RAILS_ENV=development;
+```
+这会安装依赖，创建数据库。
+
+### 运行
+#### 服务器
+
+```xml
+> cd server;
+> rails s
+```
+
+#### 客户端
+demo中app使用模拟器环境默认的host地址。（`http://10.0.2.2:3000`）。如果你在模拟器里运行，已经可以正常工作。你可以在设置菜单中修改，或者在`DemoConfig`类中直接修改。
+
+### 测试
+
+* 服务器：服务端没有。。我又不关心。
+* 客户端：你可以这样运行测试 `> cd client; > ./gradlew clean app:connectedCheck app:test`
+
+## 其他
+### 避免重复发送消息
+编写移动应用意味着你要处理不可靠的网络。通过使用持久化的job（存储在本地），在网络可用时，app工作了很不错，可是并不完美。在不可靠的网络条件下，我们的应用可能出现这种情况：服务端那数据已经更新存储了，但是客户端没有收到成功的返回。那么客户端依然认为消息没有上传，会不断重试。如果server的返回有问题，这就会变得更糟糕。
+通常情况下，重试就以为这重复上传消息。有很多策略可以解决这个问题。demo中我们使用一个唯一的二维元组`(userId, clientId)`来避免重复，它的原理如下：
+
+* 客户端创建消息时，生成一个唯一的`clientId`（`UUID.randomUUID().toString()`,注：随着时间会变化）。这个UUID和用户ID的组合在客户端和服务端都是唯一的。
+* 当服务端收到消息时，检查这个元组是否存在，如果以及存在，不会新增一条存储记录，而是仅仅返回这个条目已经存在。
+* 当客户端获取feed时，如果发现一个消息的` (userId, client Id)`与某个存在的消息相同，会覆盖这存在的消息。这可能发生在这种情况下发生：客户端没有收到服务端的返回，只是本地保存了这个消息，，但是这个消息出现在其他某个请求的返回里面。？？需要这样吗
+
+你可以在`server/app/controllers/posts_controller.rb`中使用`error_before_saving_post`和`error_after_saving_post`来触发这种特殊的情况。
+
+## 版权许可
+>Copyright (C) 2015 The Android Open Source Project
+
+>Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+
+>You may obtain a copy of the License at
+  http://www.apache.org/licenses/LICENSE-2.0
+
+>Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+
+>See the License for the specific language governing permissions and limitations under the License.
