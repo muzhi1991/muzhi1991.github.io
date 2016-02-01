@@ -73,7 +73,9 @@ plugins:
 ## Docs: http://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repo: https://github.com/muzhi1991/muzhi1991.github.io
+  repo: 
+    github: git@github.com:muzhi1991/muzhi1991.github.io.git
+    gitcafe: git@gitcafe.com:muzhi1991/muzhi1991.git,gitcafe-pages
 
 # Social Links
 social:
@@ -92,6 +94,10 @@ links:
 #comment
 #disqus_shortname: muzhi1991
 duoshuo_shortname: muzhi1991
+
+#analytics
+google_analytics: UA-73077297-1
+baidu_analytics: 492ae7efb5ef95bf72321c8712d32a03
 
 # hexo sitemap网站地图
 sitemap:

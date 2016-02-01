@@ -830,7 +830,7 @@ ResourceDecoder可以返回Resource的任何实现。所有，开发者可以实
 Sonatype的快照库和其他的maven库一样，提供jar，maven，gradle等版本。
 
 #### Jar
-Jar包可以直接从Sonatype上下载，在此检查一下日期，确保使用最新版本
+Jar包可以直接从Sonatype上下载，再次检查一下日期，确保使用最新版本
 
 #### Gradle
 在仓库列表中添加快照仓库
