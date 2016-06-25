@@ -39,7 +39,7 @@ MVP是上述六个框架的基础，对于MVP的认识，最好结合MVC、MVVM�
 
 ### MVP+Databinding
 
-这个框架可以看着是MVVM框架了。Databinding是利用Android提供的一个库实现了数据绑定的功能，即某个`Entity`内容可以直接反应到`View`中，同样`View`一旦修改，`Entity`也会变换。**本质上，这种方式简化了MVP中P层与V层的关系**，P层处理完的数据，放入某个实体中就可以显示在界面上。当然也尤其缺陷。
+这个框架可以看着是MVVM框架了。Databinding是利用Android提供的一个库实现了数据绑定的功能，即某个`Entity`内容可以直接反应到`View`中，同样`View`一旦修改，`Entity`也会变换。**本质上，这种方式简化了MVP中P层与V层的关系**，P层处理完的数据，放入某个实体中就可以显示在界面上。当然也有其缺陷。
 
 ### MVP+Dagger
 这就比较好理解了，将MVP中对象的构造使用Dagger2代替，是一种强制性解耦的措施，具体可以参加[之前的文章](http://limuzhi.com/2016/03/06/Android%E6%B3%A8%E5%85%A5%E6%A1%86%E6%9E%B6Dagger2%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/)。
