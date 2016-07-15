@@ -66,8 +66,8 @@ pagination_dir: page
 ## Plugins: http://hexo.io/plugins/
 ## Themes: http://hexo.io/themes/
 theme: next
-plugins:
-- hexo-generator-cname
+plugins: 
+  -hexo-generator-cname
 
 # Deployment
 ## Docs: http://hexo.io/docs/deployment.html
@@ -101,7 +101,8 @@ baidu_analytics: 492ae7efb5ef95bf72321c8712d32a03
 
 # hexo sitemap网站地图
 sitemap:
-path: sitemap.xml
+  path: sitemap.xml
+
 baidusitemap:
-path: baidusitemap.xml
+  path: baidusitemap.xml
 
