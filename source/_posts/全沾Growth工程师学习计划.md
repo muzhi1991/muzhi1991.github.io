@@ -53,12 +53,21 @@ tags:
 - [x] 周末 javascript语法 http://javascript.ruanyifeng.com/
 
 
-第二周
+第二周：js完结周，node启动周
 
 -[ ] 周一 [javascript语法完成]( http://www.liaoxuefeng.com/wiki/001434446689867b27157e896e74d51a89c25cc8b43bdb3000)
--[ ] 周二 node入门搭建
--[ ] 周三  
--[ ] 周四 
--[ ] 周五 
--[ ] 周末 
+-[ ] 周二 js相关工具库学习，jquery underscore 
+-[ ] 周三 node入门环境搭建
+-[ ] 周四 node相关库学习 全局变量 http fs
+-[ ] 周五 node相关库学习 stream
+-[ ] 周末 总结html css js
 
+
+第三周：node完结周，项目启动
+
+-[ ] 周一 node框架学习，全栈指南阅读
+-[ ] 周二 项目启动！！！！！
+-[ ] 周三
+-[ ] 周四
+-[ ] 周五 不在。。。
+-[ ] 周末 不在。。。
