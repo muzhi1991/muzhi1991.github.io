@@ -1,3 +1,4 @@
+#!/bin/bash 
 npm install
 npm install hexo-generator-cname --save
 npm install hexo-generator-sitemap --save
