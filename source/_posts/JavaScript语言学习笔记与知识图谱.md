@@ -37,7 +37,7 @@ js是网页的脚本语言，学习的过程中才发现内容其实很多，甚
 * JavaScript语言精粹，听说不错。
 
 知识图谱：
-[这里下载JavaScript知识图谱](files/JavaScript知识图谱)
+[这里下载JavaScript知识图谱](files/JavaScript知识图谱.mindnode)
 
 ## 变量
 
@@ -777,6 +777,11 @@ var o ={
     * 转化为Number：除了加法运算
 
 * 建议：**全部使用`Boolean`、`Number`和`String`函数进行显式转换。**
+* 坑：
+
+  * +"123"-->number(123)  
+  * 1+"123"-->String("1123")
+  * i+1，导致结果不确定！可以使用+i+1;
 
 ## 错误处理
 
@@ -1851,41 +1856,41 @@ http://cnodejs.org/topic/5056e007433135ca35034e8d
 *  判断一个变量是否声明
 
    ```javascript
-      // 检查a变量是否被声明
-      if (a) {...} // 报错
-      // 写法1
-      if (typeof a === "undefined") { // 注意引号
-        // ...
-      }
+        // 检查a变量是否被声明
+        if (a) {...} // 报错
+        // 写法1
+        if (typeof a === "undefined") { // 注意引号
+          // ...
+        }
 
-      // 写法2 浏览器环境，所有全局变量都是window对象的属性。
-      if (window.a === undefined) { // 注意没有引号
-        // ...
-      }
+        // 写法2 浏览器环境，所有全局变量都是window对象的属性。
+        if (window.a === undefined) { // 注意没有引号
+          // ...
+        }
 
-      // 写法3
-      if ('a' in window) {
-        // ...
-      }
-      // 下面方法有漏洞，a=""是可能声明过
-      // if (window.a) {...} // 不报错
-      // if (window['a']) {...} // 不报错
+        // 写法3
+        if ('a' in window) {
+          // ...
+        }
+        // 下面方法有漏洞，a=""是可能声明过
+        // if (window.a) {...} // 不报错
+        // if (window['a']) {...} // 不报错
    ```
 
 *  base64：编解码url参数用
 
    ```javascript
-      function b64Encode(str) {
-        // encodeURIComponent支持中文，但是对url的斜杠也会编码
-        return btoa(encodeURIComponent(str));
-      }
+        function b64Encode(str) {
+          // encodeURIComponent支持中文，但是对url的斜杠也会编码
+          return btoa(encodeURIComponent(str));
+        }
 
-      function b64Decode(str) {
-        return decodeURIComponent(atob(str));
-      }
+        function b64Decode(str) {
+          return decodeURIComponent(atob(str));
+        }
 
-      b64Encode('你好') // "JUU0JUJEJUEwJUU1JUE1JUJE"
-      b64Decode('JUU0JUJEJUEwJUU1JUE1JUJE') // "你好"
+        b64Encode('你好') // "JUU0JUJEJUEwJUU1JUE1JUJE"
+        b64Decode('JUU0JUJEJUEwJUU1JUE1JUJE') // "你好"
    ```
 
 *  对象属性遍历
@@ -1948,129 +1953,129 @@ http://cnodejs.org/topic/5056e007433135ca35034e8d
 *  模板引擎
 
    ```javascript
-      var str = 'Hello <%= name %>!';
+        var str = 'Hello <%= name %>!';
 
-      var o = {
-        name: 'Alice'
-      };
-      function parser(str){
-        // 'Hello <%= name %>!'--> '"Hello ", name, "!"'
-      }
-      function tmpl(str, obj) {
-        str = 'var p = [];' +
-          'with (obj) {p.push(' + parser(str) + ')};' +
-          'return p;'
-        var r = (new Function('obj', str))(obj);
-        return r.join('');
-      }
+        var o = {
+          name: 'Alice'
+        };
+        function parser(str){
+          // 'Hello <%= name %>!'--> '"Hello ", name, "!"'
+        }
+        function tmpl(str, obj) {
+          str = 'var p = [];' +
+            'with (obj) {p.push(' + parser(str) + ')};' +
+            'return p;'
+          var r = (new Function('obj', str))(obj);
+          return r.join('');
+        }
 
-      tmpl(str, o)
+        tmpl(str, o)
    ```
 
 *  为函数参数设置默认值
 
    ```javascript
-      // 方法一：简单，但是0，false会误判，如果默认值是0，用这个方法不错
-      function f(a){
-        a = a || 1; //  这句话
-        return a;
-      }
-      // 方法二：更完善一些
-      function f(a) {
-        (a !== undefined && a !== null) ? a = a : a = 1;
-        return a;
-      }
+        // 方法一：简单，但是0，false会误判，如果默认值是0，用这个方法不错
+        function f(a){
+          a = a || 1; //  这句话
+          return a;
+        }
+        // 方法二：更完善一些
+        function f(a) {
+          (a !== undefined && a !== null) ? a = a : a = 1;
+          return a;
+        }
    ```
 
 *  类似数组与数组的转化：
 
    ```javascript
-      var args = Array.prototype.slice.call(arguments);
+        var args = Array.prototype.slice.call(arguments);
 
-      // or
+        // or
 
-      var args = [];
-      for (var i = 0; i < arguments.length; i++) {
-        args.push(arguments[i]);
-      }
+        var args = [];
+        for (var i = 0; i < arguments.length; i++) {
+          args.push(arguments[i]);
+        }
    ```
 
 *  asset方法：规范化异常抛出
 
    ```javascript
-      // 没必要自己实现
-      function assert(expression, message) {
-        if (!expression)
-          throw {name: 'Assertion Exception', message: message};
-      }
-      // 建议
-      console.assert(typeof myVar != 'undefined', 'myVar is undefined!');
+        // 没必要自己实现
+        function assert(expression, message) {
+          if (!expression)
+            throw {name: 'Assertion Exception', message: message};
+        }
+        // 建议
+        console.assert(typeof myVar != 'undefined', 'myVar is undefined!');
    ```
 
 *  定义构造函数的一个模板代码，避免忘记new引起全局变量污染
 
    ```javascript
-      function Fubar (foo, bar) {
-        if (this instanceof Fubar) {
-          this._foo = foo;
-          this._bar = bar;
+        function Fubar (foo, bar) {
+          if (this instanceof Fubar) {
+            this._foo = foo;
+            this._bar = bar;
+          }
+          else {
+            return new Fubar(foo, bar);
+          }
         }
-        else {
-          return new Fubar(foo, bar);
-        }
-      }
    ```
 
 *  深拷贝对象：1.确保拷贝后的对象，与原对象具有同样的prototype原型对象。2.确保拷贝后的对象，与原对象具有同样的属性。
    ```javascript
-      function copyObject(orig) {
-        var copy = Object.create(Object.getPrototypeOf(orig));
-        copyOwnPropertiesFrom(copy, orig);
-        return copy;
-      }
+        function copyObject(orig) {
+          var copy = Object.create(Object.getPrototypeOf(orig));
+          copyOwnPropertiesFrom(copy, orig);
+          return copy;
+        }
 
-      function copyOwnPropertiesFrom(target, source) {
-        Object
-        .getOwnPropertyNames(source)
-        .forEach(function(propKey) {
-          var desc = Object.getOwnPropertyDescriptor(source, propKey);
-          Object.defineProperty(target, propKey, desc);
-        });
-        return target;
-      }
+        function copyOwnPropertiesFrom(target, source) {
+          Object
+          .getOwnPropertyNames(source)
+          .forEach(function(propKey) {
+            var desc = Object.getOwnPropertyDescriptor(source, propKey);
+            Object.defineProperty(target, propKey, desc);
+          });
+          return target;
+        }
    ```
 
 *  继承的例子：方法共享，属性私有（除非模拟静态变量）
 
    ```javascript
-     function Shape() {
-       this.x = 0;
-       this.y = 0;
-     }
+       function Shape() {
+         this.x = 0;
+         this.y = 0;
+       }
 
-     Shape.prototype.move = function (x, y) {
-       this.x += x;
-       this.y += y;
-       console.info('Shape moved.');
-     };
+       Shape.prototype.move = function (x, y) {
+         this.x += x;
+         this.y += y;
+         console.info('Shape moved.');
+       };
 
-     function Rectangle() {
-       // 第一步：调用父类构造函数，动态构造属性
-       Shape.call(this); 
-     }
-     // 另一种写法
-     function Rectangle() {
-       this.base = Shape;
-       this.base();
-     }
+       function Rectangle() {
+         // 第一步：调用父类构造函数，动态构造属性
+         Shape.call(this); 
+       }
+       // 另一种写法
+       function Rectangle() {
+         this.base = Shape;
+         this.base();
+       }
 
-     // 第二步:
-     // 子类继承父类的方法，继承的核心 对比这两种写法，下面的更好
-     // Rectangle.prototype =  new Shape()
-     Rectangle.prototype = Object.create(Shape.prototype);
-     Rectangle.prototype.constructor = Rectangle;
+       // 第二步:
+       // 子类继承父类的方法，继承的核心 对比这两种写法，下面的更好
+       // Rectangle.prototype =  new Shape()
+       Rectangle.prototype = Object.create(Shape.prototype);
+       Rectangle.prototype.constructor = Rectangle;
 
-     var rect = new Rectangle();
+       var rect = new Rectangle();
    ```
 
 
