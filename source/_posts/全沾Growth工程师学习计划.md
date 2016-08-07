@@ -66,8 +66,43 @@ tags:
 第三周：node完结周，项目启动
 
 -[ ] 周一 node框架学习，全栈指南阅读
--[ ] 周二 项目启动！！！！！
--[ ] 周三
--[ ] 周四
+-[ ] 周二 全栈指南阅读，测试驱动开发。。。（截至到上线章节之前）
+-[ ] 周三 调研项目，网上搜索nodejs学习工程，找了一堆项目。
+-[ ] 周四 已经无心学习，准备飞往哈尔滨
 -[ ] 周五 不在。。。
 -[ ] 周末 不在。。。
+
+修整周，感觉nodejs学习了太皮毛了！
+
+-[ ] 周一 刚回来，啥都没干！思考server开发不应该有redis之类的吗？于是搜了一圈，发现学的太皮毛，无法实践啊。
+-[ ] 周二 学习[《Node.js 包教不包会》](https://github.com/alsotang/node-lessons)，18篇教程！这篇教程比较实战（express），后面的nodeclude是一个比较好的例子
+-[ ] 周三 服务端爬虫（使用js的异步特性），eventproxy asyn库控制并发
+-[ ] 周四 node中的测试框架mocha should supertest（还有浏览器前端测试）istanbul 测试覆盖率与测试驱动开发的思想。
+-[ ] 周五 其他，线上部署heroku，cookie，session，redis，github的持续集成travis，数据mongodb与mongoose
+-[ ] 周末 Promise，**理解中间件**，Connect与Express学习， js api与相关的库总结
+
+
+第四周：
+
+-[ ] 周一 初步了解redis，zookeeper，dubbo，soa，rpc，thrift，mq，nigix，lvs，docker等一些列概念与关系。形成大局观。
+-[ ] 周二 nodeclude项目源码 环境部署，出入看了一下数据库，monggodb nosql文档型数据库，与hbase对比（列存储与行存储），与mysql对比等。
+-[ ] 周三 项目模块分析，使用哪些中间件
+-[ ] 周四 nodeclude项目源码 登录部分学习，oath2.0,token,sessionId,jwt以及安全问题
+-[ ] 周五 nodeclude项目源码 ，以后要总结这个项目
+-[ ] 周末 总结nodejs基础知识与下一步学习计划
+
+第五周：
+
+-[ ] 周一
+-[ ] 周二
+-[ ] 周三
+-[ ] 周四
+-[ ] 周五 
+-[ ] 周末 总结nodejs进阶与express
+
+
+webpack，react，bower，gulp等前端工具
+
+docker
+
+前段mvc框架
