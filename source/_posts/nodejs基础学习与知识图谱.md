@@ -283,13 +283,14 @@ Node.js包管理工具，统一管理包的依赖与版本，配置文件是`pac
     * `res.writeHead(statusCode,"{"xxx":"content"}")`
     * `res.write("xxx")`
     * `res.end("xxx");` **必须有**，表示结束。参数可以不写。
+    * `res.send("xxx");`返回结果，不用调end
 
 * 发出请求
 
   * 发出get—`http.get(callback)`
   * 发出post/get — `http.request(options[, callback])`
 
-* https：Node内置Https支持(但是建议Nigix处理)
+* https：Node内置Https支持(但是建议Ngnix处理)
 
   ```javascript
   var https = require('https');
@@ -563,7 +564,7 @@ Node.js包管理工具，统一管理包的依赖与版本，配置文件是`pac
   });
   ```
 
-* fokr()&&send()：fork方法直接创建一个子进程，执行Node脚本，`fork('./child.js')` 相当于 `spawn('node', ['./child.js'])` 。与spawn方法不同的是，fork会在父进程与子进程之间，建立一个通信管道，用于进程之间的通信。
+* fork()&&send()：fork方法直接创建一个子进程，执行Node脚本，`fork('./child.js')` 相当于 `spawn('node', ['./child.js'])` 。与spawn方法不同的是，fork会在父进程与子进程之间，建立一个通信管道，用于进程之间的通信。
 
   ```javascript
   var n = child_process.fork('./child.js');
