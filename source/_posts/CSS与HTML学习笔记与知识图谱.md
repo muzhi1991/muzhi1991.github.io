@@ -162,6 +162,7 @@ tags:
     * a:visited - 用户已访问的链接
     * a:hover - 鼠标指针位于链接的上方
     * a:active - 链接被点击的时刻
+
 * CSS框模型：padding,margin，content是什么
   * 元素组成:内容，内边距（padding），边框(border)，外边距(padding)
   * 与android不同的是**padding和边框不算在内容区域width/height中**(IE5,6是这样的）
@@ -185,7 +186,12 @@ tags:
       * float
       * clear
       * 一个demo http://www.w3school.com.cn/tiy/t.asp?f=csse_float6
+
 * CSS3新特性
+
+  * flex布局：http://www.ruanyifeng.com/blog/2015/07/flex-grammar.html
+    * Flex布局以后，子元素的`float`、`clear`和`vertical-align`属性将失效。
+
 * 坑：
   * css中忘了加分号，导致属性不起作用
 
