@@ -13,7 +13,7 @@ tags:
 ---
 
 
-简单分析一个真实的项目-[nodeclub](https://github.com/cnodejs/nodeclub)，这个项目是node社区的源码，可以看做是一个用Node.js(Express框架)实现的社区论坛的模板。
+简单分析一个真实的项目-[nodeclub](https://github.com/cnodejs/nodeclub)，这个项目是node社区的源码，可以看做是一个用Node.js(Express框架)实现的社区论坛的模板。建议参考下面的**技术栈目录**和[上一篇文章中的知识图谱](files/nodejs进阶与express知识图谱.mindnode)学习。
 
 包含的功能：
 
@@ -71,7 +71,7 @@ tags:
       3. cookies加盐签名,sessionId加盐签名
    3. csrf问题：`csurf`模块
    4. 输入校验 
-   5. [helmet`模块](https://segmentfault.com/a/1190000003860400)
+   5. [helmet模块](https://segmentfault.com/a/1190000003860400)
 6. 性能优化
    1. 上线前开启production模式
    2. 使用gzip

@@ -103,6 +103,31 @@ tags:
 
 webpack，react，bower，gulp等前端工具
 
-docker
-
 前段mvc框架
+
+第六周 完整的撸了一遍nodeclub代码，写了nodeclub项目分析的文章
+
+第七周 docker实践，学习了docker（看完了[docker从入门到实践](https://www.gitbook.com/book/yeasy/docker_practice)），[docker-compose 部署nodejs](https://github.com/b00giZm/docker-compose-nodejs-examples)，参考其部署了nginx+负载均衡n个node+redis+mongodb的例子，在该环境下跑起来了nodeclub。
+
+第八周 学习Java Web框架，Servlet+JSP+Spring +SpringMVC
+
+* [极客学院的Java Web简单教程](http://wiki.jikexueyuan.com/project/java-web/) 比较浅，但是有个大概的概念
+* [跟开涛学SpringMVC](http://jinnianshilongnian.iteye.com/blog/1593441) 前三章，比较好，很深入，涉及源码分析，讲了服务端构架，但是只讲了springmvc
+* 理了Java中Servlet部分的结构（不含tomcat）
+* 调研了学习的路径，
+  * 先学Servlet，然后学Spring 的IOC，再学SpringMVC
+  * 了解一下JSP的原理和简单用法，实际中可能不用它开发。
+  * Spring AOP，数据库框架Hibenate？
+  * 项目学习--一个SpringMVC项目--[官方showcase](https://github.com/spring-projects/spring-mvc-showcase) 
+  * 项目学习--一个SpringBoot项目--[springside4项目](https://github.com/springside/springside4)
+* 区分了一些概念
+  * WebService（基于http的服务） VS RPC（远程调用，更广的概念）
+  * [Restful vs SOAP](https://www.ibm.com/developerworks/cn/webservices/0907_rest_soap/) 思想的区别
+  * thrift 理解，还不深刻，与[http+json的区别](http://stackoverflow.com/questions/9732381/why-thrift-why-not-http-rpcjsongzip)
+
+
+第九周  Spring SpringMVC 数据库
+
+* Spring 还要学一下[这个教程](http://wiki.jikexueyuan.com/project/spring/)，[IBM的教程](http://www.ibm.com/developerworks/cn/java/web/spring.html)
+* [Hibernate](chrome-extension://ikhdkkncnoglghljlkmcimlnlhkeamad/pdf-viewer/web/viewer.html?file=http%3A%2F%2Fread.pudn.com%2Fdownloads96%2Febook%2F392604%2FHibernate.pdf)
+* maven

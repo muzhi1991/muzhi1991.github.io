@@ -79,7 +79,20 @@ app.get('/', function (req, res) {
 
 ### 响应请求
 
-这里的req和res和Nodejs原生的**相同**，只是在我们添加了一些中间件之后，req中会多一些变量，帮助我们处理请求。可以在不涉及 Express 的情况下调用 `req.pipe()`、`req.on('data', callback)` 和要执行的其他任何函数。
+这里的req和res和Nodejs原生的**相同**，只是在我们添加了一些中间件之后，req中会多一些变量，帮助我们处理请求。可以在不涉及 Express 的情况下调用 `req.pipe()`、`req.on('data', callback)` 和要执行的其他任何函数，如`res.end()`等。
+
+express添加了一些便捷方法
+
+* [请求req](http://expressjs.com/zh-cn/api.html#req)中：
+  * `req.params`：路由中定义的参数
+  * `req.query`：问号后面参数
+  * `req.body`：
+  * `req.cookies`
+* [返回res](http://expressjs.com/zh-cn/api.html#res)中：
+  * `res.status(200)`设置header中的状态码的便捷方法。
+  * `res.send("xxx");`返回json，text结果，比较常用，自动设置Content-Type，内部包含end。[参考](http://expressjs.com/zh-cn/api.html#res.send)
+  * `res.render();`:渲染视图，返回html，内部包含end。
+  * `res.sendfile()`:依据文件扩展名设置Content-Type。如直接返回网页。内部包含end。
 
 ### 一般中间件
 

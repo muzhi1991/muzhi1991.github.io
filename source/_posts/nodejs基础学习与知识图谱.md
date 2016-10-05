@@ -278,12 +278,12 @@ Node.js包管理工具，统一管理包的依赖与版本，配置文件是`pac
     }).listen(8080);
     ```
 
-  * 返回数据 response
+  * 返回数据 [response](https://nodejs.org/api/http.html#http_class_http_serverresponse)
 
-    * `res.writeHead(statusCode,"{"xxx":"content"}")`
-    * `res.write("xxx")`
-    * `res.end("xxx");` **必须有**，表示结束。参数可以不写。
-    * `res.send("xxx");`返回结果，不用调end
+    * 手动返回
+      * `res.writeHead(statusCode,"{"xxx":"content"}")`
+      * `res.write("xxx")`
+      * `res.end("xxx");` **必须有**，表示结束。参数可以不写。
 
 * 发出请求
 
