@@ -1,4 +1,4 @@
-title: Java Web开发入门一--JSP&&Servlet
+title: JavaWeb开发入门一--JSP&&Servlet
 date: 2016-10-08 12:17:00
 categories:
 - 技术
@@ -40,7 +40,7 @@ tags:
 
 新建的java web工程目录如下
 
-![directory](images/java_web_hello_directory.png)
+![](http://ww1.sinaimg.cn/large/57427cf8gw1faejvlq3jtj20a80b474u.jpg)
 
 * src 源码目录，存放java代码
 * web web工程目录，该目录下除了web-inf以为都是可以被浏览器访问的，既`www.xxx.com`方法了index.jsp文件，**建议存放<u>静态</u>资源文件（如css js html）**。

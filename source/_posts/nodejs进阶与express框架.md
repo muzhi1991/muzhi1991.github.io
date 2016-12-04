@@ -1,4 +1,4 @@
-title: Node.js进阶与express框架及知识图谱
+title: Node.js进阶与Express框架及知识图谱
 date: 2016-08-20 16:00:12
 categories:
 
@@ -11,25 +11,25 @@ tags:
 - 后台开发
 ---
 
-本篇介绍后台开发的常用技术与概念，以Node.js的express框架为例，express是Node.js上最流行的开发框架，十分轻量，提供了一套方便开发的工具方法。当前使用最多的是express4.0版本。
+本篇介绍后台开发的常用技术与概念，以Node.js的Express框架为例，Express是Node.js上最流行的开发框架，十分轻量，提供了一套方便开发的工具方法。当前使用最多的是Express4.0版本。
 
-> express太轻，叫他框架都有点不合适。个人认为框架的特点是我们编写的代码被框架调用，而express只是提供了一套便捷的API与相关中间件。
+> Express太轻，叫他框架都有点不合适。个人认为框架的特点是我们编写的代码被框架调用，而Express只是提供了一套便捷的API与相关中间件。
 
 学习资料：
 
-* [express教程](http://javascript.ruanyifeng.com/nodejs/express.html)
+* [Express教程](http://javascript.ruanyifeng.com/nodejs/express.html)
 * [nodejs实践，包教不包会](https://github.com/alsotang/node-lessons)
 * [官网](http://expressjs.com/zh-cn/)：安全最佳实践和性能最佳实践两篇文章不错
 
 
-知识图谱：[nodejs进阶与express知识图谱](files/nodejs进阶与express知识图谱.mindnode)，尽量在其他技术上也可以**通用**。
+知识图谱：[nodejs进阶与Express知识图谱](files/nodejs进阶与express知识图谱.mindnode)，尽量在其他技术上也可以**通用**。
 
 
 ## 基本使用
 
 ### 生成项目--express-generator
 
-该工具会自动生成express工程目录，安装mvc的结构新建一些目录
+该工具会自动生成Express工程目录，安装mvc的结构新建一些目录
 
 ```javascript
  npm install express-generator -g
@@ -81,7 +81,7 @@ app.get('/', function (req, res) {
 
 这里的req和res和Nodejs原生的**相同**，只是在我们添加了一些中间件之后，req中会多一些变量，帮助我们处理请求。可以在不涉及 Express 的情况下调用 `req.pipe()`、`req.on('data', callback)` 和要执行的其他任何函数，如`res.end()`等。
 
-express添加了一些便捷方法
+Express添加了一些便捷方法
 
 * [请求req](http://expressjs.com/zh-cn/api.html#req)中：
   * `req.params`：路由中定义的参数
@@ -193,7 +193,7 @@ app.route('/book')
   });
 ```
 
-express的Router方法可以模块化的处理路由
+Express的Router方法可以模块化的处理路由
 
 ```javascript
 var express = require('express');

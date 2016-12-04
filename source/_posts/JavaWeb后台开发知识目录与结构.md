@@ -1,4 +1,4 @@
-title: Java后台开发知识目录与结构
+title: JavaWeb后台开发知识目录与结构
 date: 2016-10-05 10:17:00
 categories:
 - 技术
@@ -14,9 +14,9 @@ tags:
 | 基础语言  | Java                             | Javascript                    |
 | Web框架 | Spring + Spring MVC              | Express                       |
 | 底层技术  | Servlet                          | Node.js                       |
-| 数据库框架 | Hibernate \|\| ibates            | mongo \|\| others             |
+| 数据库框架 | Hibernate  mybatis            | mongo  others             |
 | 核心技术  | Spring IOC框架                     | Express中间件                    |
-| 模板工具  | JSP \|\| velocity \|\| freemaker | jade \|\| ejs \|\| handlebars |
+| 模板工具  | JSP  velocity freemaker | jade ejs  handlebars |
 | 构建工具  | maven                            | npm && package.json           |
 | 运行环境  | tomcat容器                         | v8引擎                          |
 | 特点    | 复杂强大                             | 简单灵活                          |
