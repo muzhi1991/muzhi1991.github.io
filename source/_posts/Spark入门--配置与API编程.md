@@ -1,4 +1,4 @@
-title: Spark入门：配置与API编程
+title: Spark入门--配置与API编程
 date: 2017-01-29 16:28:53
 categories:
 
@@ -90,7 +90,7 @@ Spark能完成的一些任务：
 * `spark-submit`的参数（中）
   * 命令行选项opition：如`--master`、`--name`等，基本都可以在`—conf`中找到对应的配置。**在上面的文档的表格`Meaning`中可以找到对应的opinion**。
   * `--conf<key>=<value>`方式：有很多内置的key，如`spark.app.name`、`spark.master`。**与`spark-default.xml`中的配置的key一致。**
-*  `SparkConf` 代码设定(高)：`val conf = new SparkConf() .setMaster("local[2]") .setAppName("CountingSheep") val sc = new SparkContext(conf)`
+* `SparkConf` 代码设定(高)：`val conf = new SparkConf() .setMaster("local[2]") .setAppName("CountingSheep") val sc = new SparkContext(conf)`
   * ​
 
 ### 启动
@@ -319,12 +319,12 @@ RDD（Resilient Distributed Dataset）是**不可变**的分布式**对象集合
 * 非文件系统存储系统/数据库
   * JDBC数据库 
   * HBase：
-    * 使用（hadoopRDD/saveAsHadoopDataSet）（newAPIHadoopRDD/saveAsnewAPIHadoopDataSet）来读取，与**hadoopFile区别是没有path这个参数**
+    * 使用`hadoopRDD`/`saveAsHadoopDataSet` (`newAPIHadoopRDD`/`saveAsnewAPIHadoopDataSet`)来读取，与**hadoopFile区别是没有path这个参数**
   * MongoDB\Elasticsearch
 * SparkSQL读取结构化数据源（带有Schema，或者可以推断出来）：参考下一节
-* 支持使用Hadoop InputFormat和outputFormat接口访问的所有数据（如HDFS，S3，HBase）。这种方式比较原始，不推荐直接使用，推荐用更高层的API。
+* 支持使用Hadoop `InputFormat`和`OutputFormat`接口访问的所有数据（如HDFS，S3，HBase）。这种方式比较原始，不推荐直接使用，推荐用更高层的API。
   * 注意点：
-    * hadoop的inputformat必须是键值对（key-value）的形式，**如果没有key，则使用假键null**。
+    * hadoop的`Inputformat`必须是键值对（key-value）的形式，**如果没有key，则使用假键null**。
     * 有新旧两套API
       * 旧的`sc.hadoopFile[Text,Text,xxInputFormat](inputfile)`
       * 新的`sc.newAPIHadoopFile(intputfile,classOf[xxInputFormat],classOf[Text],classOf[Text],conf)`
@@ -595,4 +595,9 @@ RDD（Resilient Distributed Dataset）是**不可变**的分布式**对象集合
 
 ## 总结
 
-至此，简单地介绍了Spark的配置和常用API。可以解决开发遇到的常见问题。其中**配置部分**我们很少关心，毕竟在业务开发中我们往往使用公司配置好了的Spark环境，但是调优和解决问题往往能从中入手，是理解Spark的重要一环，这个我会在了解Spark的内部原理之后再详细说明配置项的含义。**API编程**层面主要是RDD与DataSet/DataFrame的操作，熟悉常用的操作（function与实践），介绍了**Shuffle,Partition和Cache的概念**。最后简单提了一下**Spark Streaming**和**性能优化**。这两个主题后面会单独介绍。
+至此，简单地介绍了Spark的配置和常用API，用来解决遇到的常见问题。其中**配置部分**我们很少关心，毕竟在业务开发中我们往往使用公司配置好了的Spark环境，但是调优和解决问题往往能从中入手，是理解Spark的重要一环，这个我会在了解Spark的内部原理之后再详细说明配置项的含义。**API编程**层面主要是RDD与DataSet/DataFrame的操作，熟悉常用的function工具与一下场景实践，同时介绍了**Shuffle,Partition和Cache的概念**。最后简单提了一下**Spark Streaming**和**性能优化**。后期，**工程方面**我会在这几个方面深入研究:
+
+* Spark的**基本原理与源代码**，在深层次上理解Spark。
+* 解决流式问题的**Spark Streaming**深入探究，包括且不限于流式的常见问题与Spark上的策略。
+* 常见的问题：**性能调优**与Spark如何优雅的**工程化**，涉及内存调优，Scala函数式编程等。
+* Spark社区新特性与发展方向。
