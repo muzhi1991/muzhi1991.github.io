@@ -1,4 +1,4 @@
-title: 流式超越批量：Streamg 102翻译
+title: 流式超越批量：Streaming 102翻译
 date: 2017-04-09 15:38:40
 categories:
 

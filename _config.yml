@@ -78,22 +78,22 @@ deploy:
     coding: git@git.coding.net:muzhi1991/muzhi1991.git,coding-pages
 
 # Social Links
-social:
-  github: https://github.com/muzhi1991
-  twitter: https://twitter.com/muzhi1991
-  weibo: http://weibo.com/muzhi1991
+#social:
+#  github: https://github.com/muzhi1991
+#  twitter: https://twitter.com/muzhi1991
+#  weibo: http://weibo.com/muzhi1991
 #  douban: http://douban.com/people/your-user-name
 #  zhihu: http://www.zhihu.com/people/your-user-name
 
 # title, chinese available
-links_title: Links
+#links_title: Links
 # links
-links:
-  MacTalk: http://macshuo.com/
+#links:
+#  MacTalk: http://macshuo.com/
 
 #comment
 #disqus_shortname: muzhi1991
-duoshuo_shortname: muzhi1991
+#duoshuo_shortname: muzhi1991
 
 #analytics
 google_analytics: UA-73077297-1
