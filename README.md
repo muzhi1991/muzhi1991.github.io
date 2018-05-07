@@ -1,8 +1,10 @@
 TODO:
 * 现在next主题版本是5.1.4已经不维护，找时间升级到6
 * coding去广告https://blog.singee.me/2017/12/13/hexo-next-mist-coding-pages/
+* 文章中数学公式解析失败
 * 把文件名字换成gitment支持的样子（优先级低）
 * 关注这个issue，看看bug解决没[查看issue](https://github.com/imsun/gitment/issues/16)
+* https域名验证（coding过期怎么办？github没开启强制https）
 
 
 注意点：
@@ -14,7 +16,7 @@ TODO:
     * 写的文章在`source/_post/`里面的文件名必须为英文&&没有空格冒号，可以有-
     * 新的文章必须手动打开网站，点击初始化，才能打开文档
     * 有个新依赖`npm install highlight.js --save`
-
+* coding网站强制https，参考[文章](https://www.hi-linux.com/posts/45911.html)，可能证书过期后有问题，因为外国的letsencrypt，按域名解析不到coding那里。
 
 20170903：
 * 多说被关闭了，使用gitment代替，由于现在主题next中还没有集成这个功能所有现在手动加入了很多文件（参考bac目录）,[具体方法](https://zonghongyan.github.io/2017/06/29/201706292034/) 。
