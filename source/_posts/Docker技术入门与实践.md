@@ -174,14 +174,14 @@ server {
     * 一致性
     * 需要2倍机器—解决方案：两台机器互为Master-Slave复制
 
-  ![master-slave模式](images/redis_master_slaver.png)
+  ![master-slave模式](/images/redis_master_slaver.png)
 
 * 多级缓存：在master/slave模式上再加一层L1Cache。形成多级缓存，L1Cache有多个实例，实现负载均衡。
 
   * 过程：前端请求首先会随机请求到一组L1缓存，如果这个L1缓存命中则返回，否则再请求到主缓存，如果命中，返回，同时将key-value回种到这个L1缓存中。如果主缓存中没有中，则穿透到DB，返回并同时回种到主缓存及刚才那个L1缓存。L1缓存可以有多组，很好的分担了带宽的压力，并且可以线性扩展
   * 引入的问题：一致性
 
-  ![带有L1的多级缓存](images/redis_multi_level_cache.png)
+  ![带有L1的多级缓存](/images/redis_multi_level_cache.png)
 
 * 数据一致性CAP问题：上面的所有情况都会面临数据一致性的问题，针对这个问题有一个理论，既CAP下面三条不可能同时满足：
 

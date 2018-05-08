@@ -13,7 +13,7 @@ tags:
 ---
 
 
-简单分析一个真实的项目-[nodeclub](https://github.com/cnodejs/nodeclub)，这个项目是node社区的源码，可以看做是一个用Node.js(Express框架)实现的社区论坛的模板。建议参考下面的**技术栈目录**和[上一篇文章中的知识图谱](files/nodejs进阶与express知识图谱.mindnode)学习。
+简单分析一个真实的项目-[nodeclub](https://github.com/cnodejs/nodeclub)，这个项目是node社区的源码，可以看做是一个用Node.js(Express框架)实现的社区论坛的模板。建议参考下面的**技术栈目录**和[上一篇文章中的知识图谱](/files/nodejs进阶与express知识图谱.mindnode)学习。
 
 包含的功能：
 
@@ -140,7 +140,7 @@ tags:
 
 ### 调用流程
 
-![nodeclub数据流动](images/nodeclub_flow.png)
+![nodeclub数据流动](/images/nodeclub_flow.png)
 
 注意一下，操作model这里有点乱，很多地方都操作了，如proxy，common中的一写工具，controllers下的控制器直接操作model。api目录下的RestfulAPI也有直接操作的。理想情况下：所有的model操作都在proxy中。controller api common中都引用proxy操作。问题是：比较麻烦，很多简单操作要多封装一层。
 

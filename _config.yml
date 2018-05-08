@@ -8,7 +8,7 @@ subtitle: white && black
 description: something about tech, android etc...
 author: limuzhi
 email: muzhi1991@gmail.com
-language: zh-Hans
+language: zh-CN
 timezone:
 avatar: /images/avatar.jpg
 
@@ -65,7 +65,7 @@ pagination_dir: page
 # Extensions
 ## Plugins: http://hexo.io/plugins/
 ## Themes: http://hexo.io/themes/
-theme: next
+theme: next-reloaded
 plugins: 
   -hexo-generator-cname
 

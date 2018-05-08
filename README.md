@@ -1,7 +1,5 @@
 TODO:
-* 现在next主题版本是5.1.4已经不维护，找时间升级到6
-* coding去广告https://blog.singee.me/2017/12/13/hexo-next-mist-coding-pages/
-* 文章中数学公式解析失败
+* 404 not find 页面展示问题
 * 把文件名字换成gitment支持的样子（优先级低）
 * 关注这个issue，看看bug解决没[查看issue](https://github.com/imsun/gitment/issues/16)
 * https域名验证（coding过期怎么办？github没开启强制https）
@@ -11,6 +9,13 @@ TODO:
 **hexo是node 6.x支持的，其他版本编译失败。**
 
 ## 更新日志
+20180508:
+* 升级到next 6.0 `git clone https://github.com/theme-next/hexo-theme-next themes/next-reloaded`
+* 修改根目录`_confgi.yml`: 使用next-reloaded的theme（保留了旧的next，测试没问题后，以后可以还是用next作为主题名，修改theme下的目录名就行）。修改了language为zh-CN（因为next6.0中中文改了名字）
+* 加入 hostedby coding（next6.0原生支持），去广告
+* 解决数学公式问题，只需要在需要显示公式的文档上加入`mathjax: true`
+* image路径问题修改，现在的本地图片应用用`/images/xxx.pn`，文件引用`/files/xxx.zip`。（以前是相对路径）
+
 20180507: 
 * 升级了 hexo-cli (`npm install -g hexo-cli`), next(`npm install`)，gitment已经加进去，但是bug不少，注意
     * 写的文章在`source/_post/`里面的文件名必须为英文&&没有空格冒号，可以有-

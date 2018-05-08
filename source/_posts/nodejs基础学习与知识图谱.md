@@ -13,7 +13,7 @@ tags:
 
 Node.js是我第一次接触后端开发，有些思想需要提炼出共性，以扩展到不同的语言，如Java与Python，甚至Go语言。这里只是基础介绍，后续会有Node.js进阶与框架Express实践，之后会学习其他语言的开发技术与框架（初步计划是成熟的Java框架，出名的Python，最新的Go都看一下），提炼一些重要的特点。
 
-[知识图谱](files/nodejs基础知识图谱.mindnode)
+[知识图谱](/files/nodejs基础知识图谱.mindnode)
 
 ## 安装
 

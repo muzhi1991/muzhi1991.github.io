@@ -17,7 +17,7 @@ tags:
 
 在流式系统方面，网络上流传了两篇精彩的文章，[Streaming 101](https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-101) 与 [Streaming102](https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102)。这两篇文章的作者是Google流式系统的负责人[Tyler Akidau](https://www.oreilly.com/people/09f01-tyler-akidau)，他是MillWheel与DataFlow的开发者，在流式系统方面十分权威。恰巧这两篇文章非常详细并且适合初学者，可以帮助我们理清流式系统的各种概念与面临的挑战，是十分难得的佳作。其中Streaming101已经有很多翻译的版本，质量参差不齐。官方的翻译版本参考[这里](https://www.oreilly.com.cn/ideas/?p=18)，然而不幸的是它依然晦涩难懂。这里并不打算翻译101这篇文章，读者可以参考原文和译文进行学习，它主要介绍了流式系统的一些基本概念和困境，同时**提出了一个核心观点：设计优良的流式系统完全可以代替批量系统**，并从原理上分析了如何实现这一目标。在流式102这篇文章中，作者以实际的流式系统（DataFlow）的设计为例，列举了多个场景，具体讲解了如何设计流式系统，解决这些问题。这里将翻译流式102这篇文章，我会参考原文采用意译的方式，力求更好的帮助读者理解。
 
-**在阅读流式102之前，请务必通篇阅读流式101**，理解核心概念，这里的[思维导图](files/流式101--超越批量系统.mindnode)仅供参考。Let's Go!
+**在阅读流式102之前，请务必通篇阅读流式101**，理解核心概念，这里的[思维导图](/files/流式101--超越批量系统.mindnode)仅供参考。Let's Go!
 
 ## 简介
 

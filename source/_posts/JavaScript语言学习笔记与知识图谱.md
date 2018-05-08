@@ -37,7 +37,7 @@ js是网页的脚本语言，学习的过程中才发现内容其实很多，甚
 * JavaScript语言精粹，听说不错。
 
 知识图谱：
-[这里下载JavaScript知识图谱](files/JavaScript知识图谱.mindnode)
+[这里下载JavaScript知识图谱](/files/JavaScript知识图谱.mindnode)
 
 ## 变量
 

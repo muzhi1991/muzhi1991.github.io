@@ -8,7 +8,7 @@ tags:
 ---
 ## 从最基本结构说起
 新建一个helloworld工程结构：
-![](images/android_helloworld_project_gradle_files.png)
+![](/images/android_helloworld_project_gradle_files.png)
 工程目录下只有根目录和一个app模块，没有其他模块。
 
 * 根目录`build.gradle`：关于项目的一些总体配置(比如编译系统使用的仓库和依赖，其他模块都使用的仓库和依赖)；

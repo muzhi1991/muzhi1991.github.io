@@ -28,7 +28,7 @@ tags:
 
 ## Android知识概述
 
-参考下面的文件：[安卓知识汇总](files/Android知识汇总.mindnode)
+参考下面的文件：[安卓知识汇总](/files/Android知识汇总.mindnode)
 
 ## 感想与展望
 

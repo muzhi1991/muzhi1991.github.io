@@ -57,7 +57,7 @@ tags:
 
 一个新的项目clone后有哪些分支：
 
-![all branch](images/git_branch_all.png)
+![all branch](/images/git_branch_all.png)
 
 * `master` 当前的默认分支，第一次取下来后与`origin/master `指向相同，但是后续可以在上面开发
 
@@ -125,7 +125,7 @@ tags:
 
   参考下图学习：
 
-  ![git status](images/git_status_capture.png)
+  ![git status](/images/git_status_capture.png)
 
 几个关注点：
 
@@ -157,7 +157,7 @@ tags:
 
 * merge完成时，被合入分支的最后一个commit在待合入分支之中，移动HEAD到最后一个commit。如下图所示：
 
-  ![fast forward](images/git_fast_forward_merge.png)
+  ![fast forward](/images/git_fast_forward_merge.png)
 
 * rebase完成后，commit记录合入后，HEAD指针直接向前移动多个commit。
 

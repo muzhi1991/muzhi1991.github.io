@@ -22,7 +22,7 @@ tags:
 * jQuery：一个dom操作的便捷库，兼容性优化，动画实现
 * underscore：函数式编程的库。
 
-知识图谱：[下载](files/JS相关API与Lib知识图谱.mindnode)
+知识图谱：[下载](/files/JS相关API与Lib知识图谱.mindnode)
 
 ## JS原生API
 

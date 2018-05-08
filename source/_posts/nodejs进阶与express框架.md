@@ -22,7 +22,7 @@ tags:
 * [官网](http://expressjs.com/zh-cn/)：安全最佳实践和性能最佳实践两篇文章不错
 
 
-知识图谱：[nodejs进阶与Express知识图谱](files/nodejs进阶与express知识图谱.mindnode)，尽量在其他技术上也可以**通用**。
+知识图谱：[nodejs进阶与Express知识图谱](/files/nodejs进阶与express知识图谱.mindnode)，尽量在其他技术上也可以**通用**。
 
 
 ## 基本使用

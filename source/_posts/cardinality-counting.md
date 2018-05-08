@@ -1,5 +1,6 @@
 title: 大数据算法：基数统计
 date: 2017-11-18 15:49:01
+mathjax: true
 categories:
 
 - 技术

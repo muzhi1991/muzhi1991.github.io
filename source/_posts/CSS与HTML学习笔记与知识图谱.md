@@ -24,7 +24,7 @@ tags:
 
 ## 知识图谱
 
-[下载mindnode图谱](files/HTML与CSS知识图谱.mindnode)
+[下载mindnode图谱](/files/HTML与CSS知识图谱.mindnode)
 
 ## 浏览器常识
 * URL 编码
