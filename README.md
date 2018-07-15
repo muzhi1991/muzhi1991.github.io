@@ -3,6 +3,7 @@ TODO:
 * 把文件名字换成gitment支持的样子（优先级低）
 * 关注这个issue，看看bug解决没[查看issue](https://github.com/imsun/gitment/issues/16)
 * https域名验证（coding过期怎么办？github没开启强制https）
+* 百度爬虫问题（优先级低）:https://ziyuan.baidu.com/https/index?site=http://www.limuzhi.com/
 
 
 注意点：
