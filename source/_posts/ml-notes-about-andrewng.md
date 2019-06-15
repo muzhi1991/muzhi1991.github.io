@@ -61,7 +61,7 @@ $\theta_{j} :=\theta_{j}-a \frac{1}{m} \sum_{i=1}^{m}\left(h_{\theta}\left(x^{(i
 **(simultaneously update all** )
 }
 
-同步更新${\theta }_{j}​$ for j=0,1,2...n
+同步更新 ${\theta}_j​$ for j=0,1,2...n
 $\theta_{j} :=\theta_{j}-a \frac{1}{m} \sum_{i=1}^{m}\left(h_{\theta}\left(x^{(i)}\right)-y^{(i)}\right) x_{j}^{(i)}​$
 
 Normal Equation
