@@ -1,16 +1,20 @@
 TODO:
-
+* 图床迁移，需要迁移的文件在`pic_need_migrate.txt`中
 * 404 not find 页面展示问题
-* 把文件名字换成gitment支持的样子（优先级低）
-* 关注这个issue，看看bug解决没[查看issue](https://github.com/imsun/gitment/issues/16)
 * https域名验证（coding过期怎么办？github没开启强制https）
 * 百度爬虫问题（优先级低）:https://ziyuan.baidu.com/https/index?site=http://www.limuzhi.com/
 
 
 注意点：
-**hexo是node 6.x支持的，其他版本编译失败。**
+**新版本hexo是node 12.x(8.x以上)**
 
 ## 更新日志
+
+20200225:
+
+* 见[说明](bac/bac_20200225/README.md)
+
+
 20190615:
 
 * update hexo: 

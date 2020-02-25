@@ -14,7 +14,7 @@ tags:
 ## 发布模式
 gitk --simplify-by-decoration --all
 
-![](https://ws2.sinaimg.cn/large/006tNbRwgy1fy63qd03t3j31ja0u0wwv.jpg)
+![](https://tva1.sinaimg.cn/large/006tNbRwgy1fy63qd03t3j31ja0u0wwv.jpg)
 猜测：
 * v0.7.0之前，发布模式是在发布当前主版本（如v0.5.0）时，
   * 继续用当前分支作为主版本的子版本开发（v0.5.1），对0.5.0的版本进行bug处理（master发布）
@@ -144,8 +144,8 @@ https://spark.apache.org/news/index.html
 * pyspark bug，增加操作
 
 > issue tracker使用：[地址](http://s.apache.org/d0t)
-> ![](https://ws1.sinaimg.cn/large/006tNbRwgy1fy63r2jmfbj31q60sa77v.jpg)
-> ![](https://ws4.sinaimg.cn/large/006tNbRwgy1fy63rb388sj31t80u0tek.jpg)
+> ![](https://tva1.sinaimg.cn/large/006tNbRwgy1fy63r2jmfbj31q60sa77v.jpg)
+> ![](https://tva1.sinaimg.cn/large/006tNbRwgy1fy63rb388sj31t80u0tek.jpg)
 
 ### 1.0.x
 * yarn安全模式整合？？
@@ -447,7 +447,7 @@ New Algorithms: SPARK-9471 multilayer perceptron classifier, SPARK-6487 PrefixSp
   * 用Off-heap内存管理运行时和cache内存
   * **使用sketches库实现了近似统计算法**，[sketches library](https://datasketches.github.io/)：包括approximate quantile, Bloom filter, count-min sketch等算法
   * Hive 表存储支持 bucketing方式，`bucketBy`
-  ![](https://ws2.sinaimg.cn/large/006tNbRwgy1fy63rr4imzj314y0mqt9n.jpg)
+  ![](https://tva1.sinaimg.cn/large/006tNbRwgy1fy63rr4imzj314y0mqt9n.jpg)
 * 性能
   *  **spark-sql支持了whole stage code generation**
   *  通过vectorization提升parquet扫描性能

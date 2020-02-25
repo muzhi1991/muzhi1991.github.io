@@ -74,8 +74,9 @@ plugins:
 deploy:
   type: git
   repo: 
+    coding: git@e.coding.net:muzhi1991/muzhi1991.git,coding-pages
     github: git@github.com:muzhi1991/muzhi1991.github.io.git
-    coding: git@git.coding.net:muzhi1991/muzhi1991.git,coding-pages
+    #coding: git@git.coding.net:muzhi1991/muzhi1991.git,coding-pages
 
 # Social Links
 #social:
@@ -106,3 +107,8 @@ sitemap:
 baidusitemap:
   path: baidusitemap.xml
 
+excerpt:
+  depth: 3
+  excerpt_excludes: []
+  more_excludes: []
+  hideWholePostExcerpts: true
