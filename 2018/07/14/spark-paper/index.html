@@ -14,10 +14,11 @@
 
 
 <link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
   <meta name="description" content="Spark相关论文如下：  Spark: Cluster Computing with Working Sets Resilient Distributed Datasets: A Fault-Tolerant Abstraction forIn-Memory Cluster Computing  Spark: Cluster Computing with Working Sets">
@@ -28,21 +29,10 @@
 <meta property="og:site_name" content="Night Piece">
 <meta property="og:description" content="Spark相关论文如下：  Spark: Cluster Computing with Working Sets Resilient Distributed Datasets: A Fault-Tolerant Abstraction forIn-Memory Cluster Computing  Spark: Cluster Computing with Working Sets">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fukm6k4tajj308t065q2w.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fum1echxiwj30kq0f2wf7.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fum2rswp83j30jw0e23z2.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fum2znml0rj313k0iy0un.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fy65si5590j30iq0dw3yt.jpg =337x250">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fum8w4b6ssj30km0amdg8.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fuo11rs5hnj30h80coq3g.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fuo1144pnwj30hs0g2753.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fuo1jm7xuhj30ic0c4wet.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fvdid53qrcj30ki0e0glz.jpg">
 <meta property="og:updated_time" content="2020-02-25T09:44:15.426Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Spark论文阅读">
 <meta name="twitter:description" content="Spark相关论文如下：  Spark: Cluster Computing with Working Sets Resilient Distributed Datasets: A Fault-Tolerant Abstraction forIn-Memory Cluster Computing  Spark: Cluster Computing with Working Sets">
-<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fukm6k4tajj308t065q2w.jpg">
 
 <link rel="canonical" href="http://limuzhi.com/2018/07/14/spark-paper/">
 
@@ -342,7 +332,7 @@
 <li>实现spark的核心是实现『RDD』</li>
 <li>数据集在spark中表示成<strong>一串scala的object</strong>：他们表示了<strong> the lineage of each RDD</strong>，且每个对象包括<ul>
 <li>一个指向他parent的指针</li>
-<li>parent如何转换为这个RDD<br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1fukm6k4tajj308t065q2w.jpg" alt></li>
+<li>parent如何转换为这个RDD<br><img data-src="https://tva1.sinaimg.cn/large/006tNbRwgy1fukm6k4tajj308t065q2w.jpg" alt></li>
 </ul>
 </li>
 <li>所有RDD都实现了的<strong>一组相同的接口</strong>：<ul>
@@ -428,7 +418,7 @@
 <h2 id="Resilient-Distributed-Datasets-A-Fault-Tolerant-Abstraction-forIn-Memory-Cluster-Computing"><a href="#Resilient-Distributed-Datasets-A-Fault-Tolerant-Abstraction-forIn-Memory-Cluster-Computing" class="headerlink" title="Resilient Distributed Datasets: A Fault-Tolerant Abstraction forIn-Memory Cluster Computing"></a>Resilient Distributed Datasets: A Fault-Tolerant Abstraction forIn-Memory Cluster Computing</h2><h3 id="简介-1"><a href="#简介-1" class="headerlink" title="简介"></a>简介</h3><ul>
 <li>为了错误容忍，RDD提供了一种『受限的共享内存』：他是基于粗粒度的transformation，而不是细粒度的对共享状态的update。<ul>
 <li>对比DSM：distributed shared memory（如key-value stores）是操控数据表中的可变状态（是一个任意地址位置的值）。他要错误容忍，必须<strong>副本</strong>+<strong>log update</strong>。对于数据密集型应用这是不可接收的：需要大量额外空间和传输带宽。</li>
-<li>对比RDD：logging the transformations used to build a dataset (itslineage) rather than the actual data<br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1fum1echxiwj30kq0f2wf7.jpg" alt></li>
+<li>对比RDD：logging the transformations used to build a dataset (itslineage) rather than the actual data<br><img data-src="https://tva1.sinaimg.cn/large/006tNbRwgy1fum1echxiwj30kq0f2wf7.jpg" alt></li>
 </ul>
 </li>
 <li>rdd的特征<ul>
@@ -513,14 +503,14 @@
 </li>
 <li>spark架构，用户写driver，连接n个worker<ul>
 <li>driver上的RDD跟踪整个lineage</li>
-<li>worker是<strong>常驻进程</strong>，可以在内存中存储RDD的各个分区<br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1fum2rswp83j30jw0e23z2.jpg" alt></li>
+<li>worker是<strong>常驻进程</strong>，可以在内存中存储RDD的各个分区<br><img data-src="https://tva1.sinaimg.cn/large/006tNbRwgy1fum2rswp83j30jw0e23z2.jpg" alt></li>
 </ul>
 </li>
 <li>用户通过rdd操作的参数（如map的参数）传递闭包，这个闭包就是个java的object，可以序列化，然后传输到其他node上，再加载运行。（注意也会序列化闭包依赖的变量，一个注意点：变量一斤发送，再修改变量，发送的闭包里的值不会变化）</li>
 <li>RDD是有类型的如RDD[Int]，但是我们一般不用在意，scala会自动类型推断。</li>
 <li>虽然原理很简单，但是scala的闭包有些问题需要修改（使用反射修改的），如果用交互模式，也需要一些修改，但是不需要修改scala编译器。（之前的论文也提到过）</li>
 </ul>
-<h4 id="RDD的操作（operation）"><a href="#RDD的操作（operation）" class="headerlink" title="RDD的操作（operation）"></a>RDD的操作（operation）</h4><p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1fum2znml0rj313k0iy0un.jpg" alt><br>注意点：</p>
+<h4 id="RDD的操作（operation）"><a href="#RDD的操作（operation）" class="headerlink" title="RDD的操作（operation）"></a>RDD的操作（operation）</h4><p><img data-src="https://tva1.sinaimg.cn/large/006tNbRwgy1fum2znml0rj313k0iy0un.jpg" alt><br>注意点：</p>
 <ul>
 <li>transformations是lazy，action才是真正运算</li>
 <li>一些操作如join, 只在key-value pairs的RDD上有用</li>
@@ -538,7 +528,7 @@
 </li>
 <li><p>例子1：<strong>PageRank（重点）</strong></p>
 <ul>
-<li>理解算法，同时看一下RDD的图谱。<br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1fy65si5590j30iq0dw3yt.jpg =337x250" alt></li>
+<li>理解算法，同时看一下RDD的图谱。<br><img data-src="https://tva1.sinaimg.cn/large/006tNbRwgy1fy65si5590j30iq0dw3yt.jpg =337x250" alt></li>
 <li>几个优化要点（<strong>对于多次迭代的应用通用</strong>）<ul>
 <li>缓存ranks，而不要缓存links。原因：links重新生成的成本小，且数据集很大，没必要缓存</li>
 <li>ranks的缓存，persist使用<code>RELIABLE</code>的flag。因此迭代运算成本高，一旦丢失重算非常耗时，所以<strong>可靠缓（内部可能缓存了多副本）存</strong>每一步生成ranks，而且ranks占用空间很小。（当然旧的ranks可以手动抛弃）</li>
@@ -552,7 +542,7 @@
 </li>
 </ul>
 <h3 id="RDD的实现"><a href="#RDD的实现" class="headerlink" title="RDD的实现"></a>RDD的实现</h3><p>论文中说RDD是 a simple graph-based representation （基于图的表示）</p>
-<h4 id="设计一：如何表示RDD"><a href="#设计一：如何表示RDD" class="headerlink" title="设计一：如何表示RDD"></a>设计一：如何表示RDD</h4><p>RDD的表示通过暴露5个信息（5个接口方法）来实现<br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1fum8w4b6ssj30km0amdg8.jpg" alt><br> a set of partitions, which are atomic pieces of the dataset;<br> a set of dependencies on parent RDDs; a function for computing the dataset based on its par-ents; and metadata about its partitioning scheme and data placement. </p>
+<h4 id="设计一：如何表示RDD"><a href="#设计一：如何表示RDD" class="headerlink" title="设计一：如何表示RDD"></a>设计一：如何表示RDD</h4><p>RDD的表示通过暴露5个信息（5个接口方法）来实现<br><img data-src="https://tva1.sinaimg.cn/large/006tNbRwgy1fum8w4b6ssj30km0amdg8.jpg" alt><br> a set of partitions, which are atomic pieces of the dataset;<br> a set of dependencies on parent RDDs; a function for computing the dataset based on its par-ents; and metadata about its partitioning scheme and data placement. </p>
 <ul>
 <li>一组partitions：partition是数据集的最小组成结构 — <code>partitions()</code></li>
 <li>一组dependencies：记录所有父RDD — <code>dependencies()</code></li>
@@ -600,7 +590,7 @@
 <li>两个宽依赖</li>
 </ul>
 </li>
-<li>他的输出必定有一个partitioner（继承parent的partitioner，或者是默认hash-partitioner）<br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1fuo11rs5hnj30h80coq3g.jpg" alt></li>
+<li>他的输出必定有一个partitioner（继承parent的partitioner，或者是默认hash-partitioner）<br><img data-src="https://tva1.sinaimg.cn/large/006tNbRwgy1fuo11rs5hnj30h80coq3g.jpg" alt></li>
 </ul>
 </li>
 </ul>
@@ -609,7 +599,7 @@
 <li>当运行action时，scheduler检测RDD的lineage，生成一个stage的DAG图<ul>
 <li>每个stage内部是尽量多的窄依赖的操作，可以pipeline执行—-<strong>合并形成一个task？</strong></li>
 <li>stage的边界是宽依赖，执行shuffle操作</li>
-<li>任何已经计算完成的分区（如cached过的）可以短路parent RDD的计算、<br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1fuo1144pnwj30hs0g2753.jpg" alt></li>
+<li>任何已经计算完成的分区（如cached过的）可以短路parent RDD的计算、<br><img data-src="https://tva1.sinaimg.cn/large/006tNbRwgy1fuo1144pnwj30hs0g2753.jpg" alt></li>
 </ul>
 </li>
 <li>scheduler基于数据本地性，调用task（delay schedule算法）<ul>
@@ -626,7 +616,7 @@
 <li>当前所有的action都是由driver发出的，只在需要在driver程序中检测partition是否存在并操作schedule。以后可能需要在map中（worker）有查找lookup操作???? 在每个task里面执行lookup？这就需要每个task都能通知shedule?</li>
 </ul>
 <h4 id="整合解释器"><a href="#整合解释器" class="headerlink" title="整合解释器"></a>整合解释器</h4><p>略，基本与上一篇的解释一致，问题还是Modified code generation的意义</p>
-<p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1fuo1jm7xuhj30ic0c4wet.jpg" alt></p>
+<p><img data-src="https://tva1.sinaimg.cn/large/006tNbRwgy1fuo1jm7xuhj30ic0c4wet.jpg" alt></p>
 <h4 id="checkpoint机制"><a href="#checkpoint机制" class="headerlink" title="checkpoint机制"></a>checkpoint机制</h4><p>RDD lineage虽然可以用来恢复失败任务，但是，如果在<strong>RDD链条很长</strong>的情况下，恢复重算非常费时间。<strong>尤其是存在宽依赖的场景</strong>，下游的一个task失败，导致上游大量重算。如之前的RankPage的例子。<br>这里，我们需要用户通过<strong>手动</strong>添加RDD的persist的<code>REPLICATE</code> flag来告知系统<strong>用多副本方式缓存RDD</strong>，防止中间结果丢失。</p>
 <p>未解决问题：</p>
 <ul>
@@ -650,7 +640,7 @@
 <li>receiver端读取sender时，应该同时读取多个sender的数据（hadoop中使用了5，spark0.5中默认的fetcher是1个，有个优化的类是3个），参见下图的横轴和竖轴，竖轴是完成时间（竖的线段是抖动范围）</li>
 <li>每个receiver读取单个sender时，随着receiver数目的增多，性能变差，参见下图中不同颜色的线</li>
 </ul>
-<p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1fvdid53qrcj30ki0e0glz.jpg" alt></p>
+<p><img data-src="https://tva1.sinaimg.cn/large/006tNbRwgy1fvdid53qrcj30ki0e0glz.jpg" alt></p>
 <p>优化方案（没有实践）</p>
 <ul>
 <li>加权带宽方案，对于数据倾斜的sender，receiver分配带宽时，增加他的权重（按照数据量的比例分配）</li>
@@ -873,6 +863,9 @@
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script>
@@ -906,7 +899,7 @@
 
 <script>
 NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
-  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
     var GUEST = ['nick', 'mail', 'link'];
     var guest = 'nick,mail,link';
     guest = guest.split(',').filter(item => {

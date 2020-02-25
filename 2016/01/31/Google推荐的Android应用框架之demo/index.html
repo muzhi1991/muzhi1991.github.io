@@ -14,10 +14,11 @@
 
 
 <link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
   <meta name="description" content="近日，在Google开发者的微博上推荐了一个视频，是2015年开发者峰会上两位Google的Coder的演讲，关于Android应用框架，中文相关介绍文章看这里。演讲中有个demo，类似于一个QQ的聊天界面的程序，用这个例子讲解了如何优雅地处理在各种网络异常的情况下的UI界面，既如何设计一个offline的应用。网络请求与本地缓存相结合以获取最好的用户体验应当是几乎所有Android应用的基本需求">
@@ -28,12 +29,10 @@
 <meta property="og:site_name" content="Night Piece">
 <meta property="og:description" content="近日，在Google开发者的微博上推荐了一个视频，是2015年开发者峰会上两位Google的Coder的演讲，关于Android应用框架，中文相关介绍文章看这里。演讲中有个demo，类似于一个QQ的聊天界面的程序，用这个例子讲解了如何优雅地处理在各种网络异常的情况下的UI界面，既如何设计一个offline的应用。网络请求与本地缓存相结合以获取最好的用户体验应当是几乎所有Android应用的基本需求">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://camo.githubusercontent.com/590b0315c04a7e5c0b429fbd521f99062aacde1d/68747470733a2f2f7777772e657665726e6f74652e636f6d2f73686172642f7331392f73682f31313036313730662d346637332d343531392d616537642d3466346166313364343138322f366562656436376534613734613461342f7265732f62656166626235362d633564632d346563622d393934662d3330653036616232313961342f736b697463682e706e67">
 <meta property="og:updated_time" content="2020-02-25T09:44:15.422Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Google推荐的Android应用框架之demo">
 <meta name="twitter:description" content="近日，在Google开发者的微博上推荐了一个视频，是2015年开发者峰会上两位Google的Coder的演讲，关于Android应用框架，中文相关介绍文章看这里。演讲中有个demo，类似于一个QQ的聊天界面的程序，用这个例子讲解了如何优雅地处理在各种网络异常的情况下的UI界面，既如何设计一个offline的应用。网络请求与本地缓存相结合以获取最好的用户体验应当是几乎所有Android应用的基本需求">
-<meta name="twitter:image" content="https://camo.githubusercontent.com/590b0315c04a7e5c0b429fbd521f99062aacde1d/68747470733a2f2f7777772e657665726e6f74652e636f6d2f73686172642f7331392f73682f31313036313730662d346637332d343531392d616537642d3466346166313364343138322f366562656436376534613734613461342f7265732f62656166626235362d633564632d346563622d393934662d3330653036616232313961342f736b697463682e706e67">
 
 <link rel="canonical" href="http://limuzhi.com/2016/01/31/Google推荐的Android应用框架之demo/">
 
@@ -314,7 +313,7 @@
 </li>
 </ul>
 <h2 id="数据流"><a href="#数据流" class="headerlink" title="数据流"></a>数据流</h2><h3 id="发送消息"><a href="#发送消息" class="headerlink" title="发送消息"></a>发送消息</h3><p>当用户点击按钮，首先会发生这么4步：1.验证消息合法性。2.保持消息到本地磁盘存储（这个例子中这是一个job）。3.更新PostModel添加新的信息。4.发送event通知有消息更新。<br>（可选的）4.a.如果UI可见，在收到event后更新内容。<br>注意：上面这些步骤没有涉及网络，但是我已经更新了用户界面&amp;&amp;保持必要的数据到磁盘。最后，我们需要与Server同步。</p>
-<p>同步的步骤如下<br><img src="https://camo.githubusercontent.com/590b0315c04a7e5c0b429fbd521f99062aacde1d/68747470733a2f2f7777772e657665726e6f74652e636f6d2f73686172642f7331392f73682f31313036313730662d346637332d343531392d616537642d3466346166313364343138322f366562656436376534613734613461342f7265732f62656166626235362d633564632d346563622d393934662d3330653036616232313961342f736b697463682e706e67" alt="Sync To Server"></p>
+<p>同步的步骤如下<br><img data-src="https://camo.githubusercontent.com/590b0315c04a7e5c0b429fbd521f99062aacde1d/68747470733a2f2f7777772e657665726e6f74652e636f6d2f73686172642f7331392f73682f31313036313730662d346637332d343531392d616537642d3466346166313364343138322f366562656436376534613734613461342f7265732f62656166626235362d633564632d346563622d393934662d3330653036616232313961342f736b697463682e706e67" alt="Sync To Server"></p>
 <ul>
 <li>优先级作业队列，负责处理持久化job，失败时的回退操作等，所以图中没有这些细节。</li>
 <li>一个真实环境的app应该与JobScheduler结合，确保消息在应用关闭后也可以发送。</li>
@@ -589,6 +588,9 @@
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script>
@@ -622,7 +624,7 @@
 
 <script>
 NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
-  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
     var GUEST = ['nick', 'mail', 'link'];
     var guest = 'nick,mail,link';
     guest = guest.split(',').filter(item => {

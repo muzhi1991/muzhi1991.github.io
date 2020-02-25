@@ -14,10 +14,11 @@
 
 
 <link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
   <meta name="description" content="这一节主要介绍最基本的JavaWeb开发技术，流行的JavaWeb开发框架的底层都是Servlet与与JSP，因此了解他们是接下来学习的基础。参考资料如下：  极客学院的第一个章节，十分基本 一个台湾的资料，比较偏向实践  WEB开发基础">
@@ -28,13 +29,10 @@
 <meta property="og:site_name" content="Night Piece">
 <meta property="og:description" content="这一节主要介绍最基本的JavaWeb开发技术，流行的JavaWeb开发框架的底层都是Servlet与与JSP，因此了解他们是接下来学习的基础。参考资料如下：  极客学院的第一个章节，十分基本 一个台湾的资料，比较偏向实践  WEB开发基础">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/57427cf8gw1faejvlq3jtj20a80b474u.jpg">
-<meta property="og:image" content="http://hi.csdn.net/attachment/201008/26/0_1282804027HHcv.gif">
 <meta property="og:updated_time" content="2020-02-25T09:44:15.448Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JavaWeb开发入门一--JSP&amp;&amp;Servlet">
 <meta name="twitter:description" content="这一节主要介绍最基本的JavaWeb开发技术，流行的JavaWeb开发框架的底层都是Servlet与与JSP，因此了解他们是接下来学习的基础。参考资料如下：  极客学院的第一个章节，十分基本 一个台湾的资料，比较偏向实践  WEB开发基础">
-<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/57427cf8gw1faejvlq3jtj20a80b474u.jpg">
 
 <link rel="canonical" href="http://limuzhi.com/2016/10/08/JavaWeb开发入门一--JSP&&Servlet/">
 
@@ -265,7 +263,7 @@
 </li>
 </ul>
 <h2 id="Web应用目录结构"><a href="#Web应用目录结构" class="headerlink" title="Web应用目录结构"></a>Web应用目录结构</h2><h3 id="常见目录结构"><a href="#常见目录结构" class="headerlink" title="常见目录结构"></a>常见目录结构</h3><p>新建的java web工程目录如下</p>
-<p><img src="https://tva1.sinaimg.cn/large/57427cf8gw1faejvlq3jtj20a80b474u.jpg" alt></p>
+<p><img data-src="https://tva1.sinaimg.cn/large/57427cf8gw1faejvlq3jtj20a80b474u.jpg" alt></p>
 <ul>
 <li>src 源码目录，存放java代码</li>
 <li>web web工程目录，该目录下除了web-inf以为都是可以被浏览器访问的，既<code>www.xxx.com</code>方法了index.jsp文件，<strong>建议存放<u>静态</u>资源文件（如css js html）</strong>。<ul>
@@ -440,7 +438,7 @@
 <li>ServletResponse</li>
 <li>ServletException<h4 id="继承关系"><a href="#继承关系" class="headerlink" title="继承关系"></a>继承关系</h4></li>
 </ul>
-<p>Servlet—GenericServlet—HttpServlet<br><img src="http://hi.csdn.net/attachment/201008/26/0_1282804027HHcv.gif" alt></p>
+<p>Servlet—GenericServlet—HttpServlet<br><img data-src="http://hi.csdn.net/attachment/201008/26/0_1282804027HHcv.gif" alt></p>
 <ul>
 <li>GenericServlet 装饰模式，<strong>对ServletConfig装饰了</strong>，子类可以调用ServletConfig接口的所有方法。</li>
 <li><p>HttpServlet，安照http的header分出，doGet doPost等方法</p>
@@ -790,6 +788,9 @@
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script>
@@ -823,7 +824,7 @@
 
 <script>
 NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
-  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
     var GUEST = ['nick', 'mail', 'link'];
     var guest = 'nick,mail,link';
     guest = guest.split(',').filter(item => {

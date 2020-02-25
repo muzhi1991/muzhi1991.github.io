@@ -14,10 +14,11 @@
 
 
 <link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
   <meta name="description" content="译者注在流式系统方面，网络上流传了两篇精彩的文章，Streaming 101 与 Streaming102。这两篇文章的作者是Google流式系统的负责人Tyler Akidau，他是MillWheel与DataFlow的开发者，在流式系统方面十分权威。恰巧这两篇文章非常详细并且适合初学者，可以帮助我们理清流式系统的各种概念与面临的挑战，是十分难得的佳作。其中Streaming101已经有很多翻译">
@@ -28,37 +29,10 @@
 <meta property="og:site_name" content="Night Piece">
 <meta property="og:description" content="译者注在流式系统方面，网络上流传了两篇精彩的文章，Streaming 101 与 Streaming102。这两篇文章的作者是Google流式系统的负责人Tyler Akidau，他是MillWheel与DataFlow的开发者，在流式系统方面十分权威。恰巧这两篇文章非常详细并且适合初学者，可以帮助我们理清流式系统的各种概念与面临的挑战，是十分难得的佳作。其中Streaming101已经有很多翻译">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://d3ansictanv2wj.cloudfront.net/Figure-01---Transforms-daa8ad32f2995801b32dc2929f24d4ad.jpg">
-<meta property="og:image" content="https://embedwistia-a.akamaihd.net/deliveries/c9ce5cefab8d16db487342717cee477acffa7dfe.jpg?image_play_button_size=2x&image_crop_resized=960x594&image_play_button=1&image_play_button_color=7b796ae0">
-<meta property="og:image" content="https://d3ansictanv2wj.cloudfront.net/Figure-03---Windowing-442db0cda782c8bc0d8a2769423c6f37.jpg">
-<meta property="og:image" content="https://embedwistia-a.akamaihd.net/deliveries/8f42fed76aca326248ee220b2d0e6daece412c20.jpg?image_play_button_size=2x&image_crop_resized=960x594&image_play_button=1&image_play_button_color=7b796ae0">
-<meta property="og:image" content="https://d3ansictanv2wj.cloudfront.net/Figure_05_-_Event_Time_vs_Processing_Time-6484c65e43d1821c617bee747b7de020.png">
-<meta property="og:image" content="https://embedwistia-a.akamaihd.net/deliveries/1ca8c3335e912cd17061ca15889d2e1c27098de2.jpg?image_play_button_size=2x&image_crop_resized=960x344&image_play_button=1&image_play_button_color=7b796ae0">
-<meta property="og:image" content="https://embedwistia-a.akamaihd.net/deliveries/a12e5efa572e0fb6d0c5ae9d5db1094676f6ef53.jpg?image_play_button_size=2x&image_crop_resized=960x344&image_play_button=1&image_play_button_color=7b796ae0">
-<meta property="og:image" content="https://embedwistia-a.akamaihd.net/deliveries/4bc76118539bfe60869ec06e6b6919b6e48d0ff2.jpg?image_play_button_size=2x&image_crop_resized=960x643&image_play_button=1&image_play_button_color=7b796ae0">
-<meta property="og:image" content="https://embedwistia-a.akamaihd.net/deliveries/39c7bdd39bb0cff10c8650807b255f3f34fad0a8.jpg?image_play_button_size=2x&image_crop_resized=960x674&image_play_button=1&image_play_button_color=7b796ae0">
-<meta property="og:image" content="https://embedwistia-a.akamaihd.net/deliveries/3fef7a569ee1cf9e44c4a4859ef059c9c815fde5.jpg?image_play_button_size=2x&image_crop_resized=960x674&image_play_button=1&image_play_button_color=7b796ae0">
-<meta property="og:image" content="https://d3ansictanv2wj.cloudfront.net/Figure11-V2-0dfcc51fc13c713a3903d1d10681955a.jpg">
-<meta property="og:image" content="https://embedwistia-a.akamaihd.net/deliveries/1489e8718ce80589784e51ec150bb4cf08d8577e.jpg?image_play_button_size=2x&image_crop_resized=960x637&image_play_button=1&image_play_button_color=7b796ae0">
-<meta property="og:image" content="https://embedwistia-a.akamaihd.net/deliveries/2b26fd31ca9629d521fe80d821c0b76de941ef74.jpg?image_play_button_size=2x&image_crop_resized=960x344&image_play_button=1&image_play_button_color=7b796ae0">
-<meta property="og:image" content="https://embedwistia-a.akamaihd.net/deliveries/328a112908da71728e15466166124afe085e802c.jpg?image_play_button_size=2x&image_crop_resized=960x301&image_play_button=1&image_play_button_color=7b796ae0">
-<meta property="og:image" content="https://embedwistia-a.akamaihd.net/deliveries/54b515cfcbf6f0b237c953f1681547597c6cfbcd.jpg?image_play_button_size=2x&image_crop_resized=960x316&image_play_button=1&image_play_button_color=7b796ae0">
-<meta property="og:image" content="https://d3ansictanv2wj.cloudfront.net/Figure-16---Session-Merging-a526d52186fcc33f3b5b5c59b176ac4e.jpg">
-<meta property="og:image" content="https://embedwistia-a.akamaihd.net/deliveries/62ad3e2bf2f3477c14d54600bbc8eeff27b3b0d6.jpg?image_play_button_size=2x&image_crop_resized=960x674&image_play_button=1&image_play_button_color=7b796ae0">
-<meta property="og:image" content="https://d3ansictanv2wj.cloudfront.net/18a-classic-batch-466-103a91fc0911026048ec719268ad631f.jpg">
-<meta property="og:image" content="https://d3ansictanv2wj.cloudfront.net/18b-batch-fixed-466-279032c49405c051e0992131ffadcf97.jpg">
-<meta property="og:image" content="https://d3ansictanv2wj.cloudfront.net/466-Figure-18c---streaming-wm-final-553fd05f4c8e2a20e753f6baa341af8d.jpg">
-<meta property="og:image" content="https://d3ansictanv2wj.cloudfront.net/18d-streaming-speculative-late-discarding-466-b7dbc36505d43e77d4331e6021c284f0.jpg">
-<meta property="og:image" content="https://d3ansictanv2wj.cloudfront.net/18e-streaming-speculative-late-466-3d3fd9b012839ec18aaa4bdb30eb0980.jpg">
-<meta property="og:image" content="https://d3ansictanv2wj.cloudfront.net/18f-streaming-speculative-late-retracting-466-243d9c5918a8f6cffbb9feda9a162268.jpg">
-<meta property="og:image" content="https://d3ansictanv2wj.cloudfront.net/18g-proc-time-discarding-466-b4d9839e7873197763259564438c6302.jpg">
-<meta property="og:image" content="https://d3ansictanv2wj.cloudfront.net/18h-ingress-time-466-123c9a648e1435bb0dd695cd25616011.jpg">
-<meta property="og:image" content="https://d3ansictanv2wj.cloudfront.net/18i-sessions-466-56db9dfe45a335011e21fc4c49c18982.jpg">
 <meta property="og:updated_time" content="2020-02-25T09:44:15.423Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="流式超越批量：Streaming 102翻译">
 <meta name="twitter:description" content="译者注在流式系统方面，网络上流传了两篇精彩的文章，Streaming 101 与 Streaming102。这两篇文章的作者是Google流式系统的负责人Tyler Akidau，他是MillWheel与DataFlow的开发者，在流式系统方面十分权威。恰巧这两篇文章非常详细并且适合初学者，可以帮助我们理清流式系统的各种概念与面临的挑战，是十分难得的佳作。其中Streaming101已经有很多翻译">
-<meta name="twitter:image" content="https://d3ansictanv2wj.cloudfront.net/Figure-01---Transforms-daa8ad32f2995801b32dc2929f24d4ad.jpg">
 
 <link rel="canonical" href="http://limuzhi.com/2017/04/09/流式超越批量-Streaming 102翻译/">
 
@@ -320,7 +294,7 @@
 <li><strong><code>PCollections</code></strong>：表示可以执行并行（这里的P表示的含义）的转换（Transform）操作的数据集（可能非常大）</li>
 <li><strong><code>PTransforms</code></strong>：应用到PCollection上，来执行的转换操作，生成新的PCollection。PTransforms可以是对元素一个一个操作，也可以是聚集（agg）操作，或者可以与其他的PCollection相互组合。</li>
 </ul>
-<p><img src="https://d3ansictanv2wj.cloudfront.net/Figure-01---Transforms-daa8ad32f2995801b32dc2929f24d4ad.jpg" alt="Transform的种类"></p>
+<p><img data-src="https://d3ansictanv2wj.cloudfront.net/Figure-01---Transforms-daa8ad32f2995801b32dc2929f24d4ad.jpg" alt="Transform的种类"></p>
 <p>如果有疑问或者想查看DataFlow的文档，看<a href="https://cloud.google.com/dataflow/model/programming-model" target="_blank" rel="noopener">这里</a>。</p>
 <p>为了讲解例子的方便，我们这里使用了一个名叫<strong><code>input</code></strong>的<code>PCollection&lt;KV&lt;String, Integer&gt;&gt;</code>作为输入（input是由String/Integer作为键/值对组成的，String是球队名，Interger是每人的分数）。在实际的Pipeline中，input一般从I/O源读入原始数据，然后解析日志数据成Key/Value对，最终转换成<code>PCollection&lt;KV&lt;String, Integer&gt;&gt;</code>。我会在第一个示例中写出所有代码，但是在接下来的其他示例中隐去I/O相关的部分。</p>
 <p>因此，一个例子：要求先从数据源中解析出team/score键值对，然后对每个team求和，算出球队总分。代码如下：</p>
@@ -328,29 +302,29 @@
 <p>对于下面的所有例子，我们都会先分析代码，然后用动画展示一个数据集的运行过程。具体点说，就是含有一个key和10条数据的pipeline的执行过程。在实际运行时，会有多台机器并行执行相同的操作。这里仅仅是为了简单清晰地讲解例子。</p>
 <p>所有动画都会在两个维度上绘制输入和输出：事件时间（X轴）和处理时间（Y轴）。因此，从pipeline的视角来看，白色的粗线条从底部向上移动代表了真实时间的移动。输入用圆圈表示，圆圈内的数字表示该记录的值。他们一开始是灰色的，pipeline实际观测到他们后会改变颜色。</p>
 <p>随着pipeline观测到这些值，会逐渐在状态（State）中累加他们，并最终实际输出结果。状态的变换和输出都由矩形表示，聚合值在矩形上面，被矩形覆盖的区域表示该部分的事件时间/处理时间已经累积计算到了结果中。在批处理引擎中执行Listing 1中的pipeline代码，运行过程如下（请注意，您需要点击/点击下面的图像才能启动动画，然后再循环直到再次点击/再点击）：</p>
-<p><a href="https://fast.wistia.net/embed/iframe/24noytvllc?videoFoam=true&amp;wvideo=24noytvllc" target="_blank" rel="noopener"><img src="https://embedwistia-a.akamaihd.net/deliveries/c9ce5cefab8d16db487342717cee477acffa7dfe.jpg?image_play_button_size=2x&amp;image_crop_resized=960x594&amp;image_play_button=1&amp;image_play_button_color=7b796ae0" alt="img"></a></p>
+<p><a href="https://fast.wistia.net/embed/iframe/24noytvllc?videoFoam=true&amp;wvideo=24noytvllc" target="_blank" rel="noopener"><img data-src="https://embedwistia-a.akamaihd.net/deliveries/c9ce5cefab8d16db487342717cee477acffa7dfe.jpg?image_play_button_size=2x&amp;image_crop_resized=960x594&amp;image_play_button=1&amp;image_play_button_color=7b796ae0" alt="img"></a></p>
 <p><a href="https://fast.wistia.net/embed/iframe/24noytvllc?videoFoam=true&amp;wvideo=24noytvllc" target="_blank" rel="noopener">图2：传统的批量处理过程</a></p>
 <p>由于这是一个批量的pipeline，因此，只有接收到所有的input值，系统才会累加状态（由图中顶部的绿色虚线表示），最终产生了唯一的输出：51。而且，这个例子由于没有使用任何Window，我们计算了所有Event-Time内的值的和。所以，图中用于表示状态和输出的矩形覆盖了整个X轴。但是，如果我们要处理一个无界数据源，那么传统的批量处理就不行了；我们不能等待输入数据结束，因为它实际上永远不会结束。因此，我们需要引入一个在Streaming101中提及的概念：窗口。在回答第二个问题，“计算什么时间范围的数据？”之前，我们先简要回顾一下窗口。</p>
 <h3 id="Where-windowing"><a href="#Where-windowing" class="headerlink" title="Where: windowing"></a>Where: windowing</h3><p>如上次讨论的那样，窗口化是沿着时间边界分割数据源的过程。常见的窗口划分策略包括固定窗口，滑动窗口和会话窗口。</p>
-<p><img src="https://d3ansictanv2wj.cloudfront.net/Figure-03---Windowing-442db0cda782c8bc0d8a2769423c6f37.jpg" alt="窗口策略"></p>
+<p><img data-src="https://d3ansictanv2wj.cloudfront.net/Figure-03---Windowing-442db0cda782c8bc0d8a2769423c6f37.jpg" alt="窗口策略"></p>
 <p>看一个实际的例子：把上面的求和的pipeline划分为2分钟的固定时间窗口。使用DataflowSDK，添加一个 <code>Window.into</code> transform操作即可：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Listing 2. Windowed summation code.</span></span><br><span class="line">PCollection&lt;KV&lt;String, Integer&gt;&gt; scores = input</span><br><span class="line">  .apply(Window.into(FixedWindows.of(Duration.standardMinutes(<span class="number">2</span>)))) <span class="comment">// 这一行</span></span><br><span class="line">  .apply(Sum.integersPerKey());</span><br></pre></td></tr></table></figure>
 <p>回想一下，由于语义上批处理只是流式的一个子集，所有Dataflow提供了一种统一的批处理和流式模型。因此，我们首先在批量引擎上执行这个pipeline，这种机制看起来更直观。当我们切换为流式引擎时，可以直接与这个进行比较。</p>
-<p><a href="https://fast.wistia.net/embed/iframe/v12dlvvgfh?videoFoam=true&amp;wvideo=v12dlvvgfh" target="_blank" rel="noopener"><img src="https://embedwistia-a.akamaihd.net/deliveries/8f42fed76aca326248ee220b2d0e6daece412c20.jpg?image_play_button_size=2x&amp;image_crop_resized=960x594&amp;image_play_button=1&amp;image_play_button_color=7b796ae0" alt="img"></a></p>
+<p><a href="https://fast.wistia.net/embed/iframe/v12dlvvgfh?videoFoam=true&amp;wvideo=v12dlvvgfh" target="_blank" rel="noopener"><img data-src="https://embedwistia-a.akamaihd.net/deliveries/8f42fed76aca326248ee220b2d0e6daece412c20.jpg?image_play_button_size=2x&amp;image_crop_resized=960x594&amp;image_play_button=1&amp;image_play_button_color=7b796ae0" alt="img"></a></p>
 <p><a href="https://fast.wistia.net/embed/iframe/v12dlvvgfh?videoFoam=true&amp;wvideo=v12dlvvgfh" target="_blank" rel="noopener">图4：在批量引擎上对窗口进行求和</a></p>
 <p>如前所述，直到输入数据被完全读入，状态才会累加，之后产生输出。但是，在这种情况下，我们得到的不是一个输出值，而是四个输出值：每个输出对应着2分钟的事件时间窗口。</p>
 <p>至此，我们回顾一下Streaming 101中介绍的两个主要概念：事件时间（Event-Time）与处理时间（Processing-Time）的关系以及窗口化（Windowing）。如果我们想深入学习，我们需要增加本节开头提到的新概念：水印（Watermark），触发器（Trigger）和累积（Accumulation）。因此开始Streaming 102。</p>
 <h2 id="流式102"><a href="#流式102" class="headerlink" title="流式102"></a>流式102</h2><p>我们刚刚看到了如何在批量引擎上运行窗口化的pipeline。但是，我们更希望系统有更低的延迟并且可以原生支持处理无界数据源。切换到流式引擎是正确的方向！但问题是，在批量引擎上我们清楚地知道什么时间点数据完整了（比如：当有限数据源的数据全都读入的时候），但是对于无界的数据源，我们缺乏一种有效的方式来判断数据<strong>完整性（Completeness）</strong>。因此，引入了Watermark</p>
 <h3 id="When-watermarks"><a href="#When-watermarks" class="headerlink" title="When: watermarks"></a>When: watermarks</h3><p>Watermark可以给出”何时将计算结果输出？”这个问题的一半答案：Watermark是在Event-Time域上的时间概念，用来刻画输入完整性。（这句话说明，watermark首先是表示的是一个Event-Time时间）。换句话说，它们是系统以Event-Time为尺度来衡量事件流中Record处理进度/完整性的方式（不管是无界数据还是有界数据都适用，显然在无界的情况下更有用）。</p>
 <p>回想一下Streaming 101中的这个图，这里稍作修改，其中描述了事件时间和处理时间之间的偏差（skew），在真实的分布式系统中，这个偏差会随时间不断变化。</p>
-<p><img src="https://d3ansictanv2wj.cloudfront.net/Figure_05_-_Event_Time_vs_Processing_Time-6484c65e43d1821c617bee747b7de020.png" alt="Figure 5. **Event time progress, skew, and watermarks**"></p>
+<p><img data-src="https://d3ansictanv2wj.cloudfront.net/Figure_05_-_Event_Time_vs_Processing_Time-6484c65e43d1821c617bee747b7de020.png" alt="Figure 5. **Event time progress, skew, and watermarks**"></p>
 <p>上面这个红色曲线就是真实的Watermark，随着Processing-Time的推移，他描述了Event-Time纬度的完整性的过程。你可以把Watermark看成是 F(P) -&gt; E的函数：输入是Processing-Time，输出是Event-Time。（确切的说，函数的输入是在pipeline中被观测到的Watermark这一点的所有上游的当前状态：输入源，缓冲数据，正在处理的数据等；但在概念上，将其视为从Processing-Time到Event-Time的映射更为简单。）在Event-Time上的这一点E表示：系统相信在E之前的所有数据都被观测到了。换句话说，系统『确信』不会再有Event-Time&lt;E的数据出现了。根据这种『确信』是不是严格保证或者仅仅是猜想，我们把Watermark分为两种类型：完美Watermark与启发式Watermark。</p>
 <ul>
 <li><strong>完美Watermark</strong>：如果我们对所有输入数据十分了解，就有可能构建一个完美的Watermark。这种情况下，输入源不存在数据迟来的问题，所有数据只会提前或者准时到达。</li>
 <li><strong>启发式Watermark</strong>：对于大部分的分布式输入源，期望对输入数据完全掌控是不切实际。这种情况下一般使用启发式的Watermark。启发式Watermark会使用一切可用的信息（包括分区，分区内排序，文件增长速度等）来尽量准确地推断输入的进度。在许多情况下，这种Watermark也可以预测了非常准确。即使如此，启发式Watermark的意味着它的预测有时可能是错误的，这将导致迟到的数据。我们将在下面的Trigger部分中了解如何处理迟来的数据。</li>
 </ul>
 <p>Watermark是一个有意思而且复杂的话题，超出我的讨论范围，期望未来有时间写个帖子讨论它。现在，为了更好地了解Watermark的作用和缺陷，我们使用Watermark的流式引擎，来看看Listing 2中的pipeline代码何时将计算结果输出。左边的例子使用完美的Watermark，右边的使用了启发式Watermark。</p>
-<p><a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102?wvideo=zbl7xyy294" target="_blank" rel="noopener"><img src="https://embedwistia-a.akamaihd.net/deliveries/1ca8c3335e912cd17061ca15889d2e1c27098de2.jpg?image_play_button_size=2x&amp;image_crop_resized=960x344&amp;image_play_button=1&amp;image_play_button_color=7b796ae0" alt="img"></a></p>
+<p><a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102?wvideo=zbl7xyy294" target="_blank" rel="noopener"><img data-src="https://embedwistia-a.akamaihd.net/deliveries/1ca8c3335e912cd17061ca15889d2e1c27098de2.jpg?image_play_button_size=2x&amp;image_crop_resized=960x344&amp;image_play_button=1&amp;image_play_button_color=7b796ae0" alt="img"></a></p>
 <p><a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102?wvideo=zbl7xyy294" target="_blank" rel="noopener">图6：在流式引擎上分别使用完美watermark（左）与启发式watermark（右）进行分割窗口求和的运算</a></p>
 <p>这两种情况都是watermark到达窗口终点时结果被输出（注：看图中watermark的先与12:02 12:04 12:06 12:08的交点）。主要的不同在于：右侧启发式算法没有计算『9』这个值，这对watermark曲线的形态影响巨大。这个例子突出了watermark的两个缺点（不仅watermark，任何一种完整性概念都有类似的问题），具体来说：</p>
 <ul>
@@ -384,7 +358,7 @@
 <p>但是，这样写起来有些麻烦。由于这种<code>repeated-early | on-time | repeated-late</code>的模式十分常见，我们在Dataflow API中提供了特定的简写方式（语意上等价的）。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Listing 5. Early and late firings via the early/late API.</span></span><br><span class="line">PCollection&lt;KV&lt;String, Integer&gt;&gt; scores = input</span><br><span class="line">  .apply(Window.into(FixedWindows.of(Duration.standardMinutes(<span class="number">2</span>)))</span><br><span class="line">               .triggering(</span><br><span class="line">                 AtWatermark()</span><br><span class="line">                   .withEarlyFirings(AtPeriod(Duration.standardMinutes(<span class="number">1</span>))) <span class="comment">// 这两行</span></span><br><span class="line">                   .withLateFirings(AtCount(<span class="number">1</span>))))</span><br><span class="line">  .apply(Sum.integersPerKey());</span><br></pre></td></tr></table></figure>
 <p>在流式引擎上执行Listing4/5的代码（使用完美watermark和启发式watermark）产生的结果如下：</p>
-<p><a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102?wvideo=li3chq4k3t" target="_blank" rel="noopener"><img src="https://embedwistia-a.akamaihd.net/deliveries/a12e5efa572e0fb6d0c5ae9d5db1094676f6ef53.jpg?image_play_button_size=2x&amp;image_crop_resized=960x344&amp;image_play_button=1&amp;image_play_button_color=7b796ae0" alt="img"></a></p>
+<p><a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102?wvideo=li3chq4k3t" target="_blank" rel="noopener"><img data-src="https://embedwistia-a.akamaihd.net/deliveries/a12e5efa572e0fb6d0c5ae9d5db1094676f6ef53.jpg?image_play_button_size=2x&amp;image_crop_resized=960x344&amp;image_play_button=1&amp;image_play_button_color=7b796ae0" alt="img"></a></p>
 <p><a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102?wvideo=li3chq4k3t" target="_blank" rel="noopener">图7.在安装了early/late触发器的流式引擎上进行窗口求和运算 </a></p>
 <p>这个版本比图6的版本有两处明显的提升：</p>
 <ul>
@@ -407,7 +381,7 @@
 <li>一旦一个窗口内的时间通过watermark后再经过horizon，窗口就会关闭，意味着窗口的状态就好被抛弃。我会留下一个虚线框表示当窗口关闭时，它覆盖的时间范围（两个时间域都有，右侧多出的虚线小尾巴与watermark相交）。</li>
 <li>对于这个图，我额外地为第一个窗口添加了一个迟到值『6』。『6』是迟到的，但仍然在允许延迟时间（horizon）范围内，所以它被并入更新的值为11的结果。然而，迟到的『9』超过了延迟的地平线，所以它被简单地抛弃了。</li>
 </ul>
-<p><a href="https://fast.wistia.net/embed/iframe/muwcqnrmxf?videoFoam=true&amp;wvideo=muwcqnrmxf" target="_blank" rel="noopener"><img src="https://embedwistia-a.akamaihd.net/deliveries/4bc76118539bfe60869ec06e6b6919b6e48d0ff2.jpg?image_play_button_size=2x&amp;image_crop_resized=960x643&amp;image_play_button=1&amp;image_play_button_color=7b796ae0" alt="img"></a></p>
+<p><a href="https://fast.wistia.net/embed/iframe/muwcqnrmxf?videoFoam=true&amp;wvideo=muwcqnrmxf" target="_blank" rel="noopener"><img data-src="https://embedwistia-a.akamaihd.net/deliveries/4bc76118539bfe60869ec06e6b6919b6e48d0ff2.jpg?image_play_button_size=2x&amp;image_crop_resized=960x643&amp;image_play_button=1&amp;image_play_button_color=7b796ae0" alt="img"></a></p>
 <p><a href="https://fast.wistia.net/embed/iframe/muwcqnrmxf?videoFoam=true&amp;wvideo=muwcqnrmxf" target="_blank" rel="noopener">图8. <strong>运行在流式引擎上，具有早期和晚期启动并且允许1分钟延迟的窗口求和</strong></a></p>
 <p>关于『允许延迟时间』（horizon）的最后两点说明：</p>
 <ul>
@@ -439,17 +413,17 @@
 <p>要使用丢弃模式，我们将对 Listing 5进行以下更改：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Listing 7. Discarding mode version of early/late firings.</span></span><br><span class="line">PCollection&lt;KV&lt;String, Integer&gt;&gt; scores = input</span><br><span class="line">  .apply(Window.into(FixedWindows.of(Duration.standardMinutes(<span class="number">2</span>)))</span><br><span class="line">               .triggering(</span><br><span class="line">                 AtWatermark()</span><br><span class="line">                   .withEarlyFirings(AtPeriod(Duration.standardMinutes(<span class="number">1</span>)))</span><br><span class="line">                   .withLateFirings(AtCount(<span class="number">1</span>)))</span><br><span class="line">               .discardingFiredPanes()) <span class="comment">// 这一行</span></span><br><span class="line">  .apply(Sum.integersPerKey());</span><br></pre></td></tr></table></figure>
 <p>在具有启发式watermark的流式引擎上再次运行代码将产生如下所示的输出：</p>
-<p><a href="https://fast.wistia.net/embed/iframe/64r8oawoc2?videoFoam=true&amp;wvideo=64r8oawoc2" target="_blank" rel="noopener"><img src="https://embedwistia-a.akamaihd.net/deliveries/39c7bdd39bb0cff10c8650807b255f3f34fad0a8.jpg?image_play_button_size=2x&amp;image_crop_resized=960x674&amp;image_play_button=1&amp;image_play_button_color=7b796ae0" alt="img"></a></p>
+<p><a href="https://fast.wistia.net/embed/iframe/64r8oawoc2?videoFoam=true&amp;wvideo=64r8oawoc2" target="_blank" rel="noopener"><img data-src="https://embedwistia-a.akamaihd.net/deliveries/39c7bdd39bb0cff10c8650807b255f3f34fad0a8.jpg?image_play_button_size=2x&amp;image_crop_resized=960x674&amp;image_play_button=1&amp;image_play_button_color=7b796ae0" alt="img"></a></p>
 <p><a href="https://fast.wistia.net/embed/iframe/64r8oawoc2?videoFoam=true&amp;wvideo=64r8oawoc2" target="_blank" rel="noopener">图9. 流式引擎上的含有early/later的触发器的丢弃模式版本</a></p>
 <p>虽然输出的整体形状类似于图7的累计模式，但请注意，此丢弃版本中的任何一个窗格都不重叠。因此，每个输出与其他输出是独立的。</p>
 <p>如果我们实际看看更正/回撤模式，代码修改类似（但是，请注意，Google Cloud Dataflow的回撤模式仍然处于开发状态，所以这个API中的命名有点推测，不太可能与他相同）：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Listing 8. Accumulating &amp; retracting mode version of early/late firings.</span></span><br><span class="line">PCollection&lt;KV&lt;String, Integer&gt;&gt; scores = input</span><br><span class="line">  .apply(Window.into(FixedWindows.of(Duration.standardMinutes(<span class="number">2</span>)))</span><br><span class="line">               .triggering(</span><br><span class="line">                 AtWatermark()</span><br><span class="line">                   .withEarlyFirings(AtPeriod(Duration.standardMinutes(<span class="number">1</span>)))</span><br><span class="line">                   .withLateFirings(AtCount(<span class="number">1</span>)))</span><br><span class="line">               .accumulatingAndRetractingFiredPanes()) <span class="comment">// 这一行</span></span><br><span class="line">  .apply(Sum.integersPerKey());</span><br></pre></td></tr></table></figure>
 <p>在流式引擎上运行，结果如下：</p>
-<p><a href="https://fast.wistia.net/embed/iframe/ksse5yiq3u?videoFoam=true&amp;wvideo=ksse5yiq3u" target="_blank" rel="noopener"><img src="https://embedwistia-a.akamaihd.net/deliveries/3fef7a569ee1cf9e44c4a4859ef059c9c815fde5.jpg?image_play_button_size=2x&amp;image_crop_resized=960x674&amp;image_play_button=1&amp;image_play_button_color=7b796ae0" alt="img"></a></p>
+<p><a href="https://fast.wistia.net/embed/iframe/ksse5yiq3u?videoFoam=true&amp;wvideo=ksse5yiq3u" target="_blank" rel="noopener"><img data-src="https://embedwistia-a.akamaihd.net/deliveries/3fef7a569ee1cf9e44c4a4859ef059c9c815fde5.jpg?image_play_button_size=2x&amp;image_crop_resized=960x674&amp;image_play_button=1&amp;image_play_button_color=7b796ae0" alt="img"></a></p>
 <p>[<a href="https://fast.wistia.net/embed/iframe/ksse5yiq3u?videoFoam=true&amp;wvideo=ksse5yiq3u" target="_blank" rel="noopener">图9. 流式引擎上的含有early/later的触发器的更正模式版本</a></p>
 <p>由于窗口内的窗格相互关联，不太容易看清这些回撤值。回撤值用红色标记了，他与蓝色的窗格重叠，所以看起来像是紫色。每个窗格的两个输出值用逗号分割使他们更容易区分。</p>
 <p>让我们把图7（只有启发式的版本），9，10放到一起比较一下：</p>
-<p><img src="https://d3ansictanv2wj.cloudfront.net/Figure11-V2-0dfcc51fc13c713a3903d1d10681955a.jpg" alt="积累模式的并排比较：丢弃（左），累计（中）和累计&amp;更正（右）**"></p>
+<p><img data-src="https://d3ansictanv2wj.cloudfront.net/Figure11-V2-0dfcc51fc13c713a3903d1d10681955a.jpg" alt="积累模式的并排比较：丢弃（左），累计（中）和累计&amp;更正（右）**"></p>
 <p>你可以想到，在存储和计算成本方面，丢弃模式，累计模式，累计&amp;更正模式成本是不断增加的。为此，积累模式的选择也是对正确性，延迟和成本进行权衡。</p>
 <h2 id="插曲"><a href="#插曲" class="headerlink" title="插曲"></a>插曲</h2><p>至此，我们已经回答了所有四个问题：</p>
 <ul>
@@ -478,10 +452,10 @@
 <li><strong>通过入口时间实现的Processing-Time窗口</strong></li>
 </ul>
 <p>我们会在这三种场景上分别使用两个不同的数据集（所以，一共会有2*3中情况）。这两个数据集除了观测到的顺序不同，其他均完全相同（比如相同的值发生相同的Event-Time）。第一套数据集就是我们之前一直看到的那个顺序（白色标记）。第二套所有的值都在Processing-Time的轴上移动了（如图12所示，使用紫色标记）。你可以想象一下，只要发生一点意外（比如使用复杂的分布式系统就会打乱顺序），这种情况就会发生。</p>
-<p><a href="https://fast.wistia.net/embed/iframe/lf3v07a065?videoFoam=true&amp;wvideo=lf3v07a065" target="_blank" rel="noopener"><img src="https://embedwistia-a.akamaihd.net/deliveries/1489e8718ce80589784e51ec150bb4cf08d8577e.jpg?image_play_button_size=2x&amp;image_crop_resized=960x637&amp;image_play_button=1&amp;image_play_button_color=7b796ae0" alt="img"></a></p>
+<p><a href="https://fast.wistia.net/embed/iframe/lf3v07a065?videoFoam=true&amp;wvideo=lf3v07a065" target="_blank" rel="noopener"><img data-src="https://embedwistia-a.akamaihd.net/deliveries/1489e8718ce80589784e51ec150bb4cf08d8577e.jpg?image_play_button_size=2x&amp;image_crop_resized=960x637&amp;image_play_button=1&amp;image_play_button_color=7b796ae0" alt="img"></a></p>
 <p><a href="https://fast.wistia.net/embed/iframe/lf3v07a065?videoFoam=true&amp;wvideo=lf3v07a065" target="_blank" rel="noopener">图12 -  移动输入值在Processing-Time上的位置，同时保持相同的值和Event-Time</a></p>
 <h4 id="Event-time-windowing（使用Event-Time窗口化）"><a href="#Event-time-windowing（使用Event-Time窗口化）" class="headerlink" title="Event-time windowing（使用Event-Time窗口化）"></a>Event-time windowing（使用Event-Time窗口化）</h4><p>为了建立一个比较基线，我们先看一下使用了Event-Time固定窗口搭配启发式watermark的引擎分别作用到这两个数据集上的结果。我们复用Listing5、图7中使用了early/later触发器的代码，得到的结果如下。左侧和我们以前看到的结果一样，右侧是使用了第二种顺序的数据集的结果。重点是：虽然输出过程的形状不一样，但是<strong>最终四个窗口的输出结果全部相同</strong>：14，22，3和12。</p>
-<p><a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102?wvideo=hnl6whv23j#F6" target="_blank" rel="noopener"><img src="https://embedwistia-a.akamaihd.net/deliveries/2b26fd31ca9629d521fe80d821c0b76de941ef74.jpg?image_play_button_size=2x&amp;image_crop_resized=960x344&amp;image_play_button=1&amp;image_play_button_color=7b796ae0" alt="img"></a></p>
+<p><a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102?wvideo=hnl6whv23j#F6" target="_blank" rel="noopener"><img data-src="https://embedwistia-a.akamaihd.net/deliveries/2b26fd31ca9629d521fe80d821c0b76de941ef74.jpg?image_play_button_size=2x&amp;image_crop_resized=960x344&amp;image_play_button=1&amp;image_play_button_color=7b796ae0" alt="img"></a></p>
 <p><a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102?wvideo=hnl6whv23j#F6" target="_blank" rel="noopener">图13.在Event-time固定窗口上使用两个不同Processing-Time顺序的数据集的结果</a></p>
 <h4 id="Processing-time-windowing-via-triggers（使用Trigger实现的Processing-Time窗口化）"><a href="#Processing-time-windowing-via-triggers（使用Trigger实现的Processing-Time窗口化）" class="headerlink" title="Processing-time windowing via triggers（使用Trigger实现的Processing-Time窗口化）"></a>Processing-time windowing via triggers（使用Trigger实现的Processing-Time窗口化）</h4><p>好，现在让我们来比较一下使用了Processing-Time的两种方案。首先是Trigger方式。我们从三个角度来看这种方式的Processing-Time窗口是如何工作的：</p>
 <ul>
@@ -496,7 +470,7 @@
 <li>由于我们是通过Event-Time的窗格（Pane）来模拟Processing-Time窗口的，所以图中Processing-Time轴才是窗口，就是图中Y轴的宽度。</li>
 <li>由于Processing-Time窗口对输入数据的顺序很敏感，所以，对于观测顺序不同的数据集，窗口的内容不同。左边的结果是12，21，18，右侧的结果是7，26，4。</li>
 </ul>
-<p><a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102?wvideo=befc8n62yh#F6" target="_blank" rel="noopener"><img src="https://embedwistia-a.akamaihd.net/deliveries/328a112908da71728e15466166124afe085e802c.jpg?image_play_button_size=2x&amp;image_crop_resized=960x301&amp;image_play_button=1&amp;image_play_button_color=7b796ae0" alt="img"></a></p>
+<p><a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102?wvideo=befc8n62yh#F6" target="_blank" rel="noopener"><img data-src="https://embedwistia-a.akamaihd.net/deliveries/328a112908da71728e15466166124afe085e802c.jpg?image_play_button_size=2x&amp;image_crop_resized=960x301&amp;image_play_button=1&amp;image_play_button_color=7b796ae0" alt="img"></a></p>
 <p><a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102?wvideo=befc8n62yh#F6" target="_blank" rel="noopener">图14，通过触发器实现的Processing-Time窗口，分别在两组不同观测顺序的数据集上运行</a></p>
 <h4 id="Processing-time-windowing-via-ingress-time（使用入口时间实现的Processing-Time窗口化）"><a href="#Processing-time-windowing-via-ingress-time（使用入口时间实现的Processing-Time窗口化）" class="headerlink" title="Processing-time windowing via ingress time（使用入口时间实现的Processing-Time窗口化）"></a>Processing-time windowing via ingress time（使用入口时间实现的Processing-Time窗口化）</h4><p>最后，让我们看看使用输入数据的入口时间作为Event-Time来实现Processing-Time窗口的方案.在代码方面，这里有四个方面值得一提：</p>
 <ul>
@@ -513,7 +487,7 @@
 <li>窗口触发的时间也与Trigger相同，产生的结果也相同，都是：左边12，21，18；右边7，36，4。</li>
 <li>由于使用了完美的Watermark，而且X轴表示入口时间，所以，watermark线与理想情况下的watermark线重合，都是向右上方，且斜率为1。</li>
 </ul>
-<p><a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102?wvideo=bahkp8byjn#F6" target="_blank" rel="noopener"><img src="https://embedwistia-a.akamaihd.net/deliveries/54b515cfcbf6f0b237c953f1681547597c6cfbcd.jpg?image_play_button_size=2x&amp;image_crop_resized=960x316&amp;image_play_button=1&amp;image_play_button_color=7b796ae0" alt="img"></a></p>
+<p><a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102?wvideo=bahkp8byjn#F6" target="_blank" rel="noopener"><img data-src="https://embedwistia-a.akamaihd.net/deliveries/54b515cfcbf6f0b237c953f1681547597c6cfbcd.jpg?image_play_button_size=2x&amp;image_crop_resized=960x316&amp;image_play_button=1&amp;image_play_button_color=7b796ae0" alt="img"></a></p>
 <p><a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102?wvideo=bahkp8byjn#F6" target="_blank" rel="noopener">图14，通过使用入口时间实现的Processing-Time窗口，分别在两组不同观测顺序的数据集上运行</a></p>
 <p>虽然使用这两种方式实现Processing-Time窗口很有趣，但是：这里你要明白的最重要的一点是：Event-Time窗口至少在运算结果上是输入数据顺序无关无关（在输入完成之前，实际的Panel会不断变化），而Processing-Time窗口却不是这样。<strong>如果你关系事件发生的真实时间，必须使用Event-Time窗口，否则计算结果毫无意义！！</strong>。</p>
 <h3 id="Where-session-windows（会话窗口）"><a href="#Where-session-windows（会话窗口）" class="headerlink" title="Where: session windows（会话窗口）"></a><strong>Where: session windows</strong>（会话窗口）</h3><p>我们就要讲完所有的例子啦。。。如果你读到这里，真的很有耐心。好消息是你的耐心没有白费，下面我会讲一个我最喜欢的特性：数据驱动的动态窗口—Session。请看好了。</p>
@@ -526,11 +500,11 @@
 <p>在某些场景下：对于单个Session内的数据，我们可以在时间的前面加一个通用的标志符来标记它属于某个Session（例如：视频播放器的携带服务质量信息心跳包ping。对于某次观看，可以在所有的ping的时间前面加上Session ID）。那么，这个例子的Session十分容易构建了，只要把数据按照Key聚合就是一个Session。</p>
 <p>但是，一些更通用的场景（例如：Session自己没法知道它已经开始了）需要这样：Session必须根据数据在时间内的位置来构建。在无序数据集的情况下，这十分棘手。</p>
 <p>要提供通用的Session支持，一个核心的洞察是：<strong>一个Session Window可以看成是相互重叠的小Window的组合，其中这里的小Window（ proto-session window）比较特别，他们只含有一个Record，窗口大小是inactivity的时间。因此，即使我们看到的数据是无序的，我们可以随着数据一个一个来到，简单地把这些有重叠的小Window合并起来组成一个最终的Session Window。</strong></p>
-<p><img src="https://d3ansictanv2wj.cloudfront.net/Figure-16---Session-Merging-a526d52186fcc33f3b5b5c59b176ac4e.jpg" alt="合并前的Window VS 合并后的Window"></p>
+<p><img data-src="https://d3ansictanv2wj.cloudfront.net/Figure-16---Session-Merging-a526d52186fcc33f3b5b5c59b176ac4e.jpg" alt="合并前的Window VS 合并后的Window"></p>
 <p>我们来看一个代码示例，通过使用Listing8的代码（包含了early/late触发器和retract的更新机制）来构建Session：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Listing 11. Early and late firings with session windows and retractions</span></span><br><span class="line">PCollection&lt;KV&lt;String, Integer&gt;&gt; scores = input</span><br><span class="line">  .apply(Window.into(Sessions.withGapDuration(Duration.standardMinutes(<span class="number">1</span>))) <span class="comment">// 这一行</span></span><br><span class="line">               .triggering(</span><br><span class="line">                 AtWatermark()</span><br><span class="line">                   .withEarlyFirings(AtPeriod(Duration.standardMinutes(<span class="number">1</span>)))</span><br><span class="line">                   .withLateFirings(AtCount(<span class="number">1</span>)))</span><br><span class="line">               .accumulatingAndRetractingFiredPanes())</span><br><span class="line">  .apply(Sum.integersPerKey());</span><br></pre></td></tr></table></figure>
 <p>在流式引擎上允许结果如下图17：</p>
-<p><a href="https://fast.wistia.net/embed/iframe/5eu4m6fgp1?videoFoam=true&amp;wvideo=5eu4m6fgp1" target="_blank" rel="noopener"><img src="https://embedwistia-a.akamaihd.net/deliveries/62ad3e2bf2f3477c14d54600bbc8eeff27b3b0d6.jpg?image_play_button_size=2x&amp;image_crop_resized=960x674&amp;image_play_button=1&amp;image_play_button_color=7b796ae0" alt="img"></a></p>
+<p><a href="https://fast.wistia.net/embed/iframe/5eu4m6fgp1?videoFoam=true&amp;wvideo=5eu4m6fgp1" target="_blank" rel="noopener"><img data-src="https://embedwistia-a.akamaihd.net/deliveries/62ad3e2bf2f3477c14d54600bbc8eeff27b3b0d6.jpg?image_play_button_size=2x&amp;image_crop_resized=960x674&amp;image_play_button=1&amp;image_play_button_color=7b796ae0" alt="img"></a></p>
 <p><a href="https://fast.wistia.net/embed/iframe/5eu4m6fgp1?videoFoam=true&amp;wvideo=5eu4m6fgp1" target="_blank" rel="noopener">Figure 17 - 具有early/late触发器和retract更新模式的Sessions窗口，一个生动的例子</a></p>
 <p>上图内容是否丰富，我们一起看一下：</p>
 <ul>
@@ -564,21 +538,21 @@
 <table>
 <thead>
 <tr>
-<th><img src="https://d3ansictanv2wj.cloudfront.net/18a-classic-batch-466-103a91fc0911026048ec719268ad631f.jpg" alt="img">Classic batch:<a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#L1" target="_blank" rel="noopener">Listing 1</a> / <a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#FIG2" target="_blank" rel="noopener">Figure 2</a></th>
-<th><img src="https://d3ansictanv2wj.cloudfront.net/18b-batch-fixed-466-279032c49405c051e0992131ffadcf97.jpg" alt="img">Fixed windows batch:<a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#L2" target="_blank" rel="noopener">Listing 2</a> / <a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#FIG4" target="_blank" rel="noopener">Figure 4</a></th>
-<th><img src="https://d3ansictanv2wj.cloudfront.net/466-Figure-18c---streaming-wm-final-553fd05f4c8e2a20e753f6baa341af8d.jpg" alt="img">Fixed windows streamingwatermark:<a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#L2" target="_blank" rel="noopener">Listing 2</a> / <a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#FIG6" target="_blank" rel="noopener">Figure 6</a></th>
+<th><img data-src="https://d3ansictanv2wj.cloudfront.net/18a-classic-batch-466-103a91fc0911026048ec719268ad631f.jpg" alt="img">Classic batch:<a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#L1" target="_blank" rel="noopener">Listing 1</a> / <a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#FIG2" target="_blank" rel="noopener">Figure 2</a></th>
+<th><img data-src="https://d3ansictanv2wj.cloudfront.net/18b-batch-fixed-466-279032c49405c051e0992131ffadcf97.jpg" alt="img">Fixed windows batch:<a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#L2" target="_blank" rel="noopener">Listing 2</a> / <a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#FIG4" target="_blank" rel="noopener">Figure 4</a></th>
+<th><img data-src="https://d3ansictanv2wj.cloudfront.net/466-Figure-18c---streaming-wm-final-553fd05f4c8e2a20e753f6baa341af8d.jpg" alt="img">Fixed windows streamingwatermark:<a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#L2" target="_blank" rel="noopener">Listing 2</a> / <a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#FIG6" target="_blank" rel="noopener">Figure 6</a></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><img src="https://d3ansictanv2wj.cloudfront.net/18d-streaming-speculative-late-discarding-466-b7dbc36505d43e77d4331e6021c284f0.jpg" alt="img">Early/late discarding:<a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#L7" target="_blank" rel="noopener">Listing 7</a> / <a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#FIG9" target="_blank" rel="noopener">Figure 9</a></td>
-<td><img src="https://d3ansictanv2wj.cloudfront.net/18e-streaming-speculative-late-466-3d3fd9b012839ec18aaa4bdb30eb0980.jpg" alt="img">Early/late accumulatingListings: <a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#L4" target="_blank" rel="noopener">4</a> &amp; <a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#L5" target="_blank" rel="noopener">5</a> / <a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#FIG7" target="_blank" rel="noopener">Figure 7</a></td>
-<td><img src="https://d3ansictanv2wj.cloudfront.net/18f-streaming-speculative-late-retracting-466-243d9c5918a8f6cffbb9feda9a162268.jpg" alt="img">Early/late retracting:<a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#L8" target="_blank" rel="noopener">Listing 8</a> / <a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#FIG10" target="_blank" rel="noopener">Figure 10</a></td>
+<td><img data-src="https://d3ansictanv2wj.cloudfront.net/18d-streaming-speculative-late-discarding-466-b7dbc36505d43e77d4331e6021c284f0.jpg" alt="img">Early/late discarding:<a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#L7" target="_blank" rel="noopener">Listing 7</a> / <a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#FIG9" target="_blank" rel="noopener">Figure 9</a></td>
+<td><img data-src="https://d3ansictanv2wj.cloudfront.net/18e-streaming-speculative-late-466-3d3fd9b012839ec18aaa4bdb30eb0980.jpg" alt="img">Early/late accumulatingListings: <a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#L4" target="_blank" rel="noopener">4</a> &amp; <a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#L5" target="_blank" rel="noopener">5</a> / <a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#FIG7" target="_blank" rel="noopener">Figure 7</a></td>
+<td><img data-src="https://d3ansictanv2wj.cloudfront.net/18f-streaming-speculative-late-retracting-466-243d9c5918a8f6cffbb9feda9a162268.jpg" alt="img">Early/late retracting:<a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#L8" target="_blank" rel="noopener">Listing 8</a> / <a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#FIG10" target="_blank" rel="noopener">Figure 10</a></td>
 </tr>
 <tr>
-<td><img src="https://d3ansictanv2wj.cloudfront.net/18g-proc-time-discarding-466-b4d9839e7873197763259564438c6302.jpg" alt="img">Processing-time (triggers):<a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#L9" target="_blank" rel="noopener">Listing 9</a> / <a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#FIG14" target="_blank" rel="noopener">Figure 14</a></td>
-<td><img src="https://d3ansictanv2wj.cloudfront.net/18h-ingress-time-466-123c9a648e1435bb0dd695cd25616011.jpg" alt="img">Processing-time: (ingress time)<a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#L10" target="_blank" rel="noopener">Listing 10</a> / <a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#FIG15" target="_blank" rel="noopener">Figure 15</a></td>
-<td><img src="https://d3ansictanv2wj.cloudfront.net/18i-sessions-466-56db9dfe45a335011e21fc4c49c18982.jpg" alt="img">Sessions:<a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#L11" target="_blank" rel="noopener">Listing 11</a> / <a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#FIG17" target="_blank" rel="noopener">Figure 17</a></td>
+<td><img data-src="https://d3ansictanv2wj.cloudfront.net/18g-proc-time-discarding-466-b4d9839e7873197763259564438c6302.jpg" alt="img">Processing-time (triggers):<a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#L9" target="_blank" rel="noopener">Listing 9</a> / <a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#FIG14" target="_blank" rel="noopener">Figure 14</a></td>
+<td><img data-src="https://d3ansictanv2wj.cloudfront.net/18h-ingress-time-466-123c9a648e1435bb0dd695cd25616011.jpg" alt="img">Processing-time: (ingress time)<a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#L10" target="_blank" rel="noopener">Listing 10</a> / <a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#FIG15" target="_blank" rel="noopener">Figure 15</a></td>
+<td><img data-src="https://d3ansictanv2wj.cloudfront.net/18i-sessions-466-56db9dfe45a335011e21fc4c49c18982.jpg" alt="img">Sessions:<a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#L11" target="_blank" rel="noopener">Listing 11</a> / <a href="https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102#FIG17" target="_blank" rel="noopener">Figure 17</a></td>
 </tr>
 </tbody>
 </table>
@@ -806,6 +780,9 @@
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script>
@@ -839,7 +816,7 @@
 
 <script>
 NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
-  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
     var GUEST = ['nick', 'mail', 'link'];
     var guest = 'nick,mail,link';
     guest = guest.split(',').filter(item => {

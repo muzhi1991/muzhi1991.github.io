@@ -14,10 +14,11 @@
 
 
 <link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
   <meta name="description" content="不得不说理财是一项基本的能力，从工作开始有意识地买了很多理财产品，股票，基金，p2p。仅仅基金就买过股票型，指数型，还有比较复杂的分级基金A/B。之前的购买大部分是尝试性的，漫无目的，更没有任何仔细的思量。似乎这叫做赌博更加合适。经过这一年的尝试，渐渐确定了我的理财目标。几个原则：  作为非专业人员，不会花大量时间在这上面，如股票看盘 为自己风险可以偏大，为父母，风险可控。基本公式：  理财资产（">
@@ -28,12 +29,10 @@
 <meta property="og:site_name" content="Night Piece">
 <meta property="og:description" content="不得不说理财是一项基本的能力，从工作开始有意识地买了很多理财产品，股票，基金，p2p。仅仅基金就买过股票型，指数型，还有比较复杂的分级基金A/B。之前的购买大部分是尝试性的，漫无目的，更没有任何仔细的思量。似乎这叫做赌博更加合适。经过这一年的尝试，渐渐确定了我的理财目标。几个原则：  作为非专业人员，不会花大量时间在这上面，如股票看盘 为自己风险可以偏大，为父母，风险可控。基本公式：  理财资产（">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://limuzhi.com/images/financial_quant_analyse.jpg">
 <meta property="og:updated_time" content="2020-02-25T09:44:15.452Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="理财：量化分析平台，一个定投策略的实现">
 <meta name="twitter:description" content="不得不说理财是一项基本的能力，从工作开始有意识地买了很多理财产品，股票，基金，p2p。仅仅基金就买过股票型，指数型，还有比较复杂的分级基金A/B。之前的购买大部分是尝试性的，漫无目的，更没有任何仔细的思量。似乎这叫做赌博更加合适。经过这一年的尝试，渐渐确定了我的理财目标。几个原则：  作为非专业人员，不会花大量时间在这上面，如股票看盘 为自己风险可以偏大，为父母，风险可控。基本公式：  理财资产（">
-<meta name="twitter:image" content="http://limuzhi.com/images/financial_quant_analyse.jpg">
 
 <link rel="canonical" href="http://limuzhi.com/2016/03/20/理财：量化分析平台，一个定投策略的实现/">
 
@@ -315,7 +314,7 @@
 <li>下单失败努力找原因。。比如，cash太少买不了一手</li>
 </ul>
 <p>聚宽：<br>数据太少，比如etf，只有2014年12月的。。<br>优点是api比优矿完善的多！</p>
-<h2 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h2><p>我使用code模式，实现了<strong>按月定投</strong>逻辑和<strong>定期按比例重新分配</strong>资产。<a href="./codes/定投分析.py">这里下载</a>。这里面用到一个很有用的库dateutil，可以方便的<a href="http://www.andyvenet.com/using-dateutil-generate-recurring-dates/" target="_blank" rel="noopener">产生时间序列</a>，比如每个月的最后一天，每年第几天等<br>分析结果用图表的形式表现出来：<br><img src="/images/financial_quant_analyse.jpg" alt="分析结果"></p>
+<h2 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h2><p>我使用code模式，实现了<strong>按月定投</strong>逻辑和<strong>定期按比例重新分配</strong>资产。<a href="./codes/定投分析.py">这里下载</a>。这里面用到一个很有用的库dateutil，可以方便的<a href="http://www.andyvenet.com/using-dateutil-generate-recurring-dates/" target="_blank" rel="noopener">产生时间序列</a>，比如每个月的最后一天，每年第几天等<br>分析结果用图表的形式表现出来：<br><img data-src="/images/financial_quant_analyse.jpg" alt="分析结果"></p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这些只是入门的内容，还有很多数据层面的东西要学习以及金融知识，比如那些指标是什么含义。今年有计划看一本金融类的入门书籍。理财是一个长期需要坚持的事情，从简单的策略做起，不断学习，优化，认识到不足，再优化。期望能脱离盲目，我相信，<strong>所谓坚持不懈，毫不动摇必须要有强大的学识基础。</strong></p>
 
     </div>
@@ -524,6 +523,9 @@
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script>
@@ -557,7 +559,7 @@
 
 <script>
 NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
-  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
     var GUEST = ['nick', 'mail', 'link'];
     var guest = 'nick,mail,link';
     guest = guest.split(',').filter(item => {

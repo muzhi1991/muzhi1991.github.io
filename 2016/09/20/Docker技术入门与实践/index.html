@@ -14,10 +14,11 @@
 
 
 <link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
   <meta name="description" content="运维部署的第一篇文章，自上而下（从架构向下）的介绍一些常见概念。最后用docker部署一个简单的架构，可以应付小企业的常规需求。 基本知识Web架构的演变">
@@ -28,14 +29,10 @@
 <meta property="og:site_name" content="Night Piece">
 <meta property="og:description" content="运维部署的第一篇文章，自上而下（从架构向下）的介绍一些常见概念。最后用docker部署一个简单的架构，可以应付小企业的常规需求。 基本知识Web架构的演变">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://limuzhi.com/images/redis_master_slaver.png">
-<meta property="og:image" content="http://limuzhi.com/images/redis_multi_level_cache.png">
-<meta property="og:image" content="https://yeasy.gitbooks.io/docker_practice/content/_images/network.png">
 <meta property="og:updated_time" content="2020-02-25T09:44:15.450Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="常见Web架构与Docker部署实践">
 <meta name="twitter:description" content="运维部署的第一篇文章，自上而下（从架构向下）的介绍一些常见概念。最后用docker部署一个简单的架构，可以应付小企业的常规需求。 基本知识Web架构的演变">
-<meta name="twitter:image" content="http://limuzhi.com/images/redis_master_slaver.png">
 
 <link rel="canonical" href="http://limuzhi.com/2016/09/20/Docker技术入门与实践/">
 
@@ -365,14 +362,14 @@
 </ul>
 </li>
 </ul>
-<p><img src="/images/redis_master_slaver.png" alt="master-slave模式"></p>
+<p><img data-src="/images/redis_master_slaver.png" alt="master-slave模式"></p>
 </li>
 <li><p>多级缓存：在master/slave模式上再加一层L1Cache。形成多级缓存，L1Cache有多个实例，实现负载均衡。</p>
 <ul>
 <li>过程：前端请求首先会随机请求到一组L1缓存，如果这个L1缓存命中则返回，否则再请求到主缓存，如果命中，返回，同时将key-value回种到这个L1缓存中。如果主缓存中没有中，则穿透到DB，返回并同时回种到主缓存及刚才那个L1缓存。L1缓存可以有多组，很好的分担了带宽的压力，并且可以线性扩展</li>
 <li>引入的问题：一致性</li>
 </ul>
-<p><img src="/images/redis_multi_level_cache.png" alt="带有L1的多级缓存"></p>
+<p><img data-src="/images/redis_multi_level_cache.png" alt="带有L1的多级缓存"></p>
 </li>
 <li><p>数据一致性CAP问题：上面的所有情况都会面临数据一致性的问题，针对这个问题有一个理论，既CAP下面三条不可能同时满足：</p>
 <ul>
@@ -462,7 +459,7 @@
 <li><p>特点：<strong>一个私有的网络，通过 nat 连接外网，如果要让外网连接到容器中，就需要做端口映射。</strong></p>
 </li>
 <li><p>结构图</p>
-<p><img src="https://yeasy.gitbooks.io/docker_practice/content/_images/network.png" alt></p>
+<p><img data-src="https://yeasy.gitbooks.io/docker_practice/content/_images/network.png" alt></p>
 </li>
 </ul>
 </li>
@@ -770,6 +767,9 @@
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script>
@@ -803,7 +803,7 @@
 
 <script>
 NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
-  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
     var GUEST = ['nick', 'mail', 'link'];
     var guest = 'nick,mail,link';
     guest = guest.split(',').filter(item => {

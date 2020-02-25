@@ -14,10 +14,11 @@
 
 
 <link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
   <meta name="description" content="分析spark初版本的源码，代码行数1w+，比较简单，但是基本架构变换不大，有必要阅读。先提出阅读Spark论文的一些疑问，再阅读源码。 阅读论文的问题RDD">
@@ -28,15 +29,10 @@
 <meta property="og:site_name" content="Night Piece">
 <meta property="og:description" content="分析spark初版本的源码，代码行数1w+，比较简单，但是基本架构变换不大，有必要阅读。先提出阅读Spark论文的一些疑问，再阅读源码。 阅读论文的问题RDD">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fy63zt3p9kj30n006caac.jpg =414x114">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fy640vwks4j30j80fmzmc.jpg =314x314">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fy641yldwwj30ge04o0sr.jpg =295x84">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fy64272z66j314k0fmjso.jpg =730x281">
 <meta property="og:updated_time" content="2020-02-25T09:44:15.404Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Spark源码分析-0.5最初版本">
 <meta name="twitter:description" content="分析spark初版本的源码，代码行数1w+，比较简单，但是基本架构变换不大，有必要阅读。先提出阅读Spark论文的一些疑问，再阅读源码。 阅读论文的问题RDD">
-<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fy63zt3p9kj30n006caac.jpg =414x114">
 
 <link rel="canonical" href="http://limuzhi.com/2018/08/18/spark-source-analyse-05/">
 
@@ -314,7 +310,7 @@
 <li>Caches are also aware of which entries are part of the same dataset （可以区分出不同的partition是不是同一个dataset的）</li>
 <li>key是(datasetID, partition) ，这里的datasetID包含了命名空间（Space）信息</li>
 </ul>
-<p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1fy63zt3p9kj30n006caac.jpg =414x114" alt></p>
+<p><img data-src="https://tva1.sinaimg.cn/large/006tNbRwgy1fy63zt3p9kj30n006caac.jpg =414x114" alt></p>
 <p>key的设计—KeySpace<br>原因：每个exector上已有一个cache实例，所有模块共享，需要区分命名空间<br>实现：</p>
 <ul>
 <li>使用了一个int的keySpaceId来区分：(datasetID, partition) 其中：datasetID=(keySpaceId, datasetId) 这里datasetId是真实的id</li>
@@ -346,7 +342,7 @@
 </li>
 </ul>
 <blockquote>
-<p>理解LRU设计逻辑<br>Cannot make space without removing part of the same dataset, or a more recently used one<br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1fy640vwks4j30j80fmzmc.jpg =314x314" alt><br><a href="https://blog.csdn.net/luanlouis/article/details/43017071" target="_blank" rel="noopener">https://blog.csdn.net/luanlouis/article/details/43017071</a></p>
+<p>理解LRU设计逻辑<br>Cannot make space without removing part of the same dataset, or a more recently used one<br><img data-src="https://tva1.sinaimg.cn/large/006tNbRwgy1fy640vwks4j30j80fmzmc.jpg =314x314" alt><br><a href="https://blog.csdn.net/luanlouis/article/details/43017071" target="_blank" rel="noopener">https://blog.csdn.net/luanlouis/article/details/43017071</a></p>
 </blockquote>
 <p>总结</p>
 <ol>
@@ -364,7 +360,7 @@
 <blockquote>
 <p>iterator函数何时调用？参考下面的schedule</p>
 </blockquote>
-<h4 id="Serializer"><a href="#Serializer" class="headerlink" title="Serializer"></a>Serializer</h4><p>线程安全的序列化封装，返回一个序列化工具的实例<code>SerializerInstance</code>，该接口是序列化相关的方法，one instance used by one thread at a time.<br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1fy641yldwwj30ge04o0sr.jpg =295x84" alt><br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1fy64272z66j314k0fmjso.jpg =730x281" alt></p>
+<h4 id="Serializer"><a href="#Serializer" class="headerlink" title="Serializer"></a>Serializer</h4><p>线程安全的序列化封装，返回一个序列化工具的实例<code>SerializerInstance</code>，该接口是序列化相关的方法，one instance used by one thread at a time.<br><img data-src="https://tva1.sinaimg.cn/large/006tNbRwgy1fy641yldwwj30ge04o0sr.jpg =295x84" alt><br><img data-src="https://tva1.sinaimg.cn/large/006tNbRwgy1fy64272z66j314k0fmjso.jpg =730x281" alt></p>
 <p>使用时<code>val ser = SparkEnv.get.serializer.newInstance()</code></p>
 <p>疑问：<br>效率低吗？每次都是构建了一个新的实例，不过一个线程一个实例其实还好</p>
 <h4 id="CacheTracker"><a href="#CacheTracker" class="headerlink" title="CacheTracker"></a>CacheTracker</h4><p>wait&amp;&amp;notify并发编程</p>
@@ -1018,6 +1014,9 @@
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script>
@@ -1098,7 +1097,7 @@
 
 <script>
 NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
-  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
     var GUEST = ['nick', 'mail', 'link'];
     var guest = 'nick,mail,link';
     guest = guest.split(',').filter(item => {

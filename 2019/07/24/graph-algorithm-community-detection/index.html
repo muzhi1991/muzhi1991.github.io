@@ -14,10 +14,11 @@
 
 
 <link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
   <meta name="description" content="在我们常见的数据结构中，图是一种有点冷门，时常被忽视的数据表达方式。大部分场景下，我们的数据关系足够简单，例如，一对一，一对多，这种情况下，表结构（关系数据库）或者文档结构（文档数据库）足以刻画数据之前的关系，对于稍复杂的关联/嵌套数据，通过join和文档嵌套的方式也可以轻松构建，此时在抽象层面，我们可以把数据的结构看作是一个树结构（数仓中也称为星型模型和雪花模型 ）。那什么时候会用到图呢？答案是">
@@ -28,32 +29,10 @@
 <meta property="og:site_name" content="Night Piece">
 <meta property="og:description" content="在我们常见的数据结构中，图是一种有点冷门，时常被忽视的数据表达方式。大部分场景下，我们的数据关系足够简单，例如，一对一，一对多，这种情况下，表结构（关系数据库）或者文档结构（文档数据库）足以刻画数据之前的关系，对于稍复杂的关联/嵌套数据，通过join和文档嵌套的方式也可以轻松构建，此时在抽象层面，我们可以把数据的结构看作是一个树结构（数仓中也称为星型模型和雪花模型 ）。那什么时候会用到图呢？答案是">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g4c1u856hmj30kd05xwen.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g4bi1kdhlcj30qx0ef3zj.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g4c29tmoigj308c06ljrp.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g4c2a2qtltj308c07bdfx.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g4i2vrrtfig305u05u77d.gif">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g4i537x787j308c0z0t92.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g4j0guwsnxj30dh0agaa9.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g4j1nqmadfj313q0jhjt6.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g4j2bium7yj313v0a30tw.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g4jbb8rxsij30dy09zmx7.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g4jb86cxhrj30aa084gly.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g4jbroe2y9j30id0543yi.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g4jc5tmxdbj30fg0c5t8z.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g4jc6grc05j30qz07qgm5.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g5bxf8dihpj30fi0beab0.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g5c6g6p97xj31b00u0gsz.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g5c6in36jjj31bv0u0jth.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g5c6rfj4gtj31c40u042j.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g5c6spe2zhj31c40u0jtg.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g5c6udr28oj31c40u042x.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g5c6vjgvtdj31ch0u0wim.jpg">
 <meta property="og:updated_time" content="2020-02-25T09:44:15.442Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="图分析综述与Spark下的社区发现">
 <meta name="twitter:description" content="在我们常见的数据结构中，图是一种有点冷门，时常被忽视的数据表达方式。大部分场景下，我们的数据关系足够简单，例如，一对一，一对多，这种情况下，表结构（关系数据库）或者文档结构（文档数据库）足以刻画数据之前的关系，对于稍复杂的关联/嵌套数据，通过join和文档嵌套的方式也可以轻松构建，此时在抽象层面，我们可以把数据的结构看作是一个树结构（数仓中也称为星型模型和雪花模型 ）。那什么时候会用到图呢？答案是">
-<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g4c1u856hmj30kd05xwen.jpg">
 
 <link rel="canonical" href="http://limuzhi.com/2019/07/24/graph-algorithm-community-detection/">
 
@@ -297,10 +276,10 @@
 <li><p>邻接矩阵：使用一个N<em>N的矩阵表示图（N是顶点数），对应的值表示表，适合表示<em>*稠密图</em></em></p>
 </li>
 <li><p>邻接表 ：数组与链表相结合的存储方法，数组中为图中的顶点，所关联的链表是与该顶点连接的边，适合表示<strong>稀疏图</strong></p>
-<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g4c1u856hmj30kd05xwen.jpg" alt></p>
+<p><img data-src="https://tva1.sinaimg.cn/large/006tNc79gy1g4c1u856hmj30kd05xwen.jpg" alt></p>
 </li>
 <li><p>十字链表法：是邻接表的改进方法，对于有向图，便于快速计算入度与出度。</p>
-<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g4bi1kdhlcj30qx0ef3zj.jpg" alt></p>
+<p><img data-src="https://tva1.sinaimg.cn/large/006tNc79gy1g4bi1kdhlcj30qx0ef3zj.jpg" alt></p>
 </li>
 </ul>
 <p>在neo4j数据库中使用了类似<strong>邻接表</strong>的表示方法，每一个node节点具有（下图）：</p>
@@ -308,14 +287,14 @@
 <li>一条指向Relationships<strong>双向链表</strong>的指针</li>
 <li>一条指向Property值的的key-value链表。</li>
 </ul>
-<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g4c29tmoigj308c06ljrp.jpg" alt></p>
+<p><img data-src="https://tva1.sinaimg.cn/large/006tNc79gy1g4c29tmoigj308c06ljrp.jpg" alt></p>
 <p>每个Relation中有（下图）：</p>
 <ul>
 <li>边start节点的pre和next指针以及</li>
 <li>边end节点的pre和next指针</li>
 <li>start与end的id，通过此id可以快速定位node。</li>
 </ul>
-<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g4c2a2qtltj308c07bdfx.jpg" alt></p>
+<p><img data-src="https://tva1.sinaimg.cn/large/006tNc79gy1g4c2a2qtltj308c07bdfx.jpg" alt></p>
 <p>我们可以看出通过这个数据结构，方便的实现如下功能：通过图顶点Vertex A遍历他的所有边，找到与他关联的节点的值属性值。</p>
 <h4 id="图算法综述"><a href="#图算法综述" class="headerlink" title="图算法综述"></a>图算法综述</h4><p>这里我们把常见的图相关的算法分为3类，分别为</p>
 <ul>
@@ -342,7 +321,7 @@
 <li><p>单源最短路径：求某个点到其他所有点的最短距离</p>
 <ul>
 <li><p>简介：典型算法Dijkstra，求图中一点到任何点的距离，当然也可以求两点间的最短距离，算法是贪心思想，将节点看为，全部顶点的集合是$V$，已选集合$U$，$V-U$为未选集合，每次挑选节点加入集合$U$，使得<strong>到达出发顶点$v_0$的距离</strong>最小，如此迭代。参考<a href="[https://zh.wikipedia.org/wiki/%E6%88%B4%E5%85%8B%E6%96%AF%E7%89%B9%E6%8B%89%E7%AE%97%E6%B3%95](https://zh.wikipedia.org/wiki/戴克斯特拉算法">wiki</a>)。</p>
-<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g4i2vrrtfig305u05u77d.gif" alt></p>
+<p><img data-src="https://tva1.sinaimg.cn/large/006tNc79gy1g4i2vrrtfig305u05u77d.gif" alt></p>
 </li>
 <li><p>应用：图中两点间的路由算法，如导航，电话网络等</p>
 </li>
@@ -423,7 +402,7 @@
 <li><p>介绍：<strong>描述一个图中的顶点之间结集成<a href="https://zh.wikipedia.org/wiki/團_(圖論" target="_blank" rel="noopener">团</a>)（clique）的程度的系数</strong>。两种系数的含义与计算方法如下</p>
 <ul>
 <li><p>局部集聚系数：<strong>某个顶点</strong>，他相邻的顶点组成的子图中，clique(闭合三角)的数量占总体两两相连的数量的比值。所以，如果邻接节点两两相连，局部集聚系数为1，如果邻接节点没有任何联系，集聚系数为0。可以表示为：$C(i)=\frac{\lambda_{G}\left(v_{i}\right)}{\tau_{G}\left(v_{i}\right)+\lambda_{G}\left(v_{i}\right)}$，其中，分子为顶点$v_i$包含的闭合三角数目，分母为闭合与开放三角数目之和(也等k(k-1)/2)</p>
-<p> <img src="https://tva1.sinaimg.cn/large/006tNc79gy1g4i537x787j308c0z0t92.jpg" width="100px"></p>
+<p> <img data-src="https://tva1.sinaimg.cn/large/006tNc79gy1g4i537x787j308c0z0t92.jpg" width="100px"></p>
 </li>
 <li><p>整体集聚系数：可以把<strong>整个图</strong>，看做有”闭合三角”和”开放三角”组成的，$G_{\triangle}$表示闭合三角个数，$G_{\wedge}$表示开放三角个数，整体集聚系数可以表示为$C_{t o t a l}(G)=\frac{3 \times G_{\Delta}}{3 \times G_{\Delta}+G_{\wedge}}$。另外，分母值的含义是对图中每个顶点分别对它的邻居两两相连的边的和，$C_{t o t a l}(G)=\frac{3 \times G_{\triangle}}{\sum_{i=1}^{n}\left(\begin{array}{c}{k_{i}} \\ {2}\end{array}\right)}$，其中$k_i$是每个顶点边的数目。如果用局部集聚系数表示：$C_{\text {total}}(G)=\frac{\sum_{i=1}^{n} \lambda_{G}\left(v_{i}\right)}{\sum_{i=1}^{n}\left(\tau_{G}\left(v_{i}\right)+\lambda_{G}\left(v_{i}\right)\right)}$，因为3个$G_{\triangle}$ 正好关联了3个顶点的闭合三角数目。</p>
 </li>
@@ -468,7 +447,7 @@
 </li>
 </ul>
 <p>一个例子如下，下图是对3条边的图进行分布，a是使用边分割的方式，节点ABCD的节点数据值存储了一份，但是边的数据有6份(还包含节点的引用，虚节点)，但是每台机器有节点的完整的边信息。b是使用了点分割，可以看到123条边都只存储了一次，单顶点数据却冗余存储</p>
-<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g4j0guwsnxj30dh0agaa9.jpg" alt></p>
+<p><img data-src="https://tva1.sinaimg.cn/large/006tNc79gy1g4j0guwsnxj30dh0agaa9.jpg" alt></p>
 <p>当前主流系统实现均为点分割方式。考虑到<strong>不均衡节点在大图中是常见现象</strong>，以及磁盘成本的下降，使用冗余的节点存储减少网络通信。</p>
 <h5 id="Spark中的图存储"><a href="#Spark中的图存储" class="headerlink" title="Spark中的图存储"></a>Spark中的图存储</h5><p>spark中图存储的基本方法使用了<strong>点分割</strong>的方式：每台机器存储Edge数据，同时对Vertex构建<strong>查找路由</strong>。Graph由EdgeRDD与VertexRDD组成，其中EdgeRDD存储了边，包含了src/dst/边的attr ；VertexRDD则含有顶点数据，有vid和属性attr，此外，VertexRDD还需要能通过顶点定位到所在的边，既即<strong>路由功能</strong>。下面简要介绍一下EdgeRDD与VertexRDD的数据结构：</p>
 <ul>
@@ -480,7 +459,7 @@
 <li>构建索引，<strong>目的是用srcid可以快速找到他的所有边</strong>：相同src保留第一个index,index中记录的是相同srcId中第一个出现的srcId与其下标。<strong>相当于可以用index快速在上面localSrcIds/localDstIds查找了,再向下找就是它的边</strong></li>
 <li>边相关的数据data，也是用本地id存储的，单独存在一个数组里</li>
 </ul>
-<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g4j1nqmadfj313q0jhjt6.jpg" alt></p>
+<p><img data-src="https://tva1.sinaimg.cn/large/006tNc79gy1g4j1nqmadfj313q0jhjt6.jpg" alt></p>
 </li>
 <li><p>VertexRDD</p>
 <ul>
@@ -493,20 +472,20 @@
 <li><p>对每个点分区构建路由表：可以用点的(VertexId, Int)信息快速查找到这个顶点相关的边在哪个EdgePartiton（通过pid），见下图的RoutingTablePartition</p>
 </li>
 <li><p>成ShippableVertexPartition：构建存储点属性，合并相同重复点的属性attr对象，补全缺失的attr对象</p>
-<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g4j2bium7yj313v0a30tw.jpg" alt></p>
+<p><img data-src="https://tva1.sinaimg.cn/large/006tNc79gy1g4j2bium7yj313v0a30tw.jpg" alt></p>
 </li>
 </ul>
 </li>
 </ul>
 <h4 id="分布式图计算模型"><a href="#分布式图计算模型" class="headerlink" title="分布式图计算模型"></a>分布式图计算模型</h4><p>图计算的基本思想是BSP模型，即Bulk Synchronous Parallell(分布式批同步)，他的基本思想是将图的计算<strong>分解成一系列串行的superstep(超步)</strong>:</p>
-<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g4jbb8rxsij30dy09zmx7.jpg" alt></p>
+<p><img data-src="https://tva1.sinaimg.cn/large/006tNc79gy1g4jbb8rxsij30dy09zmx7.jpg" alt></p>
 <p>每一个超步内部强调计算与通讯分离，具体而言包含三个阶段：</p>
 <ul>
 <li>并行计算(local computation)：在本地进行计算，无外部的数据访问</li>
 <li>全局通信(非本地数据通信)：方式数据给其他节点</li>
 <li>栅栏同步(等待通信行为结束)：同步阶段，等待所有节点都接收到数据</li>
 </ul>
-<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g4jb86cxhrj30aa084gly.jpg" alt></p>
+<p><img data-src="https://tva1.sinaimg.cn/large/006tNc79gy1g4jb86cxhrj30aa084gly.jpg" alt></p>
 <blockquote>
 <p>我们发现上述模型也有类似与shuffle的过程，但是对比MR，BSP模型具有下列不同：</p>
 <ul>
@@ -520,7 +499,7 @@
 <li><p>Pregel框架：该实现中<strong>以”顶点”为中心</strong>，对顶点应用函数进行计算并且顶点的值可以修改。而边没有任何计算与修改。</p>
 <ul>
 <li><p>在每个superstep中，每个顶点具有active和inactive两个状态。收到消息后就会变为active状态，并执行用户定义的同一个函数。这个函数可以对其他邻接边发出msg，修改自身的值，或者判断满足某些条件后把顶点人工halt为inactive</p>
-<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g4jbroe2y9j30id0543yi.jpg" alt></p>
+<p><img data-src="https://tva1.sinaimg.cn/large/006tNc79gy1g4jbroe2y9j30id0543yi.jpg" alt></p>
 </li>
 <li><p>当系统中没有消息再active节点时，所有节点都是inactive状态，算法迭代终止</p>
 </li>
@@ -537,10 +516,10 @@
 <li><p>scatter：顶点更新完成之后，更新边上的数据，并通知对其有依赖的邻结顶点更新状态。在<code>scatter</code>过程中，工作顶点只读，边上数据可写。(对比Pregel，注意这里边的数据可以修改)</p>
 </li>
 <li><p>存储结构如下：</p>
-<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g4jc5tmxdbj30fg0c5t8z.jpg" alt></p>
+<p><img data-src="https://tva1.sinaimg.cn/large/006tNc79gy1g4jc5tmxdbj30fg0c5t8z.jpg" alt></p>
 </li>
 <li><p>计算过程如下：</p>
-<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g4jc6grc05j30qz07qgm5.jpg" alt></p>
+<p><img data-src="https://tva1.sinaimg.cn/large/006tNc79gy1g4jc6grc05j30qz07qgm5.jpg" alt></p>
 </li>
 </ul>
 </li>
@@ -577,7 +556,7 @@
 <li>社区内部，顶点相对接近/密集</li>
 <li>不同社区之间，顶点相对疏远/稀疏</li>
 </ul>
-<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g5bxf8dihpj30fi0beab0.jpg" alt></p>
+<p><img data-src="https://tva1.sinaimg.cn/large/006tNc79gy1g5bxf8dihpj30fi0beab0.jpg" alt></p>
 <p> 从上述定义可以看出：社区是一个比较含糊的概念，只给出了一个定性的刻画。</p>
 <blockquote>
 <p>我们可以把社区发现算法对比与无监督学习中的聚类算法，典型的如 K-means系列算法，他们也是把相邻的节点进行聚合分类，不同的只有k-means中通过特征的『距离』作为衡量的标准。图的社区发现中通过边以及边的权重作为依据。</p>
@@ -806,24 +785,24 @@
 <ol>
 <li>导入数据，数据格式，为tsv，即tab分隔的边</li>
 </ol>
-<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g5c6g6p97xj31b00u0gsz.jpg" alt></p>
-<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g5c6in36jjj31bv0u0jth.jpg" alt></p>
+<p><img data-src="https://tva1.sinaimg.cn/large/006tNc79gy1g5c6g6p97xj31b00u0gsz.jpg" alt></p>
+<p><img data-src="https://tva1.sinaimg.cn/large/006tNc79gy1g5c6in36jjj31bv0u0jth.jpg" alt></p>
 <ol>
 <li>点击右侧，模块化的运行按钮启动运行算法</li>
 </ol>
-<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g5c6rfj4gtj31c40u042j.jpg" alt></p>
+<p><img data-src="https://tva1.sinaimg.cn/large/006tNc79gy1g5c6rfj4gtj31c40u042j.jpg" alt></p>
 <ol>
 <li>此时在数据页面出现新的一列，表示分类结果</li>
 </ol>
-<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g5c6spe2zhj31c40u0jtg.jpg" alt></p>
+<p><img data-src="https://tva1.sinaimg.cn/large/006tNc79gy1g5c6spe2zhj31c40u0jtg.jpg" alt></p>
 <ol>
 <li>在图中展示结果，给节点上色</li>
 </ol>
-<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g5c6udr28oj31c40u042x.jpg" alt></p>
+<p><img data-src="https://tva1.sinaimg.cn/large/006tNc79gy1g5c6udr28oj31c40u042x.jpg" alt></p>
 <ol>
 <li>挑选一直算法尝试调整图的布局分布</li>
 </ol>
-<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g5c6vjgvtdj31ch0u0wim.jpg" alt></p>
+<p><img data-src="https://tva1.sinaimg.cn/large/006tNc79gy1g5c6vjgvtdj31ch0u0wim.jpg" alt></p>
 <h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>参考文档：</p>
 <ul>
 <li><a href="https://www.cnblogs.com/bonelee/p/6211290.html" target="_blank" rel="noopener">Neo4j图数据库简介和底层原理</a></li>
@@ -1036,6 +1015,9 @@
 
   
   <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
 <script src="/js/utils.js"></script><script src="/js/motion.js"></script>
@@ -1116,7 +1098,7 @@
 
 <script>
 NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
-  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
     var GUEST = ['nick', 'mail', 'link'];
     var guest = 'nick,mail,link';
     guest = guest.split(',').filter(item => {
