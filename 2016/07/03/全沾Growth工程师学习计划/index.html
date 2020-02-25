@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="关于最近的学习计划，3个月的时间(7、8、9三个月)做一名全沾工程师。全沾是指对各个方面的技术的框架有几个基本了解，Growth是指如果需要深入可以快速成长切入。 技术清单 前端： 移动端 Android/IOS App开发（以后可以RN开发）   web开发 HTML CSS JavaScript     后端 NodeJS Redis MySql JSP  Spring MVC+Spring+">
+<meta name="keywords" content="Guide">
+<meta property="og:type" content="article">
+<meta property="og:title" content="全沾Growth工程师学习计划">
+<meta property="og:url" content="http://limuzhi.com/2016/07/03/全沾Growth工程师学习计划/index.html">
+<meta property="og:site_name" content="Night Piece">
+<meta property="og:description" content="关于最近的学习计划，3个月的时间(7、8、9三个月)做一名全沾工程师。全沾是指对各个方面的技术的框架有几个基本了解，Growth是指如果需要深入可以快速成长切入。 技术清单 前端： 移动端 Android/IOS App开发（以后可以RN开发）   web开发 HTML CSS JavaScript     后端 NodeJS Redis MySql JSP  Spring MVC+Spring+">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-02-25T09:44:15.466Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="全沾Growth工程师学习计划">
+<meta name="twitter:description" content="关于最近的学习计划，3个月的时间(7、8、9三个月)做一名全沾工程师。全沾是指对各个方面的技术的框架有几个基本了解，Growth是指如果需要深入可以快速成长切入。 技术清单 前端： 移动端 Android/IOS App开发（以后可以RN开发）   web开发 HTML CSS JavaScript     后端 NodeJS Redis MySql JSP  Spring MVC+Spring+">
+
+<link rel="canonical" href="http://limuzhi.com/2016/07/03/全沾Growth工程师学习计划/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>全沾Growth工程师学习计划 | Night Piece</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Night Piece</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">white && black</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tools">
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-wrench"></i>利器</a>
+
+  </li>
+        <li class="menu-item menu-item-read">
+
+    <a href="/read/" rel="section"><i class="fa fa-fw fa-book"></i>阅读</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://limuzhi.com/2016/07/03/全沾Growth工程师学习计划/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="limuzhi">
+      <meta itemprop="description" content="something about tech, android etc...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Night Piece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          全沾Growth工程师学习计划
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-07-03 14:14:44" itemprop="dateCreated datePublished" datetime="2016-07-03T14:14:44+08:00">2016-07-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-25 17:44:15" itemprop="dateModified" datetime="2020-02-25T17:44:15+08:00">2020-02-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2016/07/03/全沾Growth工程师学习计划/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2016/07/03/全沾Growth工程师学习计划/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>关于最近的学习计划，3个月的时间(7、8、9三个月)做一名全沾工程师。全沾是指对各个方面的技术的框架有几个基本了解，Growth是指如果需要深入可以快速成长切入。</p>
+<h2 id="技术清单"><a href="#技术清单" class="headerlink" title="技术清单"></a>技术清单</h2><ul>
+<li>前端：<ul>
+<li>移动端<ul>
+<li>Android/IOS App开发（以后可以RN开发）</li>
+</ul>
+</li>
+<li>web开发<ul>
+<li>HTML</li>
+<li>CSS</li>
+<li>JavaScript</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>后端<ul>
+<li>NodeJS</li>
+<li>Redis MySql</li>
+<li>JSP  Spring MVC+Spring+Hibernate </li>
+</ul>
+</li>
+<li>运维<ul>
+<li>Nginix</li>
+<li>虚拟机，容灾</li>
+<li>性能优化 分库分表</li>
+</ul>
+</li>
+<li>设计UX<ul>
+<li>设计工具Sketch</li>
+<li>设计基础原则学习</li>
+</ul>
+</li>
+<li>运营<ul>
+<li>数据分析 </li>
+<li>广告 推广 SEO 流量 </li>
+</ul>
+</li>
+</ul>
+<h2 id="学习方式"><a href="#学习方式" class="headerlink" title="学习方式"></a>学习方式</h2><p>以一个博客系统为实践相关知识。先使用一种最简单的技术栈实现，然后用其他技术栈实现，形成对比。然后分析不同方案，思考如何大并发等问题，挑选不同技术形成”最优”方案。</p>
+<h2 id="学习计划"><a href="#学习计划" class="headerlink" title="学习计划"></a>学习计划</h2><p>安排12周的时间（大概75天，每天6—8小时）进行学习，重点偏向技术，UX和运营有个基本的认识，没有时间可以延后。</p>
+<p>使用思维导图描绘学习路径</p>
+<h3 id="第一周"><a href="#第一周" class="headerlink" title="第一周"></a>第一周</h3><p>总体目标：html/css/javascript完成，nodejs入门，博客启动，初步打通前后端。</p>
+<ul>
+<li>[x] 周一 javascript对象模型，原型模式</li>
+<li>[x] 周二 前后端框架初探，Growth全栈增长工程师指南138</li>
+<li>[x] 周三 html/css 3WSchool教程看完 </li>
+<li>[x] 周四 CSS相关，javascript语法</li>
+<li>[x] 周五 javascript语法 <a href="http://javascript.ruanyifeng.com/" target="_blank" rel="noopener">http://javascript.ruanyifeng.com/</a></li>
+<li>[x] 周末 javascript语法 <a href="http://javascript.ruanyifeng.com/" target="_blank" rel="noopener">http://javascript.ruanyifeng.com/</a></li>
+</ul>
+<p>第二周：js完结周，node启动周</p>
+<p>-[ ] 周一 <a href="http://www.liaoxuefeng.com/wiki/001434446689867b27157e896e74d51a89c25cc8b43bdb3000" target="_blank" rel="noopener">javascript语法完成</a><br>-[ ] 周二 js相关工具库学习，jquery underscore<br>-[ ] 周三 node入门环境搭建<br>-[ ] 周四 node相关库学习 全局变量 http fs<br>-[ ] 周五 node相关库学习 stream<br>-[ ] 周末 总结html css js</p>
+<p>第三周：node完结周，项目启动</p>
+<p>-[ ] 周一 node框架学习，全栈指南阅读<br>-[ ] 周二 全栈指南阅读，测试驱动开发。。。（截至到上线章节之前）<br>-[ ] 周三 调研项目，网上搜索nodejs学习工程，找了一堆项目。<br>-[ ] 周四 已经无心学习，准备飞往哈尔滨<br>-[ ] 周五 不在。。。<br>-[ ] 周末 不在。。。</p>
+<p>修整周，感觉nodejs学习了太皮毛了！</p>
+<p>-[ ] 周一 刚回来，啥都没干！思考server开发不应该有redis之类的吗？于是搜了一圈，发现学的太皮毛，无法实践啊。<br>-[ ] 周二 学习<a href="https://github.com/alsotang/node-lessons" target="_blank" rel="noopener">《Node.js 包教不包会》</a>，18篇教程！这篇教程比较实战（express），后面的nodeclude是一个比较好的例子<br>-[ ] 周三 服务端爬虫（使用js的异步特性），eventproxy asyn库控制并发<br>-[ ] 周四 node中的测试框架mocha should supertest（还有浏览器前端测试）istanbul 测试覆盖率与测试驱动开发的思想。<br>-[ ] 周五 其他，线上部署heroku，cookie，session，redis，github的持续集成travis，数据mongodb与mongoose<br>-[ ] 周末 Promise，<strong>理解中间件</strong>，Connect与Express学习， js api与相关的库总结</p>
+<p>第四周：</p>
+<p>-[ ] 周一 初步了解redis，zookeeper，dubbo，soa，rpc，thrift，mq，nigix，lvs，docker等一些列概念与关系。形成大局观。<br>-[ ] 周二 nodeclude项目源码 环境部署，出入看了一下数据库，monggodb nosql文档型数据库，与hbase对比（列存储与行存储），与mysql对比等。<br>-[ ] 周三 项目模块分析，使用哪些中间件<br>-[ ] 周四 nodeclude项目源码 登录部分学习，oath2.0,token,sessionId,jwt以及安全问题<br>-[ ] 周五 nodeclude项目源码 ，以后要总结这个项目<br>-[ ] 周末 总结nodejs基础知识与下一步学习计划</p>
+<p>第五周：</p>
+<p>-[ ] 周一<br>-[ ] 周二<br>-[ ] 周三<br>-[ ] 周四<br>-[ ] 周五<br>-[ ] 周末 总结nodejs进阶与express</p>
+<p>webpack，react，bower，gulp等前端工具</p>
+<p>前段mvc框架</p>
+<p>第六周 完整的撸了一遍nodeclub代码，写了nodeclub项目分析的文章</p>
+<p>第七周 docker实践，学习了docker（看完了<a href="https://www.gitbook.com/book/yeasy/docker_practice" target="_blank" rel="noopener">docker从入门到实践</a>），<a href="https://github.com/b00giZm/docker-compose-nodejs-examples" target="_blank" rel="noopener">docker-compose 部署nodejs</a>，参考其部署了nginx+负载均衡n个node+redis+mongodb的例子，在该环境下跑起来了nodeclub。</p>
+<p>第八周 学习Java Web框架，Servlet+JSP+Spring +SpringMVC</p>
+<ul>
+<li><a href="http://wiki.jikexueyuan.com/project/java-web/" target="_blank" rel="noopener">极客学院的Java Web简单教程</a> 比较浅，但是有个大概的概念</li>
+<li><a href="http://jinnianshilongnian.iteye.com/blog/1593441" target="_blank" rel="noopener">跟开涛学SpringMVC</a> 前三章，比较好，很深入，涉及源码分析，讲了服务端构架，但是只讲了springmvc</li>
+<li>理了Java中Servlet部分的结构（不含tomcat）</li>
+<li>调研了学习的路径，<ul>
+<li>先学Servlet，然后学Spring 的IOC，再学SpringMVC</li>
+<li>了解一下JSP的原理和简单用法，实际中可能不用它开发。</li>
+<li>Spring AOP，数据库框架Hibenate？</li>
+<li>项目学习—一个SpringMVC项目—<a href="https://github.com/spring-projects/spring-mvc-showcase" target="_blank" rel="noopener">官方showcase</a> </li>
+<li>项目学习—一个SpringBoot项目—<a href="https://github.com/springside/springside4" target="_blank" rel="noopener">springside4项目</a></li>
+</ul>
+</li>
+<li>区分了一些概念<ul>
+<li>WebService（基于http的服务） VS RPC（远程调用，更广的概念）</li>
+<li><a href="https://www.ibm.com/developerworks/cn/webservices/0907_rest_soap/" target="_blank" rel="noopener">Restful vs SOAP</a> 思想的区别</li>
+<li>thrift 理解，还不深刻，与<a href="http://stackoverflow.com/questions/9732381/why-thrift-why-not-http-rpcjsongzip" target="_blank" rel="noopener">http+json的区别</a></li>
+</ul>
+</li>
+</ul>
+<p>第九周  Spring SpringMVC 数据库</p>
+<ul>
+<li>Spring 还要学一下<a href="http://wiki.jikexueyuan.com/project/spring/" target="_blank" rel="noopener">这个教程</a>，<a href="http://www.ibm.com/developerworks/cn/java/web/spring.html" target="_blank" rel="noopener">IBM的教程</a></li>
+<li><a href="chrome-extension://ikhdkkncnoglghljlkmcimlnlhkeamad/pdf-viewer/web/viewer.html?file=http%3A%2F%2Fread.pudn.com%2Fdownloads96%2Febook%2F392604%2FHibernate.pdf" target="_blank" rel="noopener">Hibernate</a></li>
+<li>maven</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+            <div class="social-item">
+              <a target="_blank" class="social-link" href="https://t.me/mltalk">
+                <span class="icon">
+                  <i class="fa fa-telegram"></i>
+                </span>
+
+                <span class="label">机器学习碎碎念</span>
+              </a>
+            </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Guide/" rel="tag"># Guide</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/06/25/版本控制工具git入门实践/" rel="prev" title="版本控制工具Git入门实践">
+      <i class="fa fa-chevron-left"></i> 版本控制工具Git入门实践
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2016/07/17/CSS与HTML学习笔记与知识图谱/" rel="next" title="CSS与HTML学习笔记与知识图谱">
+      CSS与HTML学习笔记与知识图谱 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#技术清单"><span class="nav-number">1.</span> <span class="nav-text">技术清单</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#学习方式"><span class="nav-number">2.</span> <span class="nav-text">学习方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#学习计划"><span class="nav-number">3.</span> <span class="nav-text">学习计划</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#第一周"><span class="nav-number">3.1.</span> <span class="nav-text">第一周</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">limuzhi</p>
+  <div class="site-description" itemprop="description">something about tech, android etc...</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muzhi1991" title="GitHub → https://github.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:muzhi1991@gmail.com" title="E-Mail → mailto:muzhi1991@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/muzhi1991" title="Twitter → https://twitter.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.chenyupeng.com/" title="https://www.chenyupeng.com/" rel="noopener" target="_blank">陈玉鹏的个人空间</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://macshuo.com/" title="http://macshuo.com/" rel="noopener" target="_blank">MacTalk</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">limuzhi</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'G5HLDFmPsllxIjax4F2JTLnl-gzGzoHsz',
+      appKey     : 'A5PTgbvpJwjPlcBJ3Brl8rDs',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="简单分析一个真实的项目-nodeclub，这个项目是node社区的源码，可以看做是一个用Node.js(Express框架)实现的社区论坛的模板。建议参考下面的技术栈目录和上一篇文章中的知识图谱学习。 包含的功能：  登录&amp;amp;&amp;amp;注册&amp;amp;&amp;amp;验证 通过第三方github信息注册 直接注册   账户系统 发帖，评论 图片上传 markdown   站内搜索 日志、性能、监控">
+<meta name="keywords" content="javascript,nodejs,后台开发,实践">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Node.js&amp;&amp;Express实践-nodeclub项目分析">
+<meta property="og:url" content="http://limuzhi.com/2016/08/28/nodejs&&express实践-nodeclub项目分析/index.html">
+<meta property="og:site_name" content="Night Piece">
+<meta property="og:description" content="简单分析一个真实的项目-nodeclub，这个项目是node社区的源码，可以看做是一个用Node.js(Express框架)实现的社区论坛的模板。建议参考下面的技术栈目录和上一篇文章中的知识图谱学习。 包含的功能：  登录&amp;amp;&amp;amp;注册&amp;amp;&amp;amp;验证 通过第三方github信息注册 直接注册   账户系统 发帖，评论 图片上传 markdown   站内搜索 日志、性能、监控">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://limuzhi.com/images/nodeclub_flow.png">
+<meta property="og:updated_time" content="2020-02-25T09:44:15.483Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Node.js&amp;&amp;Express实践-nodeclub项目分析">
+<meta name="twitter:description" content="简单分析一个真实的项目-nodeclub，这个项目是node社区的源码，可以看做是一个用Node.js(Express框架)实现的社区论坛的模板。建议参考下面的技术栈目录和上一篇文章中的知识图谱学习。 包含的功能：  登录&amp;amp;&amp;amp;注册&amp;amp;&amp;amp;验证 通过第三方github信息注册 直接注册   账户系统 发帖，评论 图片上传 markdown   站内搜索 日志、性能、监控">
+<meta name="twitter:image" content="http://limuzhi.com/images/nodeclub_flow.png">
+
+<link rel="canonical" href="http://limuzhi.com/2016/08/28/nodejs&&express实践-nodeclub项目分析/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>Node.js&&Express实践-nodeclub项目分析 | Night Piece</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Night Piece</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">white && black</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tools">
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-wrench"></i>利器</a>
+
+  </li>
+        <li class="menu-item menu-item-read">
+
+    <a href="/read/" rel="section"><i class="fa fa-fw fa-book"></i>阅读</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://limuzhi.com/2016/08/28/nodejs&&express实践-nodeclub项目分析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="limuzhi">
+      <meta itemprop="description" content="something about tech, android etc...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Night Piece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Node.js&&Express实践-nodeclub项目分析
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-08-28 10:10:10" itemprop="dateCreated datePublished" datetime="2016-08-28T10:10:10+08:00">2016-08-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-25 17:44:15" itemprop="dateModified" datetime="2020-02-25T17:44:15+08:00">2020-02-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/全栈/" itemprop="url" rel="index"><span itemprop="name">全栈</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2016/08/28/nodejs&&express实践-nodeclub项目分析/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2016/08/28/nodejs&&express实践-nodeclub项目分析/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>简单分析一个真实的项目-<a href="https://github.com/cnodejs/nodeclub" target="_blank" rel="noopener">nodeclub</a>，这个项目是node社区的源码，可以看做是一个用Node.js(Express框架)实现的社区论坛的模板。建议参考下面的<strong>技术栈目录</strong>和<a href="/files/nodejs进阶与express知识图谱.mindnode">上一篇文章中的知识图谱</a>学习。</p>
+<p>包含的功能：</p>
+<ol>
+<li>登录&amp;&amp;注册&amp;&amp;验证<ol>
+<li>通过第三方github信息注册</li>
+<li>直接注册</li>
+</ol>
+</li>
+<li>账户系统</li>
+<li>发帖，评论<ol>
+<li>图片上传</li>
+<li>markdown</li>
+</ol>
+</li>
+<li>站内搜索</li>
+<li>日志、性能、监控</li>
+<li>安全</li>
+<li>其他功能<ol>
+<li>rss</li>
+</ol>
+</li>
+</ol>
+<p>使用的技术栈：</p>
+<ol>
+<li>Node.js&amp;&amp;express</li>
+<li>代码设计结构—mvc<ol>
+<li>m<ol>
+<li>数据持久化<ol>
+<li>数据库方案：mongodb文档数据库</li>
+<li>orm框架：<code>mongoose</code>模块</li>
+<li>cookies：<code>cookie-parser</code>模块</li>
+</ol>
+</li>
+<li>内存数据存储<ol>
+<li>session&amp;&amp;redis—<code>express-session</code>,<code>connect-redis</code>模块</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>v<ol>
+<li>bootstrap框架</li>
+<li>渲染方式&amp;&amp;模板引擎<a href="http://yijiebuyi.com/blog/08cf14e904325c19814465689453b3aa.html" target="_blank" rel="noopener"><code>ejs-mate</code>模块</a></li>
+<li>app.locals res.locals传值</li>
+<li>loader加载css，js，less</li>
+<li>混合使用css与less配置样式</li>
+</ol>
+</li>
+<li>c<ol>
+<li>路由方案—<code>express.Router();</code></li>
+<li>代码流程控制，eventproxy，解决回调地狱。</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>工具lib<ol>
+<li>html解析中间件 body-parse</li>
+<li>解决js回调问题 — <code>eventproxy</code>模块</li>
+<li><strong>http请求模拟</strong>，<code>superagent</code>模块：测试api，代理，爬虫等</li>
+<li>上传文件 <code>busboy</code></li>
+<li><a href="https://github.com/broofa/node-uuid" target="_blank" rel="noopener">uuid生成工具</a>—uuid的作用与场景</li>
+<li><a href="http://blog.csdn.net/zzwwjjdj1/article/details/52042194" target="_blank" rel="noopener">nodejs的后端字符串验证器-validator</a></li>
+<li>url解析库—nodejs自带的</li>
+<li><a href="http://blog.csdn.net/boyzhoulin/article/details/40146197" target="_blank" rel="noopener">method-override</a></li>
+<li>moment模块：处理时间相关操作。</li>
+</ol>
+</li>
+<li>登录解决方案，token技术<ol>
+<li><code>passport</code>  node的登录认证中间件，支持用户名密码登录或者oauth登录</li>
+<li><code>passport-github</code> passport的github插件，实现github的登录策略</li>
+</ol>
+</li>
+<li>安全<ol>
+<li>全站https</li>
+<li>加解密<ol>
+<li>bcrypt模块</li>
+<li>数据库不存明文，只存加盐后的值或者token</li>
+<li>cookies加盐签名,sessionId加盐签名</li>
+</ol>
+</li>
+<li>csrf问题：<code>csurf</code>模块</li>
+<li>输入校验 </li>
+<li><a href="https://segmentfault.com/a/1190000003860400" target="_blank" rel="noopener">helmet模块</a></li>
+</ol>
+</li>
+<li>性能优化<ol>
+<li>上线前开启production模式</li>
+<li>使用gzip</li>
+<li>js，css文件压缩—Loader模块</li>
+<li>视图缓存（production会启用）：app.set(‘view cache’, true);</li>
+<li>api接口限流—<code>limit.js</code>自定义的中间件</li>
+</ol>
+</li>
+<li>监控<ol>
+<li>日志系统<code>log4js</code>库</li>
+<li>输出请求参数，ip，耗时</li>
+<li>错误日志输入</li>
+<li>第三方性能监控工具：oneapm</li>
+</ol>
+</li>
+<li>其他<ol>
+<li>支持api json接口的跨域访问—<code>cors</code>模块,</li>
+<li>反向代理（nginx）背后 —<code>app.enable(&#39;trust proxy&#39;);</code></li>
+</ol>
+</li>
+</ol>
+<h2 id="项目分析"><a href="#项目分析" class="headerlink" title="项目分析"></a>项目分析</h2><h3 id="目录结构"><a href="#目录结构" class="headerlink" title="目录结构"></a>目录结构</h3><ul>
+<li>main主目录下<ul>
+<li>app.js 项目入口文件</li>
+<li>xxroute.js 路由，web页面的路由和api路由</li>
+<li>config.js 项目用到的配置，如各种密钥，地址，访问频次等</li>
+<li>.jshintrc jshint工具配置</li>
+<li>package.json </li>
+<li>Makefile 定义一些常用任务，如make test，make build生成压缩js</li>
+</ul>
+</li>
+<li>common：一些工具方法的封装<ul>
+<li>cache.js：缓存封装，redis.js的再封装</li>
+<li>logger.js：日志log4js的封装</li>
+<li>redis.js：ioredis模块的封装，形成redis的client</li>
+<li>mail.js：发送邮件功能的封装</li>
+<li>tools.js 其他工具方法封装，格式化时间、密码存储比较等</li>
+<li>message.js 发送消息的功能，操作数据库</li>
+<li>at.js 提供at的功能，发送at消息，操作数据库</li>
+<li>store.js 保存文件到本地、七牛</li>
+<li>render_helper.js：一些在html中使用的工具方法的封装</li>
+</ul>
+</li>
+<li>middlewares：中间件，处理一些请求会用到的功能。<ul>
+<li>auth.js 权限校验，含有登录判断，管理员判断的中间件</li>
+<li>error_page.js 错误页的统一界面</li>
+<li>limit.js 频率限制的中间件，如api请求次数等</li>
+<li>proxy.js 在站内提供了一个代理，访问localhost/agent?url=”www.google-analytics.com”即可。</li>
+<li>requst_log.js 打印所有的http请求的日志，如完成时间</li>
+<li>mongoose_log.js dubug环境下打印mongoose操作日志。。不是中间件，就一个配置</li>
+<li>render.js  debug环境下偷偷替换（装饰）res的了render函数的中间件</li>
+</ul>
+</li>
+<li>controllers：控制器，所有的路由都会传递给controller。由它去操作model（通过proxy）调用工具方法处理数据，最后render view输出。因此controller比较重。按功能模块分为不同js，每个js中暴露多个控制器。<ul>
+<li>site.js: 网站主页相关的的请求控制器，如主页</li>
+<li>user.js：账户相关的请求控制器，如个人主页，用户设置。</li>
+<li>topic.js 话题相关的，如新建帖子，删除帖子，置顶等。</li>
+<li>message.js 消息相关，如用户个人的所有消息。</li>
+<li>其他：。。。</li>
+</ul>
+</li>
+<li>views：界面html，ejs模板写的，目录下按功能模块分包，略了</li>
+<li>proxy：<strong>model层的操作封装</strong>，可能涉及跨多个model的查找。如根据用户id查找帖子。按功能模块分为不同js。<ul>
+<li>index.js 其他所有proxy的集合，都放到它的<code>exports</code>变量中</li>
+<li>user.js 用户相关操作，如新建用户，查找用户</li>
+<li>topic.js 帖子相关操作，如查找某个帖子的相关信息，如发布的用户，内如（要查多个model）。</li>
+<li>其他。。</li>
+</ul>
+</li>
+<li>models：<strong>纯的model实体定义，数据库实体，类似POJO</strong>，不含操作。<ul>
+<li>index.js 其他所有model的集合，都放到它的<code>exports</code>变量中</li>
+<li>base_model.js 给所有model添加方法。</li>
+<li>user.js 用户实体，如用户名，密码，token</li>
+<li>topic.js 帖子的实体，如标题，时间，浏览数目，作者。</li>
+<li>其他。。</li>
+</ul>
+</li>
+<li>api：RestfulAPI，由api的router直接调用这里。</li>
+<li>test</li>
+</ul>
+<h3 id="调用流程"><a href="#调用流程" class="headerlink" title="调用流程"></a>调用流程</h3><p><img src="/images/nodeclub_flow.png" alt="nodeclub数据流动"></p>
+<p>注意一下，操作model这里有点乱，很多地方都操作了，如proxy，common中的一写工具，controllers下的控制器直接操作model。api目录下的RestfulAPI也有直接操作的。理想情况下：所有的model操作都在proxy中。controller api common中都引用proxy操作。问题是：比较麻烦，很多简单操作要多封装一层。</p>
+<h2 id="View层界面相关技术"><a href="#View层界面相关技术" class="headerlink" title="View层界面相关技术"></a>View层界面相关技术</h2><p>app.locals这个对象字面量中定义的键值对，是可以直接在模板中使用的，就和res.render时开发者传入的模板渲染参数一样</p>
+<h3 id="模板的值传递"><a href="#模板的值传递" class="headerlink" title="模板的值传递"></a>模板的值传递</h3><ul>
+<li>render参数，传入值，等价于res.locals赋值</li>
+<li>app.locals与res.locals</li>
+</ul>
+<blockquote>
+<p> <code>locals</code>可能存在于<code>app</code>对象中即：<a href="http://itbilu.com/nodejs/npm/VJ5TlyRnl.html#app-properties-locals" target="_blank" rel="noopener"><code>app.locals</code></a>；也可能存在于<code>res</code>对象中，即：<a href="http://itbilu.com/nodejs/npm/Vkp32gJpg.html#res-prop-locals" target="_blank" rel="noopener"><code>res.locals</code></a>。两者都会将该对象传递至所渲染的页面中。不同的是，<code>app.locals</code>会在整个生命周期中起作用；而<code>res.locals</code>只会有当前请求中起作用。由于<code>app.locals</code>在当前应用所有的渲染模中访问，这样我们就可以在该对象中定义一些顶级/全局的数据，并在渲染模板中使用。</p>
+</blockquote>
+<h3 id="ejs"><a href="#ejs" class="headerlink" title="ejs"></a>ejs</h3><ul>
+<li><p><a href="http://www.voidcn.com/blog/hzw05103020/article/p-2337629.html" target="_blank" rel="noopener">ejs 标签</a>(参考layout.html文件)</p>
+<ul>
+<li><p>&lt;%…%&gt; 块中安排JavaScript 代码</p>
+</li>
+<li><p>&lt;%=输出变量%&gt;</p>
+</li>
+<li><p>&lt;%- VARIABLE_NAME %&gt;：输出原始内容,不会被escape，应用在导入html，json对象</p>
+</li>
+<li><p>&lt;%-include filename %&gt;加载其他页面模版</p>
+</li>
+<li><p>自定义开闭符号(&lt;% %&gt; )</p>
+<blockquote>
+<p>=号输出,就会被escape转义编码（在JavaScript中，escape(s)是一个全局函数，其对字符串s某些字符———-替换成了十六进制的转义序列。在escape(s)返回的新字符串中，除了ASCII字母、数字、标点符号*+-./@_外，所有字符都转义成%xx或%uxxxx（x是十六进制数）形式，其中，从%u0000到%u00ff的Unicode字符转义成%xx形式。）</p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li><p>支持母模板 ejs-mate：一个ejs的分支版本，支持母模板</p>
+<ul>
+<li>什么是母模板，<a href="http://yijiebuyi.com/blog/08cf14e904325c19814465689453b3aa.html" target="_blank" rel="noopener">介绍</a>：某网站中的所有网页的header（js，css）与footer一般是相同的，不同的部分是body中的内容。</li>
+<li>layout.html中 公用的模板布局<ul>
+<li>head<ul>
+<li>一些库的css,js加载，如bootstrap，jquery</li>
+<li>layout中公用布局的css，js</li>
+<li>meta元素配置：description等，比较重要的有<a href="https://cnodejs.org/topic/5533dd6e9138f09b629674fd" target="_blank" rel="noopener">csrf存在meta中</a>，<a href="https://imququ.com/post/sth-about-switch-to-https-3.html" target="_blank" rel="noopener">referrer设置</a>。</li>
+<li>title，用js选择合适的title</li>
+<li>载入一下配置文件中的header</li>
+<li>link：<a href="http://www.cnblogs.com/LoveJenny/archive/2012/05/22/2512683.html" target="_blank" rel="noopener">icon</a>和rss</li>
+</ul>
+</li>
+<li>footer<ul>
+<li>赞助信息等</li>
+<li>ga，网盟配置</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">xmlns</span>=<span class="string">"http://www.w3.org/1999/xhtml"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- style  包括公共库的css，公共布局layout用的css--&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">%-</span> <span class="attr">Loader</span>('/<span class="attr">public</span>/<span class="attr">stylesheets</span>/<span class="attr">index.min.css</span>')</span></span><br><span class="line"><span class="tag">  <span class="attr">.css</span>('/<span class="attr">public</span>/<span class="attr">libs</span>/<span class="attr">bootstrap</span>/<span class="attr">css</span>/<span class="attr">bootstrap.css</span>')</span></span><br><span class="line"><span class="tag">  <span class="attr">.css</span>('/<span class="attr">public</span>/<span class="attr">stylesheets</span>/<span class="attr">common.css</span>')</span></span><br><span class="line"><span class="tag">  <span class="attr">.css</span>('/<span class="attr">public</span>/<span class="attr">stylesheets</span>/<span class="attr">style.less</span>')</span></span><br><span class="line"><span class="tag">	<span class="attr">.........</span></span></span><br><span class="line"><span class="tag">  <span class="attr">.done</span>(<span class="attr">assets</span>, <span class="attr">config.site_static_host</span>, <span class="attr">config.mini_assets</span>)</span></span><br><span class="line"><span class="tag">  %&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!-- scripts 包括公共库的js，公共部分layout使用main.js，responsive.js--&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">%-</span> <span class="attr">Loader</span>('/<span class="attr">public</span>/<span class="attr">index.min.js</span>')</span></span><br><span class="line"><span class="tag">  <span class="attr">.js</span>('/<span class="attr">public</span>/<span class="attr">libs</span>/<span class="attr">jquery-2.1.0.js</span>')</span></span><br><span class="line"><span class="tag">  <span class="attr">.js</span>('/<span class="attr">public</span>/<span class="attr">libs</span>/<span class="attr">lodash.compat.js</span>')</span></span><br><span class="line"><span class="tag">  <span class="attr">.js</span>('/<span class="attr">public</span>/<span class="attr">libs</span>/<span class="attr">jquery-ujs.js</span>')</span></span><br><span class="line"><span class="tag">   <span class="attr">..........</span></span></span><br><span class="line"><span class="tag">  <span class="attr">.js</span>('/<span class="attr">public</span>/<span class="attr">javascripts</span>/<span class="attr">main.js</span>')</span></span><br><span class="line"><span class="tag">  <span class="attr">.js</span>('/<span class="attr">public</span>/<span class="attr">javascripts</span>/<span class="attr">responsive.js</span>')</span></span><br><span class="line"><span class="tag">  <span class="attr">.done</span>(<span class="attr">assets</span>, <span class="attr">config.site_static_host</span>, <span class="attr">config.mini_assets</span>)</span></span><br><span class="line"><span class="tag">  %&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!--公共布局如标题栏，侧边栏---&gt;</span></span><br><span class="line">  <span class="comment">&lt;!--。。。。。。---&gt;</span></span><br><span class="line">    </span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">'main'</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!--被替换部分---&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">%-</span> <span class="attr">body</span> %&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">   <span class="comment">&lt;!--公共布局如footer---&gt;</span></span><br><span class="line">   <span class="comment">&lt;!--。。。。。。---&gt;</span></span><br><span class="line">    </span><br><span class="line">   <span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="actionscript">   <span class="comment">// 这个页面的一些脚本</span></span></span><br><span class="line">   <span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<blockquote>
+<p> 直接使用ejs的include支持模板复用：<a href="https://cnodejs.org/topic/50c1a0ed637ffa4155d05256" target="_blank" rel="noopener">https://cnodejs.org/topic/50c1a0ed637ffa4155d05256</a></p>
+</blockquote>
+<h3 id="bootstrap前端样式框架"><a href="#bootstrap前端样式框架" class="headerlink" title="bootstrap前端样式框架"></a>bootstrap前端样式框架</h3><ul>
+<li>什么是响应式布局：简单来说可以适应不同大小屏幕的布局</li>
+<li>原理：<ul>
+<li><a href="http://www.cnblogs.com/2050/p/3877280.html" target="_blank" rel="noopener">viewport</a></li>
+<li>CSS 媒体查询</li>
+<li><a href="https://developers.google.com/web/fundamentals/design-and-ui/responsive/fundamentals/how-to-choose-breakpoints?hl=zh-cn" target="_blank" rel="noopener">断点</a></li>
+</ul>
+</li>
+<li><a href="https://developers.google.com/web/fundamentals/design-and-ui/responsive/patterns/?hl=zh-cn" target="_blank" rel="noopener">常见样式</a></li>
+<li>什么是bootstrap：一个<strong>前端样式框架</strong>。仅仅是方便布局和提供一些样式。可以理解为一个增强的CSS的框架（内部使用less），同时支持<a href="http://v3.bootcss.com/customize/" target="_blank" rel="noopener">自定义</a>。<ul>
+<li>更方便布局：<strong>12栅格系统</strong></li>
+<li>一些css样式：如一下按钮、表格等样式，通过class属性引用。</li>
+<li>一些js组件：如点击按钮下拉，弹窗等常用的操作。通过自定义的属性如<code>data-toggle</code>引用。</li>
+</ul>
+</li>
+<li><a href="http://www.cnblogs.com/zhili/p/BoostrapQuickStart.html" target="_blank" rel="noopener">入门</a></li>
+</ul>
+<h3 id="css与less样式表"><a href="#css与less样式表" class="headerlink" title="css与less样式表"></a>css与less样式表</h3><p><a href="http://www.bootcss.com/p/lesscss/" target="_blank" rel="noopener">Less</a>是CSS样式表的一个进化版本，支持变量的定义。需要注意的是less最终会转换成css文件:</p>
+<ul>
+<li>客户端解析：在客户端解析less为css</li>
+<li>服务端解析：请求的less文件，服务端解析此文件为css后返回给客户端。</li>
+</ul>
+<h2 id="Controller层分析"><a href="#Controller层分析" class="headerlink" title="Controller层分析"></a>Controller层分析</h2><p>controller主要由路由调用，由它去操作model（通过proxy）调用工具方法处理数据，<strong>包含了大部分业务代码</strong>，最后render view输出。因此controller比较重。按功能模块分为不同js，每个js中暴露多个控制器。</p>
+<p>代码主要</p>
+<ul>
+<li>通过eventproxy这个库来实现的各种异步逻辑。</li>
+<li>session的使用：如session.user中存储帐号信息</li>
+<li>cache(redis)的使用</li>
+</ul>
+<h2 id="Model层分析"><a href="#Model层分析" class="headerlink" title="Model层分析"></a>Model层分析</h2><h3 id="Mongodb"><a href="#Mongodb" class="headerlink" title="Mongodb"></a><a href="https://github.com/alsotang/node-lessons/tree/master/lesson15" target="_blank" rel="noopener">Mongodb</a></h3><p>nodeclub使用Mongodb做数据库，存储用户和帖子信息。</p>
+<ul>
+<li><p>文档型数据库：存储bson（json的超集，支持二进制数据）</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> post = &#123; <span class="comment">// 一个文档，这里是一个json</span></span><br><span class="line">  title: <span class="string">'呵呵的一天'</span>,</span><br><span class="line">  author: <span class="string">'alsotang'</span>,</span><br><span class="line">  content: <span class="string">'今天网速很差'</span>,</span><br><span class="line">  tags: [<span class="string">'呵呵'</span>, <span class="string">'网速'</span>, <span class="string">'差'</span>], <span class="comment">// 可以嵌套</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>数据的层级是：数据库 -&gt; collection -&gt; document -&gt; 字段。对应mysql的数据库（db） -&gt; 表（table） -&gt; 记录（record）-&gt; 字段。</p>
+</li>
+<li><p>特点：</p>
+<ul>
+<li>表（collection）之间没有联系，不支持join</li>
+<li>不支持事务操作</li>
+<li><strong>自动分片</strong>：存储到多个实体（应该是按照key分片）</li>
+<li>scheme-less：每个文档（record）格式可以不同，但是不建议这么干。这个特定可用在log系统中。</li>
+<li>支持索引，而且<strong>支持复合索引，支持索引排序</strong></li>
+</ul>
+</li>
+<li><p>建议：关键数据还是mysql，mongodb适合存储非关键的数据。</p>
+</li>
+<li><p>mongoose：odm框架（对象文档映射） ，对应 sql 中的 orm。</p>
+</li>
+</ul>
+<h3 id="Cookies存储"><a href="#Cookies存储" class="headerlink" title="Cookies存储"></a>Cookies存储</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// cookie-parser中间件</span></span><br><span class="line">app.use(<span class="built_in">require</span>(<span class="string">'cookie-parser'</span>)(config.session_secret));</span><br><span class="line"><span class="comment">// write</span></span><br><span class="line"><span class="keyword">var</span> opts = &#123;</span><br><span class="line">    path: <span class="string">'/'</span>,</span><br><span class="line">    maxAge: <span class="number">1000</span> * <span class="number">60</span> * <span class="number">60</span> * <span class="number">24</span> * <span class="number">30</span>,</span><br><span class="line">    signed: <span class="literal">true</span>,</span><br><span class="line">    httpOnly: <span class="literal">true</span></span><br><span class="line">  &#125;;</span><br><span class="line">res.cookie(config.auth_cookie_name, auth_token, opts);</span><br><span class="line"><span class="comment">// clear</span></span><br><span class="line">res.clearCookie(config.auth_cookie_name, &#123; <span class="attr">path</span>: <span class="string">'/'</span> &#125;);</span><br><span class="line"><span class="comment">// read</span></span><br><span class="line"><span class="keyword">var</span> auth_token = req.signedCookies[config.auth_cookie_name];</span><br></pre></td></tr></table></figure>
+<ul>
+<li>cookie解析器,解析req.headers.cookie的内容,使用(value+secret)做签名（md5）,防止cookies篡改</li>
+<li>可以直接从 req.cookies[] 或者 req.signedCookies[]中获取需要的值</li>
+<li>cookies中存储：<ul>
+<li>auth_token，是用户的登录凭证。</li>
+<li>sessionId，session模块使用的id，代表会话对应的内存数据。</li>
+</ul>
+</li>
+<li>建议不要在cookies中存储过多信息，存一些对攻击者没有意义的值即可。</li>
+</ul>
+<h3 id="session-amp-amp-redis"><a href="#session-amp-amp-redis" class="headerlink" title="session&amp;&amp;redis"></a>session&amp;&amp;redis</h3><ul>
+<li>本项目，redis的作用：<ul>
+<li>存储session会话数据<ul>
+<li>user信息</li>
+</ul>
+</li>
+<li>缓存部分数据，如热门帖子等。</li>
+</ul>
+</li>
+<li>实现：<code>express-session</code>,<code>connect-redis</code>模块结合使用，session自动存储到redis中。只要读写<code>req.session.xxx</code>即可。</li>
+</ul>
+<h2 id="登录模块分析"><a href="#登录模块分析" class="headerlink" title="登录模块分析"></a>登录模块分析</h2><p>登录模块基本包含了应用的所有技术，是一个不错的分析点。</p>
+<h3 id="第三方登录与组成"><a href="#第三方登录与组成" class="headerlink" title="第三方登录与组成"></a>第三方登录与组成</h3><p>第三方授权成功后分为三种情况：</p>
+<ul>
+<li>非首次授权，直接登录论坛成功 </li>
+<li>首次授权，跳转都新用户页面，让用户选择<ul>
+<li>注册新用户</li>
+<li>与以前的帐号绑定</li>
+</ul>
+</li>
+</ul>
+<p>基本流程：</p>
+<ol>
+<li><p>通过oath2.0获得github的授权，获得accessToken</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// oauth 中间件</span></span><br><span class="line">app.use(passport.initialize());</span><br><span class="line"><span class="comment">// github oauth</span></span><br><span class="line">passport.serializeUser(<span class="function"><span class="keyword">function</span> (<span class="params">user, done</span>) </span>&#123;</span><br><span class="line">  done(<span class="literal">null</span>, user);</span><br><span class="line">&#125;);</span><br><span class="line">passport.deserializeUser(<span class="function"><span class="keyword">function</span> (<span class="params">user, done</span>) </span>&#123;</span><br><span class="line">  done(<span class="literal">null</span>, user);</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// 注册了github的auth登录策略(passport-github)</span></span><br><span class="line">passport.use(<span class="keyword">new</span> GitHubStrategy(config.GITHUB_OAUTH, githubStrategyMiddleware));</span><br><span class="line"><span class="comment">// github登录的路由，入口，调用了github授权</span></span><br><span class="line">router.get(<span class="string">'/auth/github'</span>, configMiddleware.github, passport.authenticate(<span class="string">'github'</span>));</span><br><span class="line"><span class="comment">// oauth2.0的回调路径，见oAuth的原理，最终获得accessToken，回调github.callback方法(自定义方法)</span></span><br><span class="line">router.get(<span class="string">'/auth/github/callback'</span>,</span><br><span class="line">  passport.authenticate(<span class="string">'github'</span>, &#123; <span class="attr">failureRedirect</span>: <span class="string">'/signin'</span> &#125;), github.callback);</span><br></pre></td></tr></table></figure>
+<p>​</p>
+</li>
+<li><p>使用accessToken访问github的帐号信息，获得email（必须要有email，否则提示错误）：这一步包含在 <code>passport.authenticate</code>中，<code>github.callback</code>回调中已经有这些值了。保存在req.user中。</p>
+</li>
+<li><p>通过github查询是否该github帐号已经注册过，有则更新数据库信息（accessToken等）然后直接登录，没有跳转到新帐号创建界面。</p>
+<blockquote>
+<p>思考：</p>
+<ul>
+<li>为什么非首次可以直接登录成功？因为在这里已经拿到accessToken，说明用户已经授权，以前也登录过。</li>
+<li>为什么首次授权成功后要跳转？这里的新用户界面<strong>给用户选择是否绑定以前的帐号</strong>。。如果没有这个需求可以直接创建账户然后登录成功。</li>
+</ul>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">exports.callback = <span class="function"><span class="keyword">function</span> (<span class="params">req, res, next</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> profile = req.user;</span><br><span class="line">  <span class="keyword">var</span> email = profile.emails &amp;&amp; profile.emails[<span class="number">0</span>] &amp;&amp; profile.emails[<span class="number">0</span>].value;</span><br><span class="line">  <span class="comment">// 查询数据库</span></span><br><span class="line">  User.findOne(&#123;<span class="attr">githubId</span>: profile.id&#125;, <span class="function"><span class="keyword">function</span> (<span class="params">err, user</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (err) &#123;</span><br><span class="line">      <span class="keyword">return</span> next(err);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 非首次授权，已经是 cnode 用户时，更新他的资料</span></span><br><span class="line">    <span class="keyword">if</span> (user) &#123;</span><br><span class="line">      user.githubUsername = profile.username;</span><br><span class="line">      user.githubId = profile.id;</span><br><span class="line">      user.githubAccessToken = profile.accessToken;</span><br><span class="line">      <span class="comment">// user.loginname = profile.username;</span></span><br><span class="line">      user.avatar = profile._json.avatar_url;</span><br><span class="line">      user.email = email || user.email;</span><br><span class="line">	  <span class="comment">// 保存数据到数据库</span></span><br><span class="line">      user.save(<span class="function"><span class="keyword">function</span> (<span class="params">err</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (err) &#123;</span><br><span class="line">         <span class="comment">// 错误处理 略。。。。</span></span><br><span class="line">          <span class="keyword">return</span> next(err);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 登录成功！！！在res中生成auth_token，放入cookies，其中auth_token是user对象的_id,即数据库中的主id</span></span><br><span class="line">        authMiddleWare.gen_session(user, res);</span><br><span class="line">        <span class="comment">// 回主页</span></span><br><span class="line">        <span class="keyword">return</span> res.redirect(<span class="string">'/'</span>);</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="comment">// 首次授权，用户还未存在，则建立新用户，重定向网页</span></span><br><span class="line">      req.session.profile = profile;</span><br><span class="line">      <span class="keyword">return</span> res.redirect(<span class="string">'/auth/github/new'</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">gen_session</span>(<span class="params">user, res</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> auth_token = user._id + <span class="string">'$$$$'</span>; <span class="comment">// 以后可能会存储更多信息，用 $$$$ 来分隔</span></span><br><span class="line">  <span class="keyword">var</span> opts = &#123;</span><br><span class="line">    path: <span class="string">'/'</span>,</span><br><span class="line">    maxAge: <span class="number">1000</span> * <span class="number">60</span> * <span class="number">60</span> * <span class="number">24</span> * <span class="number">30</span>,</span><br><span class="line">    signed: <span class="literal">true</span>,</span><br><span class="line">    httpOnly: <span class="literal">true</span></span><br><span class="line">  &#125;;</span><br><span class="line">  res.cookie(config.auth_cookie_name, auth_token, opts); <span class="comment">//cookie 有效期30天</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>新用户流程：添加数据库数据，生成sessionId返回给用户</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">router.get(<span class="string">'/auth/github/new'</span>, github.new);</span><br><span class="line"><span class="comment">// 新用户返回这个界面，其中有两个表单，1个是创建新用户，另一个是绑定以前的帐号。action都是调转到/auth/github/create，提交的表单有个isNew的标志，区分用户提交的哪个表单。</span></span><br><span class="line">exports.new = <span class="function"><span class="keyword">function</span> (<span class="params">req, res, next</span>) </span>&#123;</span><br><span class="line">  res.render(<span class="string">'sign/new_oauth'</span>, &#123;<span class="attr">actionPath</span>: <span class="string">'/auth/github/create'</span>&#125;);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>表单界面布局代码:</p>
+</li>
+</ol>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--第一个表单：注意csrf isnew 两个hidden --&gt;</span>      </span><br><span class="line">&lt;form id='signin_form' class='form-horizontal' action=&lt;%= actionPath%&gt; method='post'&gt;</span><br><span class="line">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">'hidden'</span> <span class="attr">name</span>=<span class="string">'_csrf'</span> <span class="attr">value</span>=<span class="string">'&lt;%= csrf %&gt;'</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">'hidden'</span> <span class="attr">name</span>=<span class="string">'isnew'</span> <span class="attr">value</span>=<span class="string">'1'</span>/&gt;</span></span><br><span class="line"></span><br><span class="line">      <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">'control-group'</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">label</span> <span class="attr">class</span>=<span class="string">'control-label'</span>&gt;</span>通过 GitHub 帐号<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">'controls'</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">'submit'</span> <span class="attr">class</span>=<span class="string">'span-info'</span> <span class="attr">value</span>=<span class="string">"注册新账号"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line">      </span><br><span class="line"><span class="comment">&lt;!--第二个表单 注意csrf 还有密码的处理--&gt;</span></span><br><span class="line">&lt;form id='signin_form' class='form-horizontal' action=&lt;%= actionPath%&gt; method='post'&gt;</span><br><span class="line">      <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">'control-group'</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">label</span> <span class="attr">class</span>=<span class="string">'controls'</span>&gt;</span>或者<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">'control-group'</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">label</span> <span class="attr">class</span>=<span class="string">'control-label'</span> <span class="attr">for</span>=<span class="string">'name'</span>&gt;</span>用户名<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">'controls'</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">input</span> <span class="attr">class</span>=<span class="string">'input-xlarge'</span> <span class="attr">id</span>=<span class="string">'name'</span> <span class="attr">name</span>=<span class="string">'name'</span> <span class="attr">size</span>=<span class="string">'30'</span> <span class="attr">type</span>=<span class="string">'text'</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">'control-group'</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">label</span> <span class="attr">class</span>=<span class="string">'control-label'</span> <span class="attr">for</span>=<span class="string">'pass'</span>&gt;</span>密码<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">'controls'</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">input</span> <span class="attr">class</span>=<span class="string">'input-xlarge'</span> <span class="attr">id</span>=<span class="string">'pass'</span> <span class="attr">name</span>=<span class="string">'pass'</span> <span class="attr">size</span>=<span class="string">'30'</span> <span class="attr">type</span>=<span class="string">'password'</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">'hidden'</span> <span class="attr">name</span>=<span class="string">'_csrf'</span> <span class="attr">value</span>=<span class="string">'&lt;%= csrf%&gt;'</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">'form-actions'</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">'submit'</span> <span class="attr">class</span>=<span class="string">'span-primary'</span> <span class="attr">value</span>=<span class="string">'关联旧账号'</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>   创建帐号/绑定github核心代码</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line">router.post(<span class="string">'/auth/github/create'</span>, github.create);</span><br><span class="line"></span><br><span class="line">exports.create = <span class="function"><span class="keyword">function</span> (<span class="params">req, res, next</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> profile = req.session.profile;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> isnew = req.body.isnew;</span><br><span class="line">  <span class="keyword">var</span> loginname = validator.trim(req.body.name || <span class="string">''</span>).toLowerCase();</span><br><span class="line">  <span class="keyword">var</span> password = validator.trim(req.body.pass || <span class="string">''</span>);</span><br><span class="line">  <span class="keyword">var</span> ep = <span class="keyword">new</span> eventproxy();</span><br><span class="line">  ep.fail(next);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (!profile) &#123;</span><br><span class="line">    <span class="keyword">return</span> res.redirect(<span class="string">'/signin'</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">delete</span> req.session.profile;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> email = profile.emails &amp;&amp; profile.emails[<span class="number">0</span>] &amp;&amp; profile.emails[<span class="number">0</span>].value;</span><br><span class="line">  <span class="keyword">if</span> (isnew) &#123; <span class="comment">// 注册新账号</span></span><br><span class="line">    <span class="comment">// 创建新的数据库实体</span></span><br><span class="line">    <span class="keyword">var</span> user = <span class="keyword">new</span> User(&#123;</span><br><span class="line">      loginname: profile.username,</span><br><span class="line">      pass: profile.accessToken, <span class="comment">//github用户密码就是accessToken</span></span><br><span class="line">      email: email,</span><br><span class="line">      avatar: profile._json.avatar_url,</span><br><span class="line">      githubId: profile.id, <span class="comment">// githubId，一个重要标志符</span></span><br><span class="line">      githubUsername: profile.username,</span><br><span class="line">      githubAccessToken: profile.accessToken,<span class="comment">//github的token</span></span><br><span class="line">      active: <span class="literal">true</span>,</span><br><span class="line">      accessToken: uuid.v4(),<span class="comment">// uuid生成，这么名字不好</span></span><br><span class="line">    &#125;);</span><br><span class="line">    user.save(<span class="function"><span class="keyword">function</span> (<span class="params">err</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">if</span> (err) &#123;</span><br><span class="line">        <span class="comment">// 错误处理。。。如重复的email，loginname等</span></span><br><span class="line">        <span class="keyword">return</span> next(err);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">// 登录成功！！！</span></span><br><span class="line">      authMiddleWare.gen_session(user, res);</span><br><span class="line">      res.redirect(<span class="string">'/'</span>);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123; <span class="comment">// 关联老账号</span></span><br><span class="line">    ep.on(<span class="string">'login_error'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">login_error</span>) </span>&#123;</span><br><span class="line">      res.status(<span class="number">403</span>);</span><br><span class="line">      res.render(<span class="string">'sign/signin'</span>, &#123; <span class="attr">error</span>: <span class="string">'账号名或密码错误。'</span> &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line">    User.findOne(&#123;<span class="attr">loginname</span>: loginname&#125;,</span><br><span class="line">      ep.done(<span class="function"><span class="keyword">function</span> (<span class="params">user</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (!user) &#123;</span><br><span class="line">          <span class="keyword">return</span> ep.emit(<span class="string">'login_error'</span>);</span><br><span class="line">        &#125;</span><br><span class="line">      <span class="comment">// 密码校验</span></span><br><span class="line">        tools.bcompare(password, user.pass, ep.done(<span class="function"><span class="keyword">function</span> (<span class="params">bool</span>) </span>&#123;</span><br><span class="line">          <span class="keyword">if</span> (!bool) &#123;</span><br><span class="line">            <span class="keyword">return</span> ep.emit(<span class="string">'login_error'</span>);</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="comment">// 更新github相关信息，绑定帐号</span></span><br><span class="line">          user.githubUsername = profile.username;</span><br><span class="line">          user.githubId = profile.id;</span><br><span class="line">          <span class="comment">// user.loginname = profile.username;</span></span><br><span class="line">          user.avatar = profile._json.avatar_url;</span><br><span class="line">          user.githubAccessToken = profile.accessToken;</span><br><span class="line"></span><br><span class="line">          user.save(<span class="function"><span class="keyword">function</span> (<span class="params">err</span>) </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (err) &#123;</span><br><span class="line">              <span class="keyword">return</span> next(err);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 登录成功！！！</span></span><br><span class="line">            authMiddleWare.gen_session(user, res);</span><br><span class="line">            res.redirect(<span class="string">'/'</span>);</span><br><span class="line">          &#125;);</span><br><span class="line">        &#125;));</span><br><span class="line">      &#125;));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<ol>
+<li><p>登录成功：登录成功后页面会重新跳转，发出新的http请求，在app.js中的中间件会更具cookies中的auth_token查询用户信息，并放入 <code>res.locals.current_user</code>和<code>req.session.user</code>中。前者用于界面渲染，后者用于session。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">exports.authUser = <span class="function"><span class="keyword">function</span> (<span class="params">req, res, next</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> ep = <span class="keyword">new</span> eventproxy();</span><br><span class="line">  ep.fail(next);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Ensure current_user always has defined.</span></span><br><span class="line">  res.locals.current_user = <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">  ep.all(<span class="string">'get_user'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">user</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!user) &#123;</span><br><span class="line">      <span class="keyword">return</span> next();</span><br><span class="line">    &#125;</span><br><span class="line">    user = res.locals.current_user = req.session.user = <span class="keyword">new</span> UserModel(user);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (config.admins.hasOwnProperty(user.loginname)) &#123;</span><br><span class="line">      user.is_admin = <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Message.getMessagesCount(user._id, ep.done(<span class="function"><span class="keyword">function</span> (<span class="params">count</span>) </span>&#123;</span><br><span class="line">      user.messages_count = count;</span><br><span class="line">      next();</span><br><span class="line">    &#125;));</span><br><span class="line">  &#125;);</span><br><span class="line">  <span class="comment">// 第一步：查看session是否有值，有直接使用它</span></span><br><span class="line">  <span class="keyword">if</span> (req.session.user) &#123;</span><br><span class="line">    ep.emit(<span class="string">'get_user'</span>, req.session.user);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// 第二步，如果没有session，则获取auth_token</span></span><br><span class="line">    <span class="keyword">var</span> auth_token = req.signedCookies[config.auth_cookie_name];</span><br><span class="line">    <span class="comment">// 没有auth_token，说明没有登录</span></span><br><span class="line">    <span class="keyword">if</span> (!auth_token) &#123;</span><br><span class="line">      <span class="keyword">return</span> next();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 有auth_token，没session，首次登录，查询数据库。</span></span><br><span class="line">    <span class="keyword">var</span> auth = auth_token.split(<span class="string">'$$$$'</span>);</span><br><span class="line">    <span class="keyword">var</span> user_id = auth[<span class="number">0</span>];</span><br><span class="line">    UserProxy.getUserById(user_id, ep.done(<span class="string">'get_user'</span>));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>​</p>
+</li>
+<li><p>总结:</p>
+<ol>
+<li><p>传输安全性：，<strong>表单的post提交本身没有加密，安全是通过https保证的</strong>。如果不使用https，建议<a href="https://www.zhihu.com/question/20060155" target="_blank" rel="noopener">提交时用js加密处理</a>。</p>
+</li>
+<li><p>数据库安全性：<strong>数据库中存储的密码是加盐后的，没有存储明文（使用bcrypt模块）</strong></p>
+<blockquote>
+<p>简单介绍bcrypt的两方法</p>
+<ul>
+<li>bcrypt.hash(source_string,salt_length,callback):第一个参数是密码明文，第二个参数是盐的长度，salt有时钟tick产生，然后会用salt计算一个hash值xxxx，然后拼接上saltvalue，最终生成<code>xxxxsaltvalue</code>。存入数据库。</li>
+<li>bcrypt.compare(sourceString,hash,callback),第一个参数是用户输入的密码，第二个是数据库存的<code>xxxxsaltvalue</code>，这个函数会取出xxxx和saltvalue，用saltvalue与sourceString计算的值比较xxxx，来验证密码输入是否正确。</li>
+<li>思考：<strong>为什么xxxxsaltvalue存在数据库中是安全的</strong>，可以防止脱库？因为脱裤的原理是：计算常用的密码的md5形成字典，然后比较。但是这里<strong>每个密码的salt都不一样</strong>，没法生成字典，所以无法脱库。</li>
+</ul>
+</blockquote>
+</li>
+<li><p>csrf：校验过程参考<a href="https://cnodejs.org/topic/5533dd6e9138f09b629674fd" target="_blank" rel="noopener">这篇文章</a></p>
+</li>
+<li><p>字符串校验部分是用的validator库</p>
+</li>
+<li><p>这里存了<strong>uuid</strong>，但是没有用，<a href="https://github.com/broofa/node-uuid" target="_blank" rel="noopener">uuid生成是专门的库</a></p>
+</li>
+<li><p><strong>生成auth_token</strong>，是用的数据库的<code>_id</code>保证唯一性，后续也方便查询数据库。过期时间是30天。思考：为什么要这样，为什么不直接把数据放入session中？？？</p>
+<blockquote>
+<p>这个是<strong>token与session的区别！</strong>，sessionId与token都存在cookies中，但是sessionId代表了内存中的一段数据，是服务端用来缓存会话的。token是登录凭证，表示登录成功过。</p>
+<ul>
+<li>如果只有session，没有token：用户一旦登录，信息直接存储在session中，可以使用。但是一旦session丢失（主要指<strong>服务端重启，redis清空</strong>。客户端清空cookies，SessionId没了token也没了），用户需要重新登录。</li>
+<li>只有token，没有session：用户登录后token放入cookies。由于没有session，每次用户请求都带着token，<strong>必须每一次都查询数据库</strong>。</li>
+<li>既有token也有session：服务端session丢失，只会用token重新查找数据库，恢复到session中。但是清空cookies依然会导致信息丢失。</li>
+<li>当然，也可以用token作为sessionId，那么在cookies中只要存一个值就可以了。但是最好不要这样，职责清晰。</li>
+</ul>
+</blockquote>
+</li>
+</ol>
+</li>
+</ol>
+<h3 id="原生注册与登录"><a href="#原生注册与登录" class="headerlink" title="原生注册与登录"></a>原生注册与登录</h3><p>注册基本流程：</p>
+<ol>
+<li><p>post提交表单：信息需要用户名密码，邮件，未加密（有https保证安全）直接post提交，<strong>client未校验，全部由服务端校验</strong>。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">id</span>=<span class="string">'signup_form'</span> <span class="attr">class</span>=<span class="string">'form-horizontal'</span> <span class="attr">action</span>=<span class="string">'/signup'</span> <span class="attr">method</span>=<span class="string">'post'</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">'control-group'</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">label</span> <span class="attr">class</span>=<span class="string">'control-label'</span> <span class="attr">for</span>=<span class="string">'loginname'</span>&gt;</span>用户名<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line"></span><br><span class="line">          <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">'controls'</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">%</span> <span class="attr">if</span> (<span class="attr">typeof</span>(<span class="attr">loginname</span>) !== <span class="string">'undefined'</span>) &#123; %&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">input</span> <span class="attr">class</span>=<span class="string">'input-xlarge'</span> <span class="attr">id</span>=<span class="string">'loginname'</span> <span class="attr">name</span>=<span class="string">'loginname'</span> <span class="attr">size</span>=<span class="string">'30'</span> <span class="attr">type</span>=<span class="string">'text'</span> <span class="attr">value</span>=<span class="string">'&lt;%= loginname %&gt;'</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">%</span> &#125; <span class="attr">else</span> &#123; %&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">input</span> <span class="attr">class</span>=<span class="string">'input-xlarge'</span> <span class="attr">id</span>=<span class="string">'loginname'</span> <span class="attr">name</span>=<span class="string">'loginname'</span> <span class="attr">size</span>=<span class="string">'30'</span> <span class="attr">type</span>=<span class="string">'text'</span> <span class="attr">value</span>=<span class="string">''</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">%</span> &#125; %&gt;</span></span><br><span class="line">          <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">'control-group'</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">label</span> <span class="attr">class</span>=<span class="string">'control-label'</span> <span class="attr">for</span>=<span class="string">'pass'</span>&gt;</span>密码<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line"></span><br><span class="line">          <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">'controls'</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">input</span> <span class="attr">class</span>=<span class="string">'input-xlarge'</span> <span class="attr">id</span>=<span class="string">'pass'</span> <span class="attr">name</span>=<span class="string">'pass'</span> <span class="attr">size</span>=<span class="string">'30'</span> <span class="attr">type</span>=<span class="string">'password'</span>/&gt;</span></span><br><span class="line">          <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">'control-group'</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">label</span> <span class="attr">class</span>=<span class="string">'control-label'</span> <span class="attr">for</span>=<span class="string">'re_pass'</span>&gt;</span>确认密码<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line"></span><br><span class="line">          <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">'controls'</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">input</span> <span class="attr">class</span>=<span class="string">'input-xlarge'</span> <span class="attr">id</span>=<span class="string">'re_pass'</span> <span class="attr">name</span>=<span class="string">'re_pass'</span> <span class="attr">size</span>=<span class="string">'30'</span> <span class="attr">type</span>=<span class="string">'password'</span>/&gt;</span></span><br><span class="line">          <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">'control-group'</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">label</span> <span class="attr">class</span>=<span class="string">'control-label'</span> <span class="attr">for</span>=<span class="string">'email'</span>&gt;</span>电子邮箱<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line"></span><br><span class="line">          <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">'controls'</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">%</span> <span class="attr">if</span> (<span class="attr">typeof</span>(<span class="attr">email</span>) !== <span class="string">'undefined'</span>) &#123; %&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">input</span> <span class="attr">class</span>=<span class="string">'input-xlarge'</span> <span class="attr">id</span>=<span class="string">'email'</span> <span class="attr">name</span>=<span class="string">'email'</span> <span class="attr">size</span>=<span class="string">'30'</span> <span class="attr">type</span>=<span class="string">'text'</span> <span class="attr">value</span>=<span class="string">'&lt;%= email %&gt;'</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">%</span> &#125; <span class="attr">else</span> &#123; %&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">input</span> <span class="attr">class</span>=<span class="string">'input-xlarge'</span> <span class="attr">id</span>=<span class="string">'email'</span> <span class="attr">name</span>=<span class="string">'email'</span> <span class="attr">size</span>=<span class="string">'30'</span> <span class="attr">type</span>=<span class="string">'text'</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">%</span> &#125; %&gt;</span></span><br><span class="line">          <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">'hidden'</span> <span class="attr">name</span>=<span class="string">'_csrf'</span> <span class="attr">value</span>=<span class="string">'&lt;%= csrf %&gt;'</span>/&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">'form-actions'</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">'submit'</span> <span class="attr">class</span>=<span class="string">'span-primary'</span> <span class="attr">value</span>=<span class="string">'注册'</span>/&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"/auth/github"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"span-info"</span>&gt;</span></span><br><span class="line">              通过 GitHub 登录</span><br><span class="line">            <span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>处理post请求：注意路由中是post</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">exports.signup = <span class="function"><span class="keyword">function</span> (<span class="params">req, res, next</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> loginname = validator.trim(req.body.loginname).toLowerCase();</span><br><span class="line">  <span class="keyword">var</span> email     = validator.trim(req.body.email).toLowerCase();</span><br><span class="line">  <span class="keyword">var</span> pass      = validator.trim(req.body.pass);</span><br><span class="line">  <span class="keyword">var</span> rePass    = validator.trim(req.body.re_pass);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> ep = <span class="keyword">new</span> eventproxy();</span><br><span class="line">  ep.fail(next);</span><br><span class="line">  ep.on(<span class="string">'prop_err'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">msg</span>) </span>&#123;</span><br><span class="line">    res.status(<span class="number">422</span>);</span><br><span class="line">    res.render(<span class="string">'sign/signup'</span>, &#123;<span class="attr">error</span>: msg, <span class="attr">loginname</span>: loginname, <span class="attr">email</span>: email&#125;);</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 服务端验证信息的正确性</span></span><br><span class="line">  <span class="keyword">if</span> ([loginname, pass, rePass, email].some(<span class="function"><span class="keyword">function</span> (<span class="params">item</span>) </span>&#123; <span class="keyword">return</span> item === <span class="string">''</span>; &#125;)) &#123;</span><br><span class="line">    ep.emit(<span class="string">'prop_err'</span>, <span class="string">'信息不完整。'</span>);</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (loginname.length &lt; <span class="number">5</span>) &#123;</span><br><span class="line">    ep.emit(<span class="string">'prop_err'</span>, <span class="string">'用户名至少需要5个字符。'</span>);</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (!tools.validateId(loginname)) &#123;</span><br><span class="line">    <span class="keyword">return</span> ep.emit(<span class="string">'prop_err'</span>, <span class="string">'用户名不合法。'</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (!validator.isEmail(email)) &#123;</span><br><span class="line">    <span class="keyword">return</span> ep.emit(<span class="string">'prop_err'</span>, <span class="string">'邮箱不合法。'</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (pass !== rePass) &#123;</span><br><span class="line">    <span class="keyword">return</span> ep.emit(<span class="string">'prop_err'</span>, <span class="string">'两次密码输入不一致。'</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// END 验证信息的正确性</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// mongo数据库查询or语句，是否用户名或者email占用</span></span><br><span class="line">  User.getUsersByQuery(&#123;<span class="string">'$or'</span>: [</span><br><span class="line">    &#123;<span class="string">'loginname'</span>: loginname&#125;,</span><br><span class="line">    &#123;<span class="string">'email'</span>: email&#125;</span><br><span class="line">  ]&#125;, &#123;&#125;, <span class="function"><span class="keyword">function</span> (<span class="params">err, users</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (err) &#123;</span><br><span class="line">      <span class="keyword">return</span> next(err);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (users.length &gt; <span class="number">0</span>) &#123;</span><br><span class="line">      ep.emit(<span class="string">'prop_err'</span>, <span class="string">'用户名或邮箱已被使用。'</span>);</span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="comment">// 可以注册！！！！</span></span><br><span class="line">    <span class="comment">// 生成密码的hash值！不保存密码原文。</span></span><br><span class="line">    tools.bhash(pass, ep.done(<span class="function"><span class="keyword">function</span> (<span class="params">passhash</span>) </span>&#123;</span><br><span class="line">      <span class="comment">// create gravatar</span></span><br><span class="line">      <span class="keyword">var</span> avatarUrl = User.makeGravatar(email);</span><br><span class="line">      <span class="comment">// 数据库操作</span></span><br><span class="line">      User.newAndSave(loginname, loginname, passhash, email, avatarUrl, <span class="literal">false</span>, <span class="function"><span class="keyword">function</span> (<span class="params">err</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (err) &#123;</span><br><span class="line">          <span class="keyword">return</span> next(err);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 发送激活邮件</span></span><br><span class="line">        mail.sendActiveMail(email, utility.md5(email + passhash + config.session_secret), loginname);</span><br><span class="line">        res.render(<span class="string">'sign/signup'</span>, &#123;</span><br><span class="line">          success: <span class="string">'欢迎加入 '</span> + config.name + <span class="string">'！我们已给您的注册邮箱发送了一封邮件，请点击里面的链接来激活您的帐号。'</span></span><br><span class="line">        &#125;);</span><br><span class="line">      &#125;);</span><br><span class="line"></span><br><span class="line">    &#125;));</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>分析：</p>
+<ul>
+<li>首先对输入进行校验，</li>
+<li>查询是否已经注册，如果有，则提示用户</li>
+<li>如果没有，计算密码，hash。<strong>只保存加盐的值，不保存原文。</strong></li>
+<li>发送用户激活邮件到邮箱，邮箱中包含一个连接其中有token和loginname。token=md5(passhash+serectkey+email)计算出（组成随意，能标识用户即可）。用户点击链接会调用服务器api，传回值，我们依据loginname查找用户，然后按照规则计算对比即可。</li>
+<li>注册完成，激活完成后，需要登录。</li>
+</ul>
+</li>
+</ol>
+<p>登录基本流程</p>
+<ol>
+<li><p>提交表单。。略，与上面类似。</p>
+</li>
+<li><p>处理表单</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">exports.login = <span class="function"><span class="keyword">function</span> (<span class="params">req, res, next</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 输入校验</span></span><br><span class="line">  <span class="keyword">var</span> loginname = validator.trim(req.body.name).toLowerCase();</span><br><span class="line">  <span class="keyword">var</span> pass      = validator.trim(req.body.pass);</span><br><span class="line">  <span class="keyword">var</span> ep        = <span class="keyword">new</span> eventproxy();</span><br><span class="line"></span><br><span class="line">  ep.fail(next);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (!loginname || !pass) &#123;</span><br><span class="line">    res.status(<span class="number">422</span>);</span><br><span class="line">    <span class="keyword">return</span> res.render(<span class="string">'sign/signin'</span>, &#123; <span class="attr">error</span>: <span class="string">'信息不完整。'</span> &#125;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 判断是用户名还是邮箱登录</span></span><br><span class="line">  <span class="keyword">var</span> getUser;</span><br><span class="line">  <span class="keyword">if</span> (loginname.indexOf(<span class="string">'@'</span>) !== <span class="number">-1</span>) &#123;</span><br><span class="line">    getUser = User.getUserByMail;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    getUser = User.getUserByLoginName;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  ep.on(<span class="string">'login_error'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">login_error</span>) </span>&#123;</span><br><span class="line">    res.status(<span class="number">403</span>);</span><br><span class="line">    res.render(<span class="string">'sign/signin'</span>, &#123; <span class="attr">error</span>: <span class="string">'用户名或密码错误'</span> &#125;);</span><br><span class="line">  &#125;);</span><br><span class="line"> <span class="comment">// 查询数据库</span></span><br><span class="line">  getUser(loginname, <span class="function"><span class="keyword">function</span> (<span class="params">err, user</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (err) &#123;</span><br><span class="line">      <span class="keyword">return</span> next(err);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (!user) &#123;</span><br><span class="line">      <span class="keyword">return</span> ep.emit(<span class="string">'login_error'</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> passhash = user.pass;</span><br><span class="line">    <span class="comment">// 密码对比，与注册相互呼应，参考第三方登录的总结一节</span></span><br><span class="line">    tools.bcompare(pass, passhash, ep.done(<span class="function"><span class="keyword">function</span> (<span class="params">bool</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">if</span> (!bool) &#123;</span><br><span class="line">        <span class="keyword">return</span> ep.emit(<span class="string">'login_error'</span>);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span> (!user.active) &#123;</span><br><span class="line">        <span class="comment">// 重新发送激活邮件</span></span><br><span class="line">        mail.sendActiveMail(user.email, utility.md5(user.email + passhash + config.session_secret), user.loginname);</span><br><span class="line">        res.status(<span class="number">403</span>);</span><br><span class="line">        <span class="keyword">return</span> res.render(<span class="string">'sign/signin'</span>, &#123; <span class="attr">error</span>: <span class="string">'此帐号还没有被激活，激活链接已发送到 '</span> + user.email + <span class="string">' 邮箱，请查收。'</span> &#125;);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">// 生成auth_token,与第三方登录类似</span></span><br><span class="line">      authMiddleWare.gen_session(user, res);</span><br><span class="line">      <span class="comment">// 登录完成的跳转，通过referrer获得来源</span></span><br><span class="line">      <span class="keyword">var</span> refer = req.session._loginReferer || <span class="string">'/'</span>;</span><br><span class="line">      <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>, len = notJump.length; i !== len; ++i) &#123;</span><br><span class="line">        <span class="keyword">if</span> (refer.indexOf(notJump[i]) &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">          refer = <span class="string">'/'</span>;</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      res.redirect(refer);</span><br><span class="line">    &#125;));</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>分析：</p>
+<ul>
+<li>输入校验</li>
+<li>判断是用户名还是邮箱登录，设置相应的查找方法</li>
+<li>数据库查询，对比密码参考<code>第三方登录的总结</code>一节的<code>数据库安全</code></li>
+<li>生成auth_token，参考第三方登录。</li>
+<li>登录完成的跳转redirect。referrer处理，<strong>referrer中记载了跳转的源页面</strong>，这里过滤了一些不用跳转的页面。关于<a href="https://imququ.com/post/referrer-policy.html" target="_blank" rel="noopener">什么是referrer</a>。<code>req.session._loginReferer</code>值在登录页面的请求中有赋值 <code>req.session._loginReferer =req.headers.referer;</code></li>
+<li>登录完成，参考第三方登录过程。</li>
+</ul>
+</li>
+</ol>
+<h2 id="HTTP请求类型分析"><a href="#HTTP请求类型分析" class="headerlink" title="HTTP请求类型分析"></a>HTTP请求类型分析</h2><p>按照开发的常用情况把所有http请求分为以下几种：</p>
+<ul>
+<li>网站界面请求<ul>
+<li>未登录的公用界面—以首页的帖子为例</li>
+<li>登录后的用户私有界面—以用户发表帖子为例</li>
+</ul>
+</li>
+<li>Restful API：提供一下api，返回json数据，给其他人使用。</li>
+</ul>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><h3 id="文件上传"><a href="#文件上传" class="headerlink" title="文件上传"></a>文件上传</h3><ul>
+<li>busboy库</li>
+</ul>
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><ul>
+<li>入口：Makefile test目标 test-cov目标（覆盖率）</li>
+<li>mocha工具、istanbul工具</li>
+<li>运行所有<code>*.test.js</code>文件</li>
+<li>benchmark??</li>
+</ul>
+<h3 id="uuid"><a href="#uuid" class="headerlink" title="uuid"></a>uuid</h3><ul>
+<li>在其他系统应该挺重要的，这个项目没有用，只是用了auth_token代替</li>
+</ul>
+<h3 id="安全"><a href="#安全" class="headerlink" title="安全"></a>安全</h3><ul>
+<li>使用一些公用的中间件如helmet防止攻击</li>
+<li>全站https，很多接口内部没有再加密，如登录等。</li>
+<li>密码等存储加盐hash，加密方法调用了bcrypt库</li>
+<li>cookies安全：不存有意义的数据，只要防止篡改（sign）即可。</li>
+<li>csrf攻击—<a href="https://cnodejs.org/topic/5533dd6e9138f09b629674fd" target="_blank" rel="noopener">这篇文章</a>，<code>csurf</code>模块</li>
+<li>xss—<code>validator</code>模块对输入校验</li>
+</ul>
+<h3 id="性能"><a href="#性能" class="headerlink" title="性能"></a><a href="http://expressjs.com/zh-cn/advanced/best-practice-performance.html" target="_blank" rel="noopener">性能</a></h3><ul>
+<li>上线前，开启production模式，会启用很多优化。</li>
+<li>上线前，压缩多个js，css文件为一个min.js min.css文件。<ul>
+<li>入口：Makefile build目标</li>
+<li>工具：Loader，国人开发的，国外也有很多类似的如grunt</li>
+<li>原理：可以参考布局文件（html）加载js/css的方法，上线后会优先加载压缩后的文件</li>
+</ul>
+</li>
+<li>gzip：两种方式，在node中使用，或者用nginx处理<ul>
+<li>nodejs<ul>
+<li>使用<code>compress</code>中间件<strong>压缩</strong>返回response。</li>
+<li><code>bodyparse</code>解析请求时会内部<strong>解压</strong>请求</li>
+</ul>
+</li>
+<li>nginx</li>
+</ul>
+</li>
+<li>视图缓存：<code>app.set(&#39;view cache&#39;, true);</code></li>
+<li>api接口限流 ：在redis中计数<ul>
+<li>登录用户，用户名限制api每天访问次数</li>
+<li>非登录用户，ip限制api每天访问次数</li>
+</ul>
+</li>
+</ul>
+<h3 id="监控"><a href="#监控" class="headerlink" title="监控"></a>监控</h3><ul>
+<li>日志系统，封装在<code>./common/logger</code>中<ul>
+<li><code>log4js</code>，模块输出日志到<strong>文件</strong>与<strong>控制台</strong>,不要直接使用<code>console.log</code>输出</li>
+<li><code>colors</code>模块，控制台输入着色。</li>
+</ul>
+</li>
+<li>请求日志输出：<code>./middlewares/request_log</code>，请求的输入，ip，返回状态，和<strong>耗时</strong>。</li>
+<li>错误输出：分为debug和线上<ul>
+<li>debug— errorhandler模块，输出错误栈到客户端浏览器。</li>
+<li>release— 是如此错误日志。</li>
+</ul>
+</li>
+<li>oneapm工具？性能监控</li>
+</ul>
+<h3 id="处理跨域访问"><a href="#处理跨域访问" class="headerlink" title="处理跨域访问"></a>处理跨域访问</h3><p>对<strong>暴露的API接口</strong>（api/v1/xxx）使用cors模块处理跨域访问的问题：</p>
+<ul>
+<li>Access-Control-Allow-Origin 头设置，支持get和html的post请求</li>
+<li>OPITION请求处理，支持json的post请求</li>
+</ul>
+<h3 id="部署问题处理"><a href="#部署问题处理" class="headerlink" title="部署问题处理"></a>部署问题处理</h3><ul>
+<li>代理背后（如nginx）：<code>app.enable(&#39;trust proxy&#39;);</code> nodejs会使用head中的x-forward字段填充ip字段,在nginx中有对应的配置。</li>
+</ul>
+<h2 id="一些缺乏的"><a href="#一些缺乏的" class="headerlink" title="一些缺乏的"></a>一些缺乏的</h2><ul>
+<li>没有消息订阅推送设计</li>
+<li>没有后台管理系统，权限管理</li>
+<li>文件上次部分没有仔细分析</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>至此，Node.js部分学习完成，这是我第一次分析一个完整的后端项目，nodeclub是个很好的demo，</p>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+            <div class="social-item">
+              <a target="_blank" class="social-link" href="https://t.me/mltalk">
+                <span class="icon">
+                  <i class="fa fa-telegram"></i>
+                </span>
+
+                <span class="label">机器学习碎碎念</span>
+              </a>
+            </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/javascript/" rel="tag"># javascript</a>
+              <a href="/tags/nodejs/" rel="tag"># nodejs</a>
+              <a href="/tags/后台开发/" rel="tag"># 后台开发</a>
+              <a href="/tags/实践/" rel="tag"># 实践</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/08/20/nodejs进阶与express框架/" rel="prev" title="Node.js进阶与Express框架及知识图谱">
+      <i class="fa fa-chevron-left"></i> Node.js进阶与Express框架及知识图谱
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2016/09/18/运维技术目录/" rel="next" title="运维技术目录">
+      运维技术目录 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#项目分析"><span class="nav-number">1.</span> <span class="nav-text">项目分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#目录结构"><span class="nav-number">1.1.</span> <span class="nav-text">目录结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#调用流程"><span class="nav-number">1.2.</span> <span class="nav-text">调用流程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#View层界面相关技术"><span class="nav-number">2.</span> <span class="nav-text">View层界面相关技术</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#模板的值传递"><span class="nav-number">2.1.</span> <span class="nav-text">模板的值传递</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ejs"><span class="nav-number">2.2.</span> <span class="nav-text">ejs</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bootstrap前端样式框架"><span class="nav-number">2.3.</span> <span class="nav-text">bootstrap前端样式框架</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#css与less样式表"><span class="nav-number">2.4.</span> <span class="nav-text">css与less样式表</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Controller层分析"><span class="nav-number">3.</span> <span class="nav-text">Controller层分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Model层分析"><span class="nav-number">4.</span> <span class="nav-text">Model层分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Mongodb"><span class="nav-number">4.1.</span> <span class="nav-text">Mongodb</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cookies存储"><span class="nav-number">4.2.</span> <span class="nav-text">Cookies存储</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#session-amp-amp-redis"><span class="nav-number">4.3.</span> <span class="nav-text">session&amp;&amp;redis</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#登录模块分析"><span class="nav-number">5.</span> <span class="nav-text">登录模块分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#第三方登录与组成"><span class="nav-number">5.1.</span> <span class="nav-text">第三方登录与组成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#原生注册与登录"><span class="nav-number">5.2.</span> <span class="nav-text">原生注册与登录</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTP请求类型分析"><span class="nav-number">6.</span> <span class="nav-text">HTTP请求类型分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他"><span class="nav-number">7.</span> <span class="nav-text">其他</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#文件上传"><span class="nav-number">7.1.</span> <span class="nav-text">文件上传</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#测试"><span class="nav-number">7.2.</span> <span class="nav-text">测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#uuid"><span class="nav-number">7.3.</span> <span class="nav-text">uuid</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安全"><span class="nav-number">7.4.</span> <span class="nav-text">安全</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#性能"><span class="nav-number">7.5.</span> <span class="nav-text">性能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#监控"><span class="nav-number">7.6.</span> <span class="nav-text">监控</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#处理跨域访问"><span class="nav-number">7.7.</span> <span class="nav-text">处理跨域访问</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#部署问题处理"><span class="nav-number">7.8.</span> <span class="nav-text">部署问题处理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一些缺乏的"><span class="nav-number">8.</span> <span class="nav-text">一些缺乏的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">9.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">limuzhi</p>
+  <div class="site-description" itemprop="description">something about tech, android etc...</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muzhi1991" title="GitHub → https://github.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:muzhi1991@gmail.com" title="E-Mail → mailto:muzhi1991@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/muzhi1991" title="Twitter → https://twitter.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.chenyupeng.com/" title="https://www.chenyupeng.com/" rel="noopener" target="_blank">陈玉鹏的个人空间</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://macshuo.com/" title="http://macshuo.com/" rel="noopener" target="_blank">MacTalk</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">limuzhi</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'G5HLDFmPsllxIjax4F2JTLnl-gzGzoHsz',
+      appKey     : 'A5PTgbvpJwjPlcBJ3Brl8rDs',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

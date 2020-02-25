@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="概述js是网页的脚本语言，学习的过程中才发现内容其实很多，甚至感觉难以上手，可能是因为他与我们遇到的大部分语言都不太一样，如C Java甚至是Python。 还好在学习的过程中做了笔记，有些知识点很难接受。">
+<meta name="keywords" content="web开发,javascript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JavaScript语言学习笔记与知识图谱">
+<meta property="og:url" content="http://limuzhi.com/2016/07/17/JavaScript语言学习笔记与知识图谱/index.html">
+<meta property="og:site_name" content="Night Piece">
+<meta property="og:description" content="概述js是网页的脚本语言，学习的过程中才发现内容其实很多，甚至感觉难以上手，可能是因为他与我们遇到的大部分语言都不太一样，如C Java甚至是Python。 还好在学习的过程中做了笔记，有些知识点很难接受。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-02-25T09:44:15.478Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JavaScript语言学习笔记与知识图谱">
+<meta name="twitter:description" content="概述js是网页的脚本语言，学习的过程中才发现内容其实很多，甚至感觉难以上手，可能是因为他与我们遇到的大部分语言都不太一样，如C Java甚至是Python。 还好在学习的过程中做了笔记，有些知识点很难接受。">
+
+<link rel="canonical" href="http://limuzhi.com/2016/07/17/JavaScript语言学习笔记与知识图谱/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>JavaScript语言学习笔记与知识图谱 | Night Piece</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Night Piece</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">white && black</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tools">
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-wrench"></i>利器</a>
+
+  </li>
+        <li class="menu-item menu-item-read">
+
+    <a href="/read/" rel="section"><i class="fa fa-fw fa-book"></i>阅读</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://limuzhi.com/2016/07/17/JavaScript语言学习笔记与知识图谱/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="limuzhi">
+      <meta itemprop="description" content="something about tech, android etc...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Night Piece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          JavaScript语言学习笔记与知识图谱
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-07-17 16:14:44" itemprop="dateCreated datePublished" datetime="2016-07-17T16:14:44+08:00">2016-07-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-25 17:44:15" itemprop="dateModified" datetime="2020-02-25T17:44:15+08:00">2020-02-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/全栈/" itemprop="url" rel="index"><span itemprop="name">全栈</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2016/07/17/JavaScript语言学习笔记与知识图谱/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2016/07/17/JavaScript语言学习笔记与知识图谱/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>js是网页的脚本语言，学习的过程中才发现内容其实很多，甚至感觉难以上手，可能是因为他与我们遇到的大部分语言都不太一样，如C Java甚至是Python。</p>
+<p>还好在学习的过程中做了笔记，有些知识点很难接受。</p>
+<p>一些重要的点：</p>
+<ul>
+<li>原型模式</li>
+<li>静态方法，实例方法，内部方法。</li>
+<li>单线程，异步特点，事件循环</li>
+<li>this变量，与坑</li>
+<li>闭包的概念与应用（核心：记住函数上下文变量）</li>
+<li>设计的不严谨的地方，如null，undefined，变量提升</li>
+<li>很多ES6新特性，可以用在node上面</li>
+</ul>
+<p>建议：<strong>使用严格模式</strong></p>
+<p>参考文章：</p>
+<ul>
+<li><a href="http://www.liaoxuefeng.com/wiki/001434446689867b27157e896e74d51a89c25cc8b43bdb3000" target="_blank" rel="noopener">廖雪峰的JavaScript教程</a>：建议学习这一篇，简单易懂，忽略细节，尤其是关于原型的部分。</li>
+<li><a href="http://javascript.ruanyifeng.com/" target="_blank" rel="noopener">阮一峰的JavaScript标准参考教程ES5</a>：十分详尽，可以当做参考资料。</li>
+</ul>
+<p>其他书籍：</p>
+<ul>
+<li>JavaScript语言精粹，听说不错。</li>
+</ul>
+<p>知识图谱：<br><a href="/files/JavaScript知识图谱.mindnode">这里下载JavaScript知识图谱</a></p>
+<h2 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h2><ul>
+<li>如果只是声明变量而没有赋值，则该变量的值是<code>undefined</code>。<code>undefined</code>是一个JavaScript关键字，表示“无定义”。如果一个变量没有声明就直接使用，JavaScript会报错，告诉你变量未定义。<code>ReferenceError: x is not defined</code></li>
+</ul>
+<ul>
+<li>严格地说，<code>var a = 1</code> 与 <code>a = 1</code>，这两条语句的效果不完全一样，主要体现在<code>delete</code>命令无法删除前者。不过，绝大多数情况下，这种差异是可以忽略的。<strong>建议总是使用<code>var</code>命令声明变量。</strong></li>
+</ul>
+<ul>
+<li>变量<code>x</code>声明了两次，第二次声明是无效的(赋值的话就有效了)</li>
+</ul>
+<ul>
+<li><p>变量提升：JavaScript引擎的工作方式是，先解析代码，获取所有被声明的变量，然后再一行一行地运行。这造成的结果，就是所有的变量的声明语句，都会被提升到代码的头部，这就叫做变量提升（hoisting）。函数内部也是这样。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a;</span><br><span class="line"><span class="built_in">console</span>.log(a); <span class="comment">// undefined,表示变量a已声明，但还未赋值。</span></span><br><span class="line">a = <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<blockquote>
+<p>变量提升只对<code>var</code>命令声明的变量有效，如果一个变量不是用<code>var</code>命令声明的，就不会发生变量提升。</p>
+</blockquote>
+<ul>
+<li><p>合法：<code>arg0</code> <code>_tmp</code> <strong><code>$elem</code></strong> <code>π</code> 中文变量 ；不合法: <code>1a</code> <code>***</code> <code>a+b</code> <code>-d</code></p>
+</li>
+<li><p>作用域：只有两种作用域：函数作用域和全局作用域。<strong>变量没有块作用域</strong>：区块中的变量与区块外的变量，属于同一个作用域。只有函数中声明的变量是局部的。因此特别注意<code>for</code>、<code>if</code>、<code>while</code>.</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">  <span class="keyword">var</span> x = <span class="number">5</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">console</span>.log(x);  <span class="comment">// 5</span></span><br></pre></td></tr></table></figure>
+<p>​</p>
+</li>
+</ul>
+<h2 id="if-while-for-switch等注意点"><a href="#if-while-for-switch等注意点" class="headerlink" title="if while for switch等注意点"></a>if while for switch等注意点</h2><ul>
+<li>if while for的条件语句中使用<code>=</code>不会报错，因而要注意</li>
+<li><code>if(undefined){}</code> <code>if(0){}</code> <code>if(false){}</code> <code>if(null)</code> <code>if(&quot;&quot;)</code> <code>if(&#39;&#39;)</code> <code>if(NaN）</code>都不进入语句</li>
+<li><code>if([ ]){}</code> <code>if({}){}</code>都是true，<strong>js的语法参考的是java，与python不同</strong></li>
+<li><code>switch</code>语句后面的表达式与<code>case</code>语句后面的表示式，在比较运行结果时，采用的是严格相等运算符（<code>===</code>），而不是相等运算符（<code>==</code>）</li>
+</ul>
+<ul>
+<li><p>label的使用，可以<code>break label</code> <code>continue label</code>跳出多层循环</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">top:</span><br><span class="line">   <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; i++)&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> j = <span class="number">0</span>; j &lt; <span class="number">3</span>; j++)&#123;</span><br><span class="line">      <span class="keyword">if</span> (i === <span class="number">1</span> &amp;&amp; j === <span class="number">1</span>) <span class="keyword">break</span> top;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">'i='</span> + i + <span class="string">', j='</span> + j);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="数据类型"><a href="#数据类型" class="headerlink" title="数据类型"></a>数据类型</h2><ul>
+<li><p>数值（number）：整数和小数（比如1和3.14）<strong>原始类型</strong></p>
+</li>
+<li><p>字符串（string）：字符组成的文本（比如”Hello World”）<strong>原始类型</strong></p>
+</li>
+<li><p>布尔值（boolean）：<code>true</code>（真）和<code>false</code>（假）两个特定值 <strong>原始类型</strong></p>
+</li>
+<li><p><code>undefined</code>：表示“未定义”或不存在，即此处目前没有任何值 <strong>特殊值</strong></p>
+</li>
+<li><p><code>null</code>：表示空缺，即此处应该有一个值，但目前为空 <strong>特殊值</strong></p>
+</li>
+<li><p>对象（object）：各种值组成的集合 <strong>合成类型</strong></p>
+<ul>
+<li><p>狭义的对象（object）</p>
+</li>
+<li><p>数组（array）</p>
+</li>
+<li><p>函数（function）</p>
+<blockquote>
+<p>JavaScript把函数当成一种数据类型，<strong>可以像其他类型的数据一样，进行赋值和传递</strong>，这为编程带来了很大的灵活性，体现了JavaScript作为<strong>“函数式语言”</strong>的本质。</p>
+</blockquote>
+</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>JavaScript的所有数据，都可以视为<strong>广义的对象</strong>。不仅数组和函数属于对象，就连原始类型的数据（数值、字符串、布尔值）也可以用对象方式调用。为了避免混淆，此后除非特别声明，本教程的”对象“都特指<strong>狭义的对象。</strong></p>
+</blockquote>
+<ul>
+<li><p>判断一个值是什么类型</p>
+<ul>
+<li><p><code>typeof</code>运算符：区别数据类型，注意返回值是<strong>字符串</strong>，加引号了。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typeof</span> <span class="literal">undefined</span> <span class="comment">// "undefined"</span></span><br><span class="line"><span class="keyword">typeof</span> v <span class="comment">// "undefined" v是一个没声明的变量不会报错</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typeof</span> <span class="built_in">window</span> <span class="comment">// "object"</span></span><br><span class="line"><span class="keyword">typeof</span> &#123;&#125; <span class="comment">// "object"</span></span><br><span class="line"><span class="keyword">typeof</span> [] <span class="comment">// "object"</span></span><br><span class="line"><span class="keyword">typeof</span> <span class="literal">null</span> <span class="comment">// "object" 注意这个instanceof Object false</span></span><br><span class="line"><span class="keyword">typeof</span> <span class="number">123</span> <span class="comment">// "number"</span></span><br><span class="line"><span class="keyword">typeof</span> <span class="string">'123'</span> <span class="comment">// "string"</span></span><br><span class="line"><span class="keyword">typeof</span> <span class="literal">false</span> <span class="comment">// "boolean"</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params"></span>) </span>&#123;&#125;</span><br><span class="line"><span class="keyword">typeof</span> f <span class="comment">// "function"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>instanceof</code>运算符：区分<strong>对象</strong>object的类型???</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> o = &#123;&#125;;</span><br><span class="line"><span class="keyword">var</span> a = [];</span><br><span class="line">o <span class="keyword">instanceof</span> <span class="built_in">Array</span> <span class="comment">// false</span></span><br><span class="line">a <span class="keyword">instanceof</span> <span class="built_in">Array</span> <span class="comment">// true</span></span><br><span class="line">a <span class="keyword">instanceof</span> <span class="built_in">Object</span> <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>Object.prototype.toString</code>方法</p>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p><code>undefined</code>和<code>null</code>等价理解(undefined==null)，按下面含义使用：</p>
+<ul>
+<li><p><code>null</code>表示空值，即该处的值现在为空。比如，调用函数时，不需要传入某个参数，这时就可以传入<code>null</code>。</p>
+</li>
+<li><p><code>undefined</code>表示“未定义”，下面是返回<code>undefined</code>的典型场景</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 变量声明了，但没有赋值</span></span><br><span class="line"><span class="keyword">var</span> i;</span><br><span class="line">i <span class="comment">// undefined</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 调用函数时，应该提供的参数没有提供，该参数等于undefined</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params">x</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> x;</span><br><span class="line">&#125;</span><br><span class="line">f() <span class="comment">// undefined</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 对象没有赋值的属性</span></span><br><span class="line"><span class="keyword">var</span>  o = <span class="keyword">new</span> <span class="built_in">Object</span>();</span><br><span class="line">o.p <span class="comment">// undefined</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 函数没有返回值时，默认返回undefined</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params"></span>) </span>&#123;&#125;</span><br><span class="line">f() <span class="comment">// undefined</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<blockquote>
+<p> <code>undefined</code>和<code>null</code>不同于<code>Undefined</code>和<code>Null</code>（或者其他仅仅大小写不同的词形），后者只是普通的变量名。</p>
+</blockquote>
+</li>
+</ul>
+<ul>
+<li>布尔型：除了下面六个值被转为<code>false</code>，其他值都视为<code>true</code><ul>
+<li><code>undefined</code></li>
+<li><code>null</code></li>
+<li><code>false</code></li>
+<li><code>0</code></li>
+<li><code>NaN</code></li>
+<li><code>&quot;&quot;</code>或<code>&#39;&#39;</code>（空字符串）</li>
+</ul>
+</li>
+</ul>
+<h2 id="数值"><a href="#数值" class="headerlink" title="数值"></a>数值</h2><ul>
+<li><p>js中所有数都是64bit的浮点数（包括整数）</p>
+</li>
+<li><p>最大值，最小值 <code>Number.MAX_VALUE</code> // 1.7976931348623157e+308<br><code>Number.MIN_VALUE</code> // 5e-324</p>
+</li>
+<li><p><code>NaN</code>是JavaScript的特殊值，表示“非数字”（Not a Number）,主要出现在将字符串解析成数字出错的场合。如：<code>5 - &#39;x&#39;</code> <code>Math.acos(2)</code> <code>0/0</code>。</p>
+<ul>
+<li><p><code>typeof NaN</code> // ‘number’ NaN不是一种独立的数据类型，而是一种特殊数值</p>
+</li>
+<li><p><code>NaN === NaN</code> // false <code>NaN</code>不等于任何值，包括它本身</p>
+</li>
+<li><p><code>Boolean(NaN)</code>// false</p>
+</li>
+<li><p><code>NaN + 32</code> // NaN <code>NaN</code>与任何数（包括它自己）的运算，得到的都是<code>NaN</code></p>
+</li>
+<li><p><code>isNaN(NaN)</code> // true <code>isNaN</code>方法可以用来判断一个值是否为<code>NaN</code> ；isNaN(‘Hello’) ==》true； isNaN([12]) ==》false，它会先尝试参数类型转换。</p>
+</li>
+<li><p>因此isNaN并不可靠可靠的判断 是不是 NaN的方法：利用<code>NaN</code>是JavaScript之中唯一不等于自身的值这个特点</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">myIsNaN</span>(<span class="params">value</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> value !== value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p><code>Infinity</code>表示“无穷”，用来表示两种场景。一种是一个正的数值太大，或一个负的数值太小。<strong>正向溢出（overflow）、负向溢出（underflow）和被<code>0</code>除，JavaScript都不报错</strong></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="literal">Infinity</span> === -<span class="literal">Infinity</span> <span class="comment">// false</span></span><br><span class="line"><span class="built_in">Math</span>.pow(<span class="number">2</span>, <span class="built_in">Math</span>.pow(<span class="number">2</span>, <span class="number">100</span>))  <span class="comment">// Infinity</span></span><br><span class="line"><span class="number">0</span> / <span class="number">0</span> <span class="comment">// NaN</span></span><br><span class="line"><span class="number">1</span> / <span class="number">-0</span> <span class="comment">// -Infinity</span></span><br><span class="line"><span class="number">-1</span> / <span class="number">-0</span> <span class="comment">// Infinity</span></span><br></pre></td></tr></table></figure>
+<p>一堆奇葩的运算，从数学无穷角度理解</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">5</span> * <span class="literal">Infinity</span> <span class="comment">// Infinity</span></span><br><span class="line"><span class="number">5</span> - <span class="literal">Infinity</span> <span class="comment">// -Infinity</span></span><br><span class="line"><span class="literal">Infinity</span> / <span class="number">5</span> <span class="comment">// Infinity</span></span><br><span class="line"><span class="number">5</span> / <span class="literal">Infinity</span> <span class="comment">// 0</span></span><br><span class="line"><span class="number">0</span> * <span class="literal">Infinity</span> <span class="comment">// NaN</span></span><br><span class="line"><span class="number">0</span> / <span class="literal">Infinity</span> <span class="comment">// 0</span></span><br><span class="line"><span class="literal">Infinity</span> / <span class="number">0</span> <span class="comment">// Infinity</span></span><br><span class="line"><span class="literal">null</span> * <span class="literal">Infinity</span> <span class="comment">// NaN // null相当于0</span></span><br><span class="line"><span class="literal">null</span> / <span class="literal">Infinity</span> <span class="comment">// 0</span></span><br><span class="line"><span class="literal">Infinity</span> / <span class="literal">null</span> <span class="comment">// Infinity</span></span><br><span class="line"><span class="literal">undefined</span> + <span class="literal">Infinity</span> <span class="comment">// NaN</span></span><br><span class="line"><span class="literal">undefined</span> - <span class="literal">Infinity</span> <span class="comment">// NaN</span></span><br><span class="line"><span class="literal">undefined</span> / <span class="literal">Infinity</span> <span class="comment">// NaN</span></span><br><span class="line"><span class="literal">Infinity</span> / <span class="literal">undefined</span> <span class="comment">// NaN</span></span><br><span class="line"><span class="literal">Infinity</span> + <span class="literal">Infinity</span> <span class="comment">// Infinity</span></span><br><span class="line"><span class="literal">Infinity</span> - <span class="literal">Infinity</span> <span class="comment">// NaN</span></span><br><span class="line"><span class="literal">Infinity</span> / <span class="literal">Infinity</span> <span class="comment">// NaN</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>isFinite函数</strong></li>
+</ul>
+</li>
+<li><p>与数值相关的全局方法：字符串转换成数字和进制转换，有些蛋疼的细节</p>
+<ul>
+<li>parseInt</li>
+<li>parseFloat</li>
+</ul>
+</li>
+</ul>
+<h2 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h2><ul>
+<li>单引号和双引号都可以，但是<strong>建议单引号</strong>。由于HTML语言的属性值使用双引号</li>
+<li>单引号内部可以用双引号，反之亦然</li>
+<li>unicode utf16，有坑？</li>
+<li>其他方法，参考标准库</li>
+</ul>
+<h2 id="对象"><a href="#对象" class="headerlink" title="对象"></a>对象</h2><p>定义：所谓对象，就是一种无序的数据集合，由若干个“键值对”（key-value）构成。因此<strong>对象的key都是字符串，可以是任意字符（不符合变量命名规范也行）</strong>。但是引用时使用<strong><code>o[key]</code></strong>（优先）、<code>o[&#39;key&#39;]</code>（可能有歧义），不能用<code>o.key</code>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> o =&#123;</span><br><span class="line">  <span class="number">1</span>: <span class="string">'a'</span>,</span><br><span class="line">  <span class="number">3.2</span>: <span class="string">'b'</span>,</span><br><span class="line">  <span class="number">1e-2</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="number">.234</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="number">0xFF</span>: <span class="literal">true</span>,</span><br><span class="line">  p: <span class="string">"helloworld"</span>,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>对象的生成方法，通常有三种方法</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> o1 = &#123;&#125;; <span class="comment">// 推荐</span></span><br><span class="line"><span class="keyword">var</span> o2 = <span class="keyword">new</span> <span class="built_in">Object</span>();</span><br><span class="line"><span class="keyword">var</span> o3 = <span class="built_in">Object</span>.create(<span class="literal">null</span>); <span class="comment">// 继承用？？</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><del>定义的一个注意点</del>(一般情况不用管)</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> o = &#123;</span><br><span class="line">  p: <span class="string">'Hello World'</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// 尽量不要这样，有歧义，可能任务是语句快</span></span><br><span class="line"><span class="keyword">var</span> o = &#123;<span class="attr">p</span>: <span class="string">'Hello World'</span>&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看本身的所有属性(不含继承) Object.keys(o);</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> o = &#123;</span><br><span class="line">  key1: <span class="number">1</span>,</span><br><span class="line">  key2: <span class="number">2</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="built_in">Object</span>.keys(o); <span class="comment">// ['key1', 'key2']</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>添加属性： <code>o.p=1</code> || <code>o[&#39;p&#39;]=1</code></p>
+</li>
+<li><p><strong>删除属性</strong>：</p>
+<ul>
+<li><code>delete</code>命令只能删除对象本身的属性，<strong>无法删除继承的属性</strong></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><code>delete</code>命令<strong>不能删除<code>var</code>命令声明的变量</strong>，只能用来删除属性。因为<strong><code>var</code>声明的全局变量都是顶层对象（浏览器的顶层对象就是<code>window</code>对象）的属性</strong>，而且默认不得删除。</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> o = &#123;&#125;;</span><br><span class="line"><span class="keyword">delete</span> o.p <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+<p>  注意：<code>o</code>对象并没有<code>p</code>属性，但是<code>delete</code>命令照样返回<code>true</code>。只有一种情况，<code>delete</code>命令会返回<code>false</code>，那就是该属性存在，且不得删除。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// defineProperty定义的属性不能删除！</span></span><br><span class="line"><span class="keyword">var</span> o = <span class="built_in">Object</span>.defineProperty(&#123;&#125;, <span class="string">'p'</span>, &#123;</span><br><span class="line">  value: <span class="number">123</span>,</span><br><span class="line">  configurable: <span class="literal">false</span></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">o.p <span class="comment">// 123</span></span><br><span class="line"><span class="keyword">delete</span> o.p <span class="comment">// false</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>in运算符：<code>in</code>运算符用于检查对象是否包含某个属性</p>
+<ul>
+<li><p><code>for...in</code>：循环用来遍历一个对象的全部属性</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> o = &#123;<span class="attr">a</span>: <span class="number">1</span>, <span class="attr">b</span>: <span class="number">2</span>, <span class="attr">c</span>: <span class="number">3</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i <span class="keyword">in</span> o) &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(o[i]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<ul>
+<li>它遍历的是对象所有可遍历（enumberable）的属性，<strong>会跳过不可遍历的属性</strong>，比如<code>toString</code>属性不会被<code>for...in</code>循环遍历到，因为它默认设置为“不可遍历”</li>
+<li>它不仅遍历对象自身的属性，<strong>还遍历继承的属性</strong></li>
+</ul>
+</blockquote>
+</li>
+</ul>
+</li>
+<li><p><del>with语句</del>（<strong>不建议使用！</strong>用在模板引擎的实现）：操作同一个对象的多个属性时，提供一些书写的方便。<code>with</code>区块内部的变量，<strong>必须是当前对象已经存在的属性，否则会创造一个当前作用域的全局变量</strong>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 例一</span></span><br><span class="line"><span class="keyword">with</span> (o) &#123;</span><br><span class="line">  p1 = <span class="number">1</span>;</span><br><span class="line">  p2 = <span class="number">2</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 等同于</span></span><br><span class="line">o.p1 = <span class="number">1</span>;</span><br><span class="line">o.p2 = <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 例二</span></span><br><span class="line"><span class="keyword">with</span> (<span class="built_in">document</span>.links[<span class="number">0</span>])&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(href);</span><br><span class="line">  <span class="built_in">console</span>.log(title);</span><br><span class="line">  <span class="built_in">console</span>.log(style);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 等同于</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">document</span>.links[<span class="number">0</span>].href);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">document</span>.links[<span class="number">0</span>].title);</span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">document</span>.links[<span class="number">0</span>].style);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h2><p>定义：数组是一个key（属性名）为0，1，2…的对象，它的类型是Array，原型是Object。<code>Object.keys()</code>可返回。与其他任何对象类似，可用<code>a[0]</code>，<code>a[&#39;0&#39;]</code>取值，</p>
+<ul>
+<li><p>定义：<code>var arr = [&#39;a&#39;, &#39;b&#39;];</code></p>
+</li>
+<li><p>重要方法：<code>arr.push(element)</code> <code>arr.pop()</code></p>
+</li>
+<li><p><em>请注意</em>，<code>for ... in</code>对<code>Array</code>的循环得到的是<code>String</code>而不是<code>Number</code>。</p>
+</li>
+<li><p>长度： <code>arr.length</code> </p>
+<ul>
+<li>值可以修改<ul>
+<li>如果比实际的length小，会删除多余元素</li>
+<li>如果比实际的length大，这种结果[1, undefined × 2]</li>
+</ul>
+</li>
+<li><code>length</code>属性的值就是等于最大的<strong>数字键</strong>加1</li>
+</ul>
+</li>
+<li><p>添加：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">arr[<span class="number">1000</span>] = <span class="string">'e'</span>; <span class="comment">// 不一定要连续</span></span><br><span class="line">arr.length <span class="comment">// 1001 注意，很特别</span></span><br><span class="line">arr[<span class="number">999</span>] <span class="comment">// undefined 注意，很特别</span></span><br><span class="line"><span class="built_in">Object</span>.keys(arr) <span class="comment">// ["0", "1", "1000"]</span></span><br><span class="line">arr.length=<span class="number">3</span> </span><br><span class="line">arr <span class="comment">//["a", "b", undefined × 1]</span></span><br><span class="line">arr[<span class="number">4</span>] <span class="comment">// undefined</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>遍历：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = [<span class="number">1</span>, ,<span class="number">2</span>,<span class="number">3</span>]; <span class="comment">// 一个含有空位的数组</span></span><br><span class="line"><span class="comment">// for in 不推荐，可能会遍历非数组属性，自动忽略空位</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i <span class="keyword">in</span> a) &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(a[i]); <span class="comment">// 注意与python区别，i只是key，不是value</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 循环,可能遇到空位</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; a.length; i++) &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(a[i]);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// for each，自动忽略空位</span></span><br><span class="line">a.forEach(<span class="function"><span class="keyword">function</span> (<span class="params">color</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(color);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>清空:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arr.length = <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>删除任意一个值：<code>delete a[1]</code>不影响<code>length</code>，被删除的成为<code>undefined</code>,成为<strong><em>空位</em></strong>。</p>
+</li>
+<li><p>可以添加其他属性 <code>a[&#39;p&#39;] = &#39;abc&#39;;</code></p>
+</li>
+<li><p>注意：<strong>由于数组本质上是对象的一种，所以我们可以为数组添加属性，但是这不影响<code>length</code>属性的值。</strong></p>
+</li>
+<li><p>数组类似对象：给普通Object对象加上length属性，如<strong>string，arguments就是</strong>。</p>
+</li>
+</ul>
+<h2 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h2><p>一等公民</p>
+<ul>
+<li><p>三种声明方式</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 方法一</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">print</span>(<span class="params">s</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(s);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 方法二</span></span><br><span class="line"><span class="keyword">var</span> print = <span class="function"><span class="keyword">function</span>(<span class="params">s</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(s);</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// 方法二，注意func只在函数体内可访问</span></span><br><span class="line"><span class="comment">// 最好  var f = function f() &#123;&#125;;</span></span><br><span class="line"><span class="keyword">var</span> print = <span class="function"><span class="keyword">function</span> <span class="title">func</span>(<span class="params">s</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(s);</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// 方法三 函数的本质是对象，最后一句是返回值，前面是n个参数</span></span><br><span class="line"><span class="keyword">var</span> add = <span class="keyword">new</span> <span class="built_in">Function</span>( <span class="comment">//new 可以不写，但是不建议！</span></span><br><span class="line">  <span class="string">'x'</span>,</span><br><span class="line">  <span class="string">'y'</span>,</span><br><span class="line">  <span class="string">'return (x + y)'</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>函数重复声明，之前的会失效（对比变量）</p>
+</li>
+<li><p>函数提升：只有第一种方式声明的会提升。</p>
+</li>
+<li><p>函数对象的属性：</p>
+<ul>
+<li><p><code>name</code> 函数名</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f1</span>(<span class="params"></span>) </span>&#123;&#125;</span><br><span class="line">f1.name <span class="comment">// 'f1'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> f2 = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;&#125;;</span><br><span class="line">f2.name <span class="comment">// '' 测试发现，返回"f2".....</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> f3 = <span class="function"><span class="keyword">function</span> <span class="title">myName</span>(<span class="params"></span>) </span>&#123;&#125;;</span><br><span class="line">f3.name <span class="comment">// 'myName'</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>length</code> 函数参数个数，可以区分实际传入的个数，实现面向对象编程的”方法重载“（overload）。</p>
+</li>
+<li><p><code>toString()</code> 返回函数的源码，函数内部的注释也可以返回。</p>
+</li>
+</ul>
+</li>
+<li><p>允许调用时省略参数</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params">a, b</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> a;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">f(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>) <span class="comment">// 1</span></span><br><span class="line">f(<span class="number">1</span>) <span class="comment">// 1</span></span><br><span class="line">f() <span class="comment">// undefined</span></span><br><span class="line">f(<span class="literal">undefined</span>, <span class="number">1</span>)  <span class="comment">// 省略第一个参数，不能f(,1)语法错误</span></span><br><span class="line">f.length <span class="comment">// 2 注意length是f定义的本身的属性</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>为函数参数设置默认值</strong>：参考code snippet</p>
+</li>
+<li><p>值传递，引用传递，与java类似</p>
+</li>
+<li><p><strong><code>arguments</code>对象</strong>：代表所有参数，由于JavaScript允许函数有不定数目的参数，所以我们需要一种机制，可以在函数体内部读取所有参数。这就是<code>arguments</code>对象的由来。<strong>这个对象只有在函数体内部，才可以使用</strong>。</p>
+<ul>
+<li><p>它不是数组，虽然很像，<code>arguments[0]</code>取值，<code>arguments.length</code>获取参数个数，<code>arguments[0]=1</code>赋值(不建议)。    </p>
+</li>
+<li><p>不能使用数组的方法forEach/slice等，可以转化为数组后再用。</p>
+</li>
+<li><p>常用的地方是<code>myfunction.apply(obj, arguments)</code></p>
+</li>
+<li><p><del>callee属性</del>：arguments对应的原函数，严格模式里面是禁用的，因此不建议使用。</p>
+</li>
+<li><p>应用：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 判断个数</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params">a, b, c</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">arguments</span>.length === <span class="number">2</span>) &#123;</span><br><span class="line">        <span class="comment">// 实际拿到的参数是a和b，c为undefined</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//  即使不定义参数也能拿到参数</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">abs</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">arguments</span>.length === <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> x = <span class="built_in">arguments</span>[<span class="number">0</span>];</span><br><span class="line">    <span class="keyword">return</span> x &gt;= <span class="number">0</span> ? x : -x;</span><br><span class="line">&#125;</span><br><span class="line">abs(<span class="number">-9</span>); <span class="comment">// 9</span></span><br></pre></td></tr></table></figure>
+<p>​</p>
+</li>
+</ul>
+</li>
+<li><p><del>立即调用的函数表达式（IIFE）</del></p>
+<ul>
+<li><p>一对圆括号<code>()</code>是一种运算符，跟在函数名之后，表示调用该函数</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 避免歧义，必须要外层的括号，以表达式解释，而不是语句。</span></span><br><span class="line"><span class="comment">// 如果function在行首js引擎认为是语句。</span></span><br><span class="line">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123; <span class="comment">/* code */</span> &#125;());</span><br><span class="line"><span class="comment">// 或者 更好理解</span></span><br><span class="line">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123; <span class="comment">/* code */</span> &#125;)();</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>用处：</p>
+<ul>
+<li><p>一是不必为函数命名，避免了污染全局变量；</p>
+</li>
+<li><p>二是IIFE内部形成了一个单独的作用域，可以封装一些外部无法读取的私有变量。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 写法一</span></span><br><span class="line"><span class="keyword">var</span> tmp = newData;</span><br><span class="line">processData(tmp);</span><br><span class="line">storeData(tmp);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 写法二,更好，避免tmp污染全局作用域</span></span><br><span class="line">(<span class="function"><span class="keyword">function</span> (<span class="params"></span>)</span>&#123;</span><br><span class="line">  <span class="keyword">var</span> tmp = newData;</span><br><span class="line">  processData(tmp);</span><br><span class="line">  storeData(tmp);</span><br><span class="line">&#125;());</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><del>eval命令</del>：相当于其他语言的exe命令，<strong>将字符串当作语句执行</strong></p>
+<ul>
+<li><p><code>eval</code>没有自己的作用域，都在当前作用域内执行</p>
+</li>
+<li><p><code>eval</code>的使用分成两种情况，像上面这样的调用，就叫做“直接使用”，这种情况下<code>eval</code>的作用域就是当前作用域（即全局作用域或函数作用域）。另一种情况是，<code>eval</code>不是直接调用，而是“间接调用”，此时eval的作用域总是全局作用域。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">  <span class="keyword">var</span> a = <span class="number">2</span>;</span><br><span class="line">  <span class="keyword">var</span> e = <span class="built_in">eval</span>;</span><br><span class="line">  e(<span class="string">'console.log(a)'</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">f() <span class="comment">// 1</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>同样的功能：<code>Function</code>构造函数也可以让字符串执行。</p>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>不要在if，while语句中声明函数，但是可以在函数内部声明函数。(闭包)</li>
+<li>高阶函数：将函数作为参数传入一个函数。</li>
+</ul>
+<h2 id="函数闭包"><a href="#函数闭包" class="headerlink" title="函数闭包"></a>函数闭包</h2><ul>
+<li><p>定义：把闭包简单理解成“定义在一个函数内部的函数”。在本质上，闭包就是将函数内部和函数外部连接起来的一座桥梁。</p>
+</li>
+<li><p>作用：</p>
+<ul>
+<li>可以读取函数内部的变量，</li>
+<li>让这些变量始终保持在内存中，即闭包可以使得它诞生环境一直存在</li>
+</ul>
+</li>
+<li><p>用法举例：</p>
+<ul>
+<li><p>保持变量到内存：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">createIncrementor</span>(<span class="params">start</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 或者var start =0;</span></span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> start++;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> inc = createIncrementor(<span class="number">5</span>);</span><br><span class="line"></span><br><span class="line">inc() <span class="comment">// 5</span></span><br><span class="line">inc() <span class="comment">// 6</span></span><br><span class="line">inc() <span class="comment">// 7</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>封装私有变量和方法</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Person</span>(<span class="params">name</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> _age;</span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">setAge</span>(<span class="params">n</span>) </span>&#123;</span><br><span class="line">    _age = n;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">getAge</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> _age;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// 注意：如果new Person 实际生成的是这个对象</span></span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    name: name,</span><br><span class="line">    getAge: getAge,</span><br><span class="line">    setAge: setAge</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> p1 = person(<span class="string">'张三'</span>);</span><br><span class="line">p1.setAge(<span class="number">25</span>);</span><br><span class="line">p1.getAge() <span class="comment">// 25</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="运算符"><a href="#运算符" class="headerlink" title="运算符"></a>运算符</h2><ul>
+<li><p>比较方法：</p>
+<ul>
+<li>如果运算子是对象，先自动转成原始类型的值（即先执行该对象的<code>valueOf</code>方法，如果结果还不是原始类型的值，再执行<code>toString</code>方法）。</li>
+<li>如果两个运算子都是字符串，则按照字典顺序比较（实际上是比较Unicode码点）。</li>
+<li>否则，将两个运算子都转成数值，再进行比较。</li>
+</ul>
+</li>
+<li><p><code>==</code>和<code>===</code>：如果两个值不是同一类型，严格相等运算符（<code>===</code>）直接返回<code>false</code>，而<strong>相等运算符（<code>==</code>）会将它们转化成同一个类型</strong>，再用严格相等运算符进行比较</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">''</span> == <span class="number">0</span> <span class="comment">// 等同于 Number('') === 0 </span></span><br><span class="line"></span><br><span class="line"><span class="number">1</span> === <span class="string">"1"</span> <span class="comment">// false</span></span><br><span class="line"><span class="number">1</span> == <span class="string">"1"</span> <span class="comment">// true</span></span><br><span class="line"><span class="comment">// 对象是比较内存地址</span></span><br><span class="line">(&#123;&#125; === &#123;&#125;) <span class="comment">// false</span></span><br><span class="line">(&#123;&#125; == &#123;&#125;) <span class="comment">// false</span></span><br><span class="line"></span><br><span class="line"><span class="literal">null</span> === <span class="literal">null</span> <span class="comment">// true</span></span><br><span class="line"><span class="literal">null</span> === <span class="literal">undefined</span> <span class="comment">// false</span></span><br><span class="line"><span class="literal">null</span> == <span class="literal">undefined</span> <span class="comment">// true</span></span><br><span class="line"><span class="number">0</span> == <span class="literal">null</span> <span class="comment">// false</span></span><br><span class="line"><span class="number">0</span> == <span class="literal">undefined</span> <span class="comment">// false</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>!=</code>和<code>!==</code>：同上</p>
+</li>
+<li><p>最佳实践：<strong>不要使用相等运算符（<code>==</code>），最好只使用严格相等运算符（<code>===</code>）。</strong>因为<code>==</code>会有很多违反直觉的例子：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">''</span> == <span class="string">'0'</span>           <span class="comment">// false</span></span><br><span class="line"><span class="number">0</span> == <span class="string">''</span>             <span class="comment">// true</span></span><br><span class="line"><span class="number">0</span> == <span class="string">'0'</span>            <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>取反运算：下面的6个值取反是true，但是不代表本身==false</p>
+<ul>
+<li><code>undefined</code></li>
+<li><code>null</code></li>
+<li><code>false</code></li>
+<li><code>0</code>（包括<code>+0</code>和<code>-0</code>）</li>
+<li><code>NaN</code></li>
+<li>空字符串（<code>&#39;&#39;</code>）</li>
+</ul>
+</li>
+<li><p>void 运算符：执行一个表达式，然后不返回任何值，或者说返回<code>undefined</code>。</p>
+<ul>
+<li><p>示例</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">x = <span class="number">5</span> <span class="comment">// 5</span></span><br><span class="line"><span class="keyword">void</span> (x = <span class="number">5</span>); <span class="comment">// // undefined</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params"></span>) </span>&#123;<span class="keyword">return</span> <span class="number">1</span>&#125;</span><br><span class="line">f(); <span class="comment">// 1</span></span><br><span class="line"><span class="keyword">void</span> f(); <span class="comment">// undefined</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>应用：在超级链接中插入代码，目的是返回<code>undefined</code>可以防止网页跳转</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--点击某个link，运行某个方法--&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- 会运行f函数，并跳转到example.com网页--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"http://example.com"</span> <span class="attr">onclick</span>=<span class="string">"f();"</span>&gt;</span>文字<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- onclick返回false，不跳转--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"http://example.com"</span> <span class="attr">onclick</span>=<span class="string">"f();return false;"</span>&gt;</span>文字<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- 用void，实现点击不调不跳转--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"javascript: void(f())"</span>&gt;</span>文字<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!-- 不会在当前页面跳转，而是打开新窗口--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"javascript:void window.open('http://example.com/')"</span>&gt;</span></span><br><span class="line">  点击打开新窗口</span><br><span class="line"><span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!--提交表单--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"javascript: void(document.form.submit())"</span>&gt;</span></span><br><span class="line">文字<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="数据类型转换"><a href="#数据类型转换" class="headerlink" title="数据类型转换"></a>数据类型转换</h2><p>变量本身的类型是动态的。但是<strong>运算时</strong>是有类型的。理解上面各种运算符（如<code>1 == &#39;1&#39;</code>,<code>&#39;4&#39; - &#39;3&#39;</code>）就是数据转换的过程。</p>
+<ul>
+<li><p>强制转换：使用<code>Number</code>、<code>String</code>和<code>Boolean</code>三个构造函数，手动将各种类型的值，转换成数字、字符串或者布尔值。</p>
+<ul>
+<li><p>Number</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Number</span>(<span class="string">''</span>) <span class="comment">// 0</span></span><br><span class="line"><span class="built_in">Number</span>(<span class="literal">undefined</span>) <span class="comment">// NaN</span></span><br><span class="line"><span class="built_in">Number</span>(<span class="literal">null</span>) <span class="comment">// 0</span></span><br><span class="line"><span class="built_in">Number</span>(&#123;&#125;) <span class="comment">// NaN</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 区分Number与parseInt</span></span><br><span class="line"><span class="built_in">Number</span>(<span class="string">'42 cats'</span>) <span class="comment">// NaN</span></span><br><span class="line"><span class="built_in">parseInt</span>(<span class="string">'42 cats'</span>) <span class="comment">// 42</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><code>Number</code>函数会自动过滤一个字符串前导和后缀的空格。</p>
+<p><code>Number</code>方法的参数是对象(字符串除外)时，将返回<code>NaN</code>。</p>
+</blockquote>
+</li>
+<li><p>String</p>
+</li>
+<li><p>Boolean 除了下面6个，都是true</p>
+<ul>
+<li><code>undefined</code></li>
+<li><code>null</code></li>
+<li><code>-0</code></li>
+<li><code>0</code>或<code>+0</code></li>
+<li><code>NaN</code></li>
+<li><code>&#39;&#39;</code>（空字符串）</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>自动转换：</p>
+<ul>
+<li><p>时机：</p>
+<ul>
+<li>不同类型的数据互相运算 如 <code>123+&#39;abc&#39;</code></li>
+<li>对非布尔值类型的数据求布尔值 如<code>if(&quot;abc&quot;)</code></li>
+<li>对非数值类型的数据使用一元运算符（即“+”和“-”）如- [1, 2, 3] // NaN</li>
+</ul>
+</li>
+<li><p>规则：</p>
+<p>预期什么类型的值，就调用该类型的转换函数</p>
+<ul>
+<li>转化为String：加法运算</li>
+<li>转化为Number：除了加法运算</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>建议：<strong>全部使用<code>Boolean</code>、<code>Number</code>和<code>String</code>函数进行显式转换。</strong></p>
+</li>
+<li><p>坑：</p>
+<ul>
+<li>+”123”—&gt;number(123)  </li>
+<li>1+”123”—&gt;String(“1123”)</li>
+<li>i+1，导致结果不确定！可以使用+i+1;</li>
+</ul>
+</li>
+</ul>
+<h2 id="错误处理"><a href="#错误处理" class="headerlink" title="错误处理"></a>错误处理</h2><p>类似于java的throw catch机制，这里都叫Error或者xxxError。</p>
+<ul>
+<li><p>内置异常：Error的子类</p>
+<ul>
+<li><strong>SyntaxError</strong>:解析代码时发生的语法错误。</li>
+<li><strong>ReferenceError</strong>：引用一个不存在的变量时发生的错误。</li>
+<li><strong>RangeError</strong>：一是数组长度为负数，二是Number对象的方法参数超出范围</li>
+<li><strong>TypeError</strong>：变量或参数不是预期类型时发生的错误，如：调用对象不存在的方法</li>
+<li><strong>URIError</strong>：<code>URIError</code>是URI相关函数的参数不正确时抛出的错误，主要涉及<code>encodeURI()</code>、<code>decodeURI()</code>、<code>encodeURIComponent()</code>、<code>decodeURIComponent()</code>、<code>escape()</code>和<code>unescape()</code></li>
+<li><del><strong>EvalError</strong></del></li>
+</ul>
+</li>
+<li><p>自定义错误：Error的子类</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">UserError</span>(<span class="params">message</span>) </span>&#123;</span><br><span class="line">   <span class="keyword">this</span>.message = message || <span class="string">"默认信息"</span>;</span><br><span class="line">   <span class="keyword">this</span>.name = <span class="string">"UserError"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">UserError.prototype = <span class="keyword">new</span> <span class="built_in">Error</span>();</span><br><span class="line">UserError.prototype.constructor = UserError;</span><br><span class="line"><span class="comment">// 使用</span></span><br><span class="line"><span class="keyword">new</span> UserError(<span class="string">"这是自定义的错误！"</span>);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>throw 可以抛出任何对象，当然包括Error对象</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 一般使用</span></span><br><span class="line"><span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">'出错了!'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 抛出一个字符串</span></span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">  <span class="keyword">throw</span> <span class="string">"Error！"</span>;</span><br><span class="line">&#125;<span class="keyword">catch</span>(e)&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(e);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 抛出一个数值</span></span><br><span class="line"><span class="keyword">throw</span> <span class="number">42</span>;</span><br><span class="line"><span class="comment">// 抛出一个布尔值</span></span><br><span class="line"><span class="keyword">throw</span> <span class="literal">true</span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>try catch示例</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">  foo.bar();</span><br><span class="line">&#125; <span class="keyword">catch</span> (e) &#123;</span><br><span class="line">  <span class="keyword">if</span> (e <span class="keyword">instanceof</span> <span class="built_in">EvalError</span>) &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(e.name + <span class="string">": "</span> + e.message);</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (e <span class="keyword">instanceof</span> <span class="built_in">RangeError</span>) &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(e.name + <span class="string">": "</span> + e.message);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>finally</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">  writeFile(Data);</span><br><span class="line">&#125; <span class="keyword">catch</span>(e) &#123;</span><br><span class="line">  handleError(e);</span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">  closeFile();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>try catch finally return 之间的trick。。。</p>
+</li>
+</ul>
+<h2 id="标准库"><a href="#标准库" class="headerlink" title="标准库"></a>标准库</h2><p>调用对象方法的两种方式：</p>
+<ul>
+<li><p>正常：o.func(arg1,arg2)</p>
+</li>
+<li><p>call/apply <code>对象名.func.call(o,arg1,arg2 )</code>或者 <code>对象名.func.apply(o,args)</code>，</p>
+<ul>
+<li><p>应用：实例对象可能会自定义<code>toString</code>方法，覆盖掉<code>Object.prototype.toString</code>方法。通过函数的<code>call</code>方法，可以在任意值上调用<code>Object.prototype.toString</code>方法，帮助我们判断这个值的类型。如果不想创建实例，只是想单纯调用这些方法</p>
+<p>​</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Object</span>.prototype.toString.call(value)</span><br><span class="line"><span class="comment">// </span></span><br><span class="line"><span class="comment">// Array.prototype.method.call(调用对象，参数)</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="Object"><a href="#Object" class="headerlink" title="Object"></a>Object</h3><p><strong>重点</strong>：对象的方法一般定义在<code>Object.prototype</code>（<strong>实例方法</strong>）和<code>Object</code>（<strong>静态方法，不能被Object实例对象调用</strong>）中。</p>
+<blockquote>
+<p>除此之外，还有内部方法，在Object的构造函数中定义，外部无法修改，这种定义方法耗内存。ex:this.func=function(){};</p>
+</blockquote>
+<ul>
+<li><p>给Object添加方法的两种方式（其他对象也是）：</p>
+<ul>
+<li>添加到<code>Object</code>中</li>
+<li>添加到<code>Object.prototype</code>中</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 静态方法,区别，这里不是构造函数里面this.print(内部方法)</span></span><br><span class="line"><span class="built_in">Object</span>.print = <span class="function"><span class="keyword">function</span>(<span class="params">o</span>)</span>&#123; <span class="built_in">console</span>.log(o) &#125;;</span><br><span class="line"><span class="comment">// 静态方法，只能这样调用</span></span><br><span class="line"><span class="built_in">Object</span>.print(o);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 实例方法</span></span><br><span class="line"><span class="built_in">Object</span>.prototype.print = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123; <span class="built_in">console</span>.log(<span class="keyword">this</span>)&#125;;</span><br><span class="line"><span class="comment">// 两种调用方式</span></span><br><span class="line">o.print();</span><br><span class="line"><span class="built_in">Object</span>.prototype.print.call(o);</span><br></pre></td></tr></table></figure>
+<p>​</p>
+</li>
+</ul>
+<ul>
+<li>静态方法<ul>
+<li><strong>Object.keys()</strong>，<del>Object.getOwnPropertyNames()</del>作用以及区别</li>
+<li><strong>对象属性模型的相关方法</strong></li>
+<li><strong>控制对象状态的方法</strong></li>
+<li><strong>原型链相关方法</strong><ul>
+<li>Object.create()：生成一个新对象，并该对象的原型。</li>
+<li>Object.getPrototypeOf()：获取对象的Prototype对象</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>实例方法<ul>
+<li><code>valueOf()</code>：返回当前对象对应的值。</li>
+<li><code>toString()</code>：返回当前对象对应的字符串形式。</li>
+<li><code>hasOwnProperty()</code>：判断某个属性是否为当前对象自身的属性，还是继承自原型对象的属性。</li>
+<li><code>isPrototypeOf()</code>：判断当前对象是否为另一个对象的原型。</li>
+<li><code>propertyIsEnumerable()</code>：判断某个属性是否可枚举。</li>
+<li><code>toLocaleString()</code>：返回当前对象对应的本地字符串形式。</li>
+</ul>
+</li>
+</ul>
+<h3 id="Array"><a href="#Array" class="headerlink" title="Array"></a>Array</h3><p>Object的子类，建议使用<code>var arr=[];</code>方式定义</p>
+<ul>
+<li><p>静态方法</p>
+<ul>
+<li><code>isArray()</code>：一个值是否为数组。它可以弥补typeof运算符的不足</li>
+</ul>
+</li>
+<li><p>实例方法</p>
+<ul>
+<li>Object继承的 valueOf、toString等</li>
+<li>push pop</li>
+<li>join 它把当前<code>Array</code>的每个元素都用指定的字符串连接起来，然后返回连接后的字符串</li>
+<li>concat</li>
+<li>shift unshift</li>
+<li>reverse</li>
+<li><strong>slice</strong>:方法用于提取原数组的一部分，返回一个新数组，还能用作把非数组<strong>转为真正的数组</strong>。</li>
+<li>splice<code>splice()</code>方法是修改<code>Array</code>的“万能方法”，它可以从指定的索引开始删除若干元素，然后再从该位置添加若干元素.</li>
+<li><code>sort()</code>：默认把所有元素先转换为String再排序，结果<code>&#39;10&#39;</code>排在了<code>&#39;2&#39;</code>的前面。用默认排序规则，直接对数字排序，绝对栽进坑里！<code>sort()</code>方法会直接对<code>Array</code>进行修改，它返回的结果仍是当前<code>Array</code></li>
+</ul>
+</li>
+<li><p>新增方法：大部分是函数式操作方法</p>
+<ul>
+<li>map forEach filter</li>
+<li>some every</li>
+<li>reduce reduceRight</li>
+<li>indexOf lastIndexOf</li>
+</ul>
+</li>
+<li><p><strong>链式使用</strong>：demo</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> users = [&#123;<span class="attr">name</span>:<span class="string">"tom"</span>, <span class="attr">email</span>:<span class="string">"tom@example.com"</span>&#125;,</span><br><span class="line">			 &#123;<span class="attr">name</span>:<span class="string">"peter"</span>, <span class="attr">email</span>:<span class="string">"peter@example.com"</span>&#125;];</span><br><span class="line"></span><br><span class="line">users</span><br><span class="line">.map(<span class="function"><span class="keyword">function</span> (<span class="params">user</span>)</span>&#123; <span class="keyword">return</span> user.email; &#125;)</span><br><span class="line">.filter(<span class="function"><span class="keyword">function</span> (<span class="params">email</span>) </span>&#123; <span class="keyword">return</span> <span class="regexp">/^t/</span>.test(email); &#125;)</span><br><span class="line">.forEach(alert);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="其他标准库对象"><a href="#其他标准库对象" class="headerlink" title="其他标准库对象"></a>其他标准库对象</h3><p>包装对象（Boolean、Number、String）、Math、Date、RegExp、JSON</p>
+<ul>
+<li><p>正则</p>
+<ul>
+<li><p>构造</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// /xyz/构造了一个正则表达式</span></span><br><span class="line"><span class="keyword">var</span> regex = <span class="regexp">/xyz/</span>;</span><br><span class="line"><span class="keyword">var</span> regex = <span class="keyword">new</span> <span class="built_in">RegExp</span>(<span class="string">'xyz'</span>);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>应用</p>
+<ul>
+<li><p>分割字符串</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 正确分割空格，n个空格</span></span><br><span class="line"><span class="string">'a b   c'</span>.split(<span class="regexp">/\s+/</span>); <span class="comment">// ['a', 'b', 'c']</span></span><br></pre></td></tr></table></figure>
+<p>​</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>包装类型：</p>
+<ul>
+<li><code>new String(true)</code> 不是String<code>(true)</code></li>
+<li><code>new String(&quot;str&quot;) === &quot;str&quot;;</code> <code>Boolean(true) === true;</code><strong>是false</strong></li>
+<li><strong>不要使用包装对象</strong>！</li>
+</ul>
+</li>
+<li><p>Date：</p>
+<ul>
+<li><p>坑：<strong>月份是0–11</strong>，不是1–12</p>
+</li>
+<li><p>为了方便时区转换，统一用<strong>时间戳</strong>表示时间，显示的时候再转换</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> d = <span class="keyword">new</span> <span class="built_in">Date</span>(<span class="number">1435146562875</span>);</span><br><span class="line">d.toLocaleString(); <span class="comment">// '2015/6/24 下午7:49:22'，本地时间（北京时区+8:00），显示的字符串与操作系统设定的格式有关</span></span><br><span class="line">d.toUTCString();</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>Json:</p>
+<ul>
+<li><p>序列化（都是UTF8）</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// </span></span><br><span class="line"><span class="keyword">var</span> xiaoming = &#123;</span><br><span class="line">    name: <span class="string">'小明'</span>,</span><br><span class="line">    age: <span class="number">14</span>,</span><br><span class="line">    skills: [<span class="string">'JavaScript'</span>, <span class="string">'Java'</span>, <span class="string">'Python'</span>, <span class="string">'Lisp'</span>],</span><br><span class="line">    <span class="comment">// 给对象添加toJSON方法，会按照下面的输出</span></span><br><span class="line">    <span class="comment">// toJSON: function () &#123;</span></span><br><span class="line">    <span class="comment">//     return &#123; // 只输出name和age，并且改变了key：</span></span><br><span class="line">    <span class="comment">//         'Name': this.name,</span></span><br><span class="line">    <span class="comment">//         'Age': this.age</span></span><br><span class="line">    <span class="comment">//     &#125;;</span></span><br><span class="line">    <span class="comment">// &#125;</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">JSON</span>.stringify(xiaoming); </span><br><span class="line"><span class="comment">// 控制缩进，比较好看</span></span><br><span class="line"><span class="built_in">JSON</span>.stringify(xiaoming, <span class="literal">null</span>, <span class="string">'  '</span>);</span><br><span class="line"><span class="comment">// 过滤</span></span><br><span class="line"><span class="built_in">JSON</span>.stringify(xiaoming, [<span class="string">'name'</span>, <span class="string">'skills'</span>], <span class="string">'  '</span>);</span><br><span class="line"><span class="comment">// 处理函数后输出</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">convert</span>(<span class="params">key, value</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> value === <span class="string">'string'</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> value.toUpperCase();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> value;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">JSON</span>.stringify(xiaoming, convert, <span class="string">'  '</span>);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>反序列化</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">JSON</span>.parse(<span class="string">'[1,2,3,true]'</span>); <span class="comment">// [1, 2, 3, true]</span></span><br><span class="line"><span class="built_in">JSON</span>.parse(<span class="string">'&#123;"name":"小明","age":14&#125;'</span>); <span class="comment">// Object &#123;name: '小明', age: 14&#125;</span></span><br><span class="line"><span class="comment">// 处理函数</span></span><br><span class="line"><span class="built_in">JSON</span>.parse(<span class="string">'&#123;"name":"小明","age":14&#125;'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">key, value</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 把number * 2:</span></span><br><span class="line">    <span class="keyword">if</span> (key === <span class="string">'name'</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> value + <span class="string">'同学'</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> value;</span><br><span class="line">&#125;); <span class="comment">// Object &#123;name: '小明同学', age: 14&#125;</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="属性描述对象（了解）"><a href="#属性描述对象（了解）" class="headerlink" title="属性描述对象（了解）"></a>属性描述对象（了解）</h3><p>描述一个对象的属性的行为。<strong>对象的每个属性都有自己对应的属性描述对象，保存该属性的一些元信息。</strong>比如是否可以修改（writable），是否可以被遍历enumerable。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="comment">// 存放该属性的属性值,默认为undefined</span></span><br><span class="line">  value: <span class="number">123</span>, </span><br><span class="line">  <span class="comment">// boolean，是否可改变，默认为true</span></span><br><span class="line">  writable: <span class="literal">false</span>, </span><br><span class="line">  <span class="comment">//是否可枚举，默认true,影响for in/Object.keys</span></span><br><span class="line">  enumerable: <span class="literal">true</span>, </span><br><span class="line">  <span class="comment">// “可配置性”，默认为true,false后这其他描述值不可修改</span></span><br><span class="line">  configurable: <span class="literal">false</span>,</span><br><span class="line">  <span class="comment">// 保持属性的get，set方法</span></span><br><span class="line">  <span class="keyword">get</span>: undefined,</span><br><span class="line">  <span class="keyword">set</span>: undefined</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="面向对象编程"><a href="#面向对象编程" class="headerlink" title="面向对象编程"></a>面向对象编程</h2><h3 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h3><ul>
+<li><p><strong>没有类</strong>。不是基于“类”的，而是基于构造函数（constructor）和原型链（prototype）。</p>
+</li>
+<li><p>用构造函数生成对象模板</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Vehicle就是构造函数，它提供模板</span></span><br><span class="line"><span class="keyword">var</span> Vehicle = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 'use strict'; //可以添加，使用严格模式</span></span><br><span class="line">  <span class="keyword">this</span>.price = <span class="number">1000</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p> 注意：</p>
+<ul>
+<li>遵守构造函数名<strong>首字母大写</strong>的编码规范</li>
+<li><del>尽量使用上面的方法定义构造函数，避免使用<code>function Vehicle(){}</code>定义构造函数，向外暴露成了函数。</del></li>
+</ul>
+</blockquote>
+</li>
+<li><p>生成对象</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> v = <span class="keyword">new</span> Vehicle(); <span class="comment">// 有参数传参 new Vehicle(100)</span></span><br><span class="line"><span class="keyword">var</span> v = <span class="keyword">new</span> Vehicle; <span class="comment">// 没参数的话也可以</span></span><br><span class="line"><span class="comment">// 错误！容易忘记new，使用严格模式时会报错</span></span><br><span class="line"><span class="comment">// var v = Vehicle();</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>new的原理</p>
+<ol>
+<li>创建一个空对象，作为将要返回的对象实例</li>
+<li>将这个空对象的原型，指向构造函数的<code>prototype</code>属性</li>
+<li><strong>将这个空对象赋值给函数内部的<code>this</code>关键字</strong></li>
+<li>开始执行构造函数内部的代码</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 超级简化，var a = new A('hehe') =&gt;</span></span><br><span class="line"><span class="keyword">var</span> a = <span class="keyword">new</span> <span class="built_in">Object</span>();</span><br><span class="line">a.__proto__ = A.prototype; (proto)</span><br><span class="line">A.call(a, <span class="string">'hehe'</span>);</span><br></pre></td></tr></table></figure>
+<p>​</p>
+</li>
+<li><p>坑：</p>
+<ul>
+<li><em>如果构造函数内部有<code>return</code>语句*</em>，而且<code>return</code>后面跟着一个对象，<code>new</code>命令会返回<code>return</code>语句指定的对象；否则，就会不管<code>return</code>语句，返回<code>this</code>对象。</li>
+<li><del>如果对普通函数（<strong>内部没有<code>this</code>关键字的函数</strong>）使用<code>new</code>命令，则会返回一个空对象。</del>(chrome测试，不是这样的)</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> Vehicle = <span class="function"><span class="keyword">function</span> (<span class="params"></span>)</span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.price = <span class="number">1000</span>;</span><br><span class="line">  <span class="keyword">return</span> &#123; <span class="attr">price</span>: <span class="number">2000</span> &#125;;</span><br><span class="line">&#125;;</span><br><span class="line">(<span class="keyword">new</span> Vehicle()).price</span><br><span class="line"></span><br><span class="line"><span class="comment">//function getMessage() &#123;</span></span><br><span class="line"><span class="comment">//  return 'this is a message';</span></span><br><span class="line"><span class="comment">//&#125;</span></span><br><span class="line"><span class="comment">//var msg = new getMessage();</span></span><br><span class="line"><span class="comment">//msg // &#123;&#125;</span></span><br><span class="line"><span class="comment">//typeof msg // "Object"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>一个可以参考的new命令流程</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">_new</span>(<span class="params"><span class="regexp">/* 构造函数 */</span> constructor, <span class="regexp">/* 构造函数参数 */</span> param1</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 将 arguments 对象转为数组</span></span><br><span class="line">  <span class="keyword">var</span> args = [].slice.call(<span class="built_in">arguments</span>);</span><br><span class="line">  <span class="comment">// 取出构造函数</span></span><br><span class="line">  <span class="keyword">var</span> <span class="keyword">constructor</span> = args.shift();</span><br><span class="line">  // 创建一个空对象，继承构造函数的 prototype 属性</span><br><span class="line">  var context = Object.create(<span class="keyword">constructor</span>.prototype);</span><br><span class="line">  // 执行构造函数</span><br><span class="line">  var result = <span class="keyword">constructor</span>.apply(context, args);</span><br><span class="line">  // 如果返回结果是对象，就直接返回，则返回 context 对象</span><br><span class="line">  return (typeof result === 'object' &amp;&amp; result != null) ? result : context;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 实例</span><br><span class="line">var actor = _new(Person, '张三', 28);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>instanceof：判断对象的类型（根据原型判断），区别typeof，也是typeof的补充。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 对原始类型无效，用typeof判断</span></span><br><span class="line"><span class="keyword">var</span> s = <span class="string">'hello'</span>;</span><br><span class="line">s <span class="keyword">instanceof</span> <span class="built_in">String</span> <span class="comment">// false</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> s = <span class="keyword">new</span> <span class="built_in">String</span>(<span class="string">'hello'</span>);</span><br><span class="line">s <span class="keyword">instanceof</span> <span class="built_in">String</span> <span class="comment">// true</span></span><br><span class="line"><span class="comment">// undefined和null不是对象</span></span><br><span class="line"><span class="literal">undefined</span> <span class="keyword">instanceof</span> <span class="built_in">Object</span> <span class="comment">// false</span></span><br><span class="line"><span class="literal">null</span> <span class="keyword">instanceof</span> <span class="built_in">Object</span> <span class="comment">// false</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="this关键字"><a href="#this关键字" class="headerlink" title="this关键字"></a>this关键字</h3><ul>
+<li>核心：<ul>
+<li>每个函数都说有this，这个隐藏的参数</li>
+<li>this是随时变换的，<strong>函数被赋值给谁（对象），this就指向谁（对象）</strong>。</li>
+<li>全局的函数this指向window。</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>阅读：<a href="http://javascript.ruanyifeng.com/oop/this.html" target="_blank" rel="noopener">http://javascript.ruanyifeng.com/oop/this.html</a></p>
+</li>
+<li><p>一个常见的错误：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> log = <span class="built_in">console</span>.log;</span><br><span class="line"><span class="comment">// 调用call并传入console对象作为this:</span></span><br><span class="line">log(<span class="string">"test"</span>); <span class="comment">// error!</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>注意点：</p>
+<ul>
+<li>避免嵌套this，解决办法：<strong>使用一个变量锁定this</strong>（如<code>var that = this;</code>）然后内层函数调用这个变量，是非常常见的做法，有大量应用，<u>请务必掌握</u>。</li>
+<li><strong>避免数组处理方法中的this</strong>，数组的<code>map</code>和<code>foreach</code>方法，允许提供一个函数作为参数。<strong>解决办法同上</strong>。或者<strong>将<code>this</code>当作<code>foreach</code>方法的第二个参数</strong>，固定它的运行环境。也可使用bind方法。</li>
+<li><strong>避免回调函数中的this</strong>，可使用bind方法。</li>
+<li>对普通函数调用，我们通常把<code>this</code>绑定为<code>null</code>。</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>固定this：JavaScript提供了<code>call</code>、<code>apply</code>、<code>bind</code>这三个方法，来切换/固定<code>this</code>的指向。他们都是<strong>function的方法</strong></p>
+<ul>
+<li><p><code>function.prototype.call()</code>、<code>function.prototype.apply()</code>：指定this&amp;&amp;调用函数，不同是参数列表。一个应用：调用原生方法，见标准库Object节</p>
+</li>
+<li><p><code>function.prototype.bind()</code>：绑定函数到某个对象，保存返回值，以后调用该函数，this都是指向这个对象。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> obj = &#123;</span><br><span class="line">  count: <span class="number">100</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// 注意保持func</span></span><br><span class="line"><span class="keyword">var</span> func = counter.inc.bind(obj);</span><br><span class="line"><span class="comment">// 不是直接调用counter.inc</span></span><br><span class="line">func();</span><br><span class="line">obj.count <span class="comment">// 101</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 数组的例子，多调用bind，来绑定this</span></span><br><span class="line">obj.print = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.times.forEach(<span class="function"><span class="keyword">function</span> (<span class="params">n</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">this</span>.name);</span><br><span class="line">  &#125;.bind(<span class="keyword">this</span>));</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>​</p>
+<ul>
+<li>还可以绑定参数</li>
+<li>传null，表示绑定全局的window</li>
+</ul>
+</li>
+<li><p><u><strong>bind结合call使用</strong>，一定要理解！！！！！很有意思</u></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Array.prototype.push函数本身是个对象</span></span><br><span class="line"><span class="comment">// 一个绑定了push函数的call，call参数是(调用者,调用参数)</span></span><br><span class="line"><span class="keyword">var</span> push = <span class="built_in">Function</span>.prototype.call.bind(<span class="built_in">Array</span>.prototype.push);</span><br><span class="line"><span class="keyword">var</span> pop = <span class="built_in">Function</span>.prototype.call.bind(<span class="built_in">Array</span>.prototype.pop);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> a = [<span class="number">1</span> ,<span class="number">2</span> ,<span class="number">3</span>];</span><br><span class="line">push(a, <span class="number">4</span>)</span><br><span class="line">a <span class="comment">// [1, 2, 3, 4]</span></span><br><span class="line"></span><br><span class="line">pop(a)</span><br><span class="line">a <span class="comment">// [1, 2, 3]</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="原型prototype与继承"><a href="#原型prototype与继承" class="headerlink" title="原型prototype与继承"></a>原型prototype与继承</h3><ul>
+<li><p>原型机制的出发点：构造函数生成的方法每个实例都有一个，浪费内存，有什么机制能公用这些方法。</p>
+</li>
+<li><p>实质：<strong>构造函数通过原型链记录了继承关系。记录的方法是：通过函数的<code>prototype</code>把关系串联起来。</strong>至于原型链中分配的对象即<strong>原型对象</strong>,<strong>一个构造函数对应一个原型对象</strong>。（好好理解为什么不能直接把构造函数串起来）</p>
+</li>
+<li><p>基本设计：原型对象上的所有属性和方法，都能被派生对象共享。<u>通过构造函数生成实例对象时，会自动为实例对象分配原型对象</u>。<strong>每一个构造函数都有一个<code>prototype</code>属性</strong>，这个属性就是实例对象的<strong>原型对象</strong>。</p>
+<ul>
+<li>当实例对象本身没有某个属性或方法的时候，它会到构造函数的<code>prototype</code>属性指向的对象，去寻找该属性或方法。这就是原型对象的特殊之处。</li>
+<li>如果实例对象自身就有某个属性或方法，它就不会再去原型对象寻找这个属性或方法。</li>
+<li>当修改某个属性时，会在实例对象本身上加入该属性，从而覆盖(override)原型对象的属性。以后修改的都是实例对象本身的属性。</li>
+</ul>
+<blockquote>
+<p>注意：<code>prototype</code>只有构造<strong>函数</strong>（Function）有！普通对象（Object）没有！普通对象只有<code>__proto__</code></p>
+</blockquote>
+</li>
+</ul>
+<ul>
+<li><p>JavaScript的所有对象都有构造函数，而所有构造函数都有<code>prototype</code>属性（其实是所有函数都有<code>prototype</code>属性），所以所有对象都有自己的原型对象。</p>
+</li>
+<li><p>原型链：<strong>原型链的尽头是一个<code>__proto__</code>值为null的Object实体</strong>。所有对象的原型最终都可以上溯到<code>Object.prototype</code>，即<code>Object</code>构造函数的<code>prototype</code>属性指向的那个<strong>对象</strong>。那么，<code>Object.prototype</code>对象有没有它的原型呢？回答可以是有的，就是没有任何属性和方法的<code>null</code>对象，而<code>null</code>对象没有自己的原型。</p>
+</li>
+<li><p>constructor属性：<code>prototype</code>对象有一个<code>constructor</code>属性，默认指向<code>prototype</code>对象所在的构造函数。(<code>constructor</code>是<code>Object</code>的属性,指向构造自身的构造函数Function)</p>
+<ul>
+<li><p><code>constructor</code>属性的作用，是分辨原型对象到底属于哪个构造函数。</p>
+</li>
+<li><p>有了<code>constructor</code>属性，就可以从实例新建另一个实例。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> y = <span class="keyword">new</span> x.constructor();</span><br><span class="line"><span class="comment">// 一个应用，创建一个copy函数</span></span><br><span class="line">Constr.prototype.createCopy = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="keyword">this</span>.constructor();</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// 一个应用，获取某个对象的构造函数名</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Foo</span>(<span class="params"></span>) </span>&#123;&#125;</span><br><span class="line"><span class="keyword">var</span> f = <span class="keyword">new</span> Foo();</span><br><span class="line">f.constructor.name <span class="comment">// "Foo"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>instanceof 的判断和constructor和prototype有关。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mine <span class="keyword">instanceof</span> <span class="built_in">Array</span></span><br><span class="line"><span class="comment">// 等同于</span></span><br><span class="line">(<span class="built_in">Array</span> === MyArray.prototype.constructor) ||</span><br><span class="line">(<span class="built_in">Array</span> === <span class="built_in">Array</span>.prototype.constructor) ||</span><br><span class="line">(<span class="built_in">Array</span> === <span class="built_in">Object</span>.prototype.constructor )</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>constructor实际用处不大，但是所有如果设置了函数对象的prototype属性加一句：(因为.constructor是Object的属性)</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">o.prototype.constructor = o;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p><code>Object.getPrototypeOf</code>方法返回一个对象的原型。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Object</span>.getPrototypeOf(&#123;&#125;) === <span class="built_in">Object</span>.prototype</span><br><span class="line"><span class="comment">// 函数的原型是Function.prototype</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params"></span>) </span>&#123;&#125;</span><br><span class="line"><span class="built_in">Object</span>.getPrototypeOf(f) === <span class="built_in">Function</span>.prototype <span class="comment">// true</span></span><br><span class="line"><span class="built_in">Object</span>.getPrototypeOf(f) === f.__proto__ <span class="comment">// true</span></span><br><span class="line"><span class="comment">// f 为 F 的实例对象，则 f 的原型是 F.prototype</span></span><br><span class="line"><span class="keyword">var</span> f = <span class="keyword">new</span> F();</span><br><span class="line"><span class="built_in">Object</span>.getPrototypeOf(f) === F.prototype <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>Object.setPrototypeOf</code>方法可以为现有对象设置原型，<strong>返回一个新对象</strong>。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = &#123;<span class="attr">x</span>: <span class="number">1</span>&#125;;</span><br><span class="line"><span class="keyword">var</span> b = <span class="built_in">Object</span>.setPrototypeOf(&#123;&#125;, a);</span><br><span class="line"><span class="comment">// 等同于</span></span><br><span class="line"><span class="comment">// var b = &#123;__proto__: a&#125;;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>Object.create</code>方法用于从<strong>原型对象</strong>生成新的<strong>实例对象</strong>，可以替代<code>new</code>命令。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> A = &#123;</span><br><span class="line"> print: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">   <span class="built_in">console</span>.log(<span class="string">'hello'</span>);</span><br><span class="line"> &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// 注意参数，是原型对象</span></span><br><span class="line"><span class="keyword">var</span> B = <span class="built_in">Object</span>.create(A);</span><br><span class="line"><span class="keyword">var</span> C = <span class="built_in">Object</span>.create(<span class="literal">null</span>)</span><br><span class="line"></span><br><span class="line">B.print <span class="comment">// hello</span></span><br><span class="line">B.print === A.print <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><p><code>var b =Object.create(a)</code>会导致类型判断不方便，使用<code>isPrototypeOf</code>方法即可。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> o1 = &#123;&#125;;</span><br><span class="line"><span class="keyword">var</span> o2 = <span class="built_in">Object</span>.create(o1);</span><br><span class="line"><span class="keyword">var</span> o3 = <span class="built_in">Object</span>.create(o2);</span><br><span class="line"></span><br><span class="line">o2.isPrototypeOf(o3) <span class="comment">// true</span></span><br><span class="line">o1.isPrototypeOf(o3) <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Object.create(null) 不继承任何属性，不含有Object.ptototype的方法如valueOf,可以使用下面方式</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> o1 = <span class="built_in">Object</span>.create(&#123;&#125;);</span><br><span class="line"><span class="keyword">var</span> o2 = <span class="built_in">Object</span>.create(<span class="built_in">Object</span>.prototype);</span><br><span class="line"><span class="keyword">var</span> o3 = <span class="keyword">new</span> <span class="built_in">Object</span>();</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p><code>__proto__</code>:记录对象的原型，可以读写，来改变对象原型对象，但是不建议这么做，而是通过<code>Object.getPrototypeof()</code>（读取）和<code>Object.setPrototypeOf()</code>（设置）。</p>
+<ul>
+<li>获取当前对象的原型对象<ul>
+<li><code>obj.__proto__</code> 不推荐，有些浏览器没有</li>
+<li><code>obj.constructor.prototype</code> 不推荐，有些继承修改忘了改constructor。</li>
+<li><code>Object.getPrototypeOf(obj)</code> 推荐</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="模块化"><a href="#模块化" class="headerlink" title="模块化"></a>模块化</h2><p>使用trick模块化js代码</p>
+<h3 id="方式一"><a href="#方式一" class="headerlink" title="方式一"></a>方式一</h3><p>方法放入prototype，私有变量放入实例对象中。问题是私有变量暴露出去了。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">StringBuilder</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>._buffer = [];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">StringBuilder.prototype = &#123;</span><br><span class="line">  <span class="keyword">constructor</span>: StringBuilder,</span><br><span class="line">  add: function (str) &#123;</span><br><span class="line">    <span class="keyword">this</span>._buffer.push(str);</span><br><span class="line">  &#125;,</span><br><span class="line">  toString: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>._buffer.join(<span class="string">''</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="方式二"><a href="#方式二" class="headerlink" title="方式二"></a>方式二</h3><p>封装私有变量：立即执行函数的写法</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 立即执行函数确保全局只生成一个实例。</span></span><br><span class="line"><span class="keyword">var</span> module1 = (<span class="function"><span class="keyword">function</span>(<span class="params">$, window, document</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> _count = <span class="number">0</span>;</span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">go</span>(<span class="params">num</span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">handleEvents</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">initialize</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">dieCouraselDie</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 放入全局作用域，也可不放</span></span><br><span class="line">  <span class="built_in">window</span>.finalCarousel = &#123;</span><br><span class="line">    <span class="comment">// 暴露出去的方法</span></span><br><span class="line">    init : initialize,</span><br><span class="line">    destroy : dieCouraselDie</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">window</span>.finalCarousel;</span><br><span class="line">  <span class="comment">// 依赖的其他模块，因为网络异步加载可能为undefined，可以使用宽松放大模式，确保内部访问jQuery.xxx不会Error。</span></span><br><span class="line">  <span class="comment">// (jQuery|| &#123;&#125;);</span></span><br><span class="line">&#125;)( jQuery, <span class="built_in">window</span>, <span class="built_in">document</span> );</span><br></pre></td></tr></table></figure>
+<h2 id="线程模型"><a href="#线程模型" class="headerlink" title="线程模型"></a>线程模型</h2><h3 id="单线程-队列-异步"><a href="#单线程-队列-异步" class="headerlink" title="单线程+队列+异步"></a>单线程+队列+异步</h3><p>一个例子:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> start = <span class="keyword">new</span> <span class="built_in">Date</span>;</span><br><span class="line">setTimeout(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> end = <span class="keyword">new</span> <span class="built_in">Date</span>;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'Time elapsed:'</span>, end - start, <span class="string">'ms'</span>);</span><br><span class="line">&#125;, <span class="number">500</span>);</span><br><span class="line"><span class="keyword">while</span> (<span class="keyword">new</span> <span class="built_in">Date</span> - start &lt; <span class="number">1000</span>) &#123;&#125;;</span><br><span class="line"><span class="comment">// 最后输出&gt;1000.setTimeout立即返回到线程队列里面等待</span></span><br></pre></td></tr></table></figure>
+<h3 id="事件循环"><a href="#事件循环" class="headerlink" title="事件循环"></a>事件循环</h3><ul>
+<li><a href="http://www.ruanyifeng.com/blog/2014/10/event-loop.html" target="_blank" rel="noopener">参考这篇文章</a></li>
+</ul>
+<h2 id="ES6有用新特性"><a href="#ES6有用新特性" class="headerlink" title="ES6有用新特性"></a>ES6有用新特性</h2><h3 id="字符串-1"><a href="#字符串-1" class="headerlink" title="字符串"></a>字符串</h3><ul>
+<li><p>多行字符串 </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">alert(<span class="string">`多行</span></span><br><span class="line"><span class="string">字符串</span></span><br><span class="line"><span class="string">测试`</span>);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h3><ul>
+<li><p><code>Map</code> <code>Set</code></p>
+<ul>
+<li><p>与普通对象{}区别：</p>
+<ul>
+<li><code>Map</code>的key可以是任意类型<code>{}</code>只能是String</li>
+<li>很容易的得到一个<code>Map的键值对个数</code>,而只能跟踪一个对象的键值对个数</li>
+</ul>
+</li>
+<li><p>使用：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> m = <span class="keyword">new</span> <span class="built_in">Map</span>(); <span class="comment">// 空Map</span></span><br><span class="line"><span class="comment">// var m = new Map([['Michael', 95], ['Bob', 75], ['Tracy', 85]]);</span></span><br><span class="line">m.set(<span class="string">'Adam'</span>, <span class="number">67</span>); <span class="comment">// 添加新的key-value</span></span><br><span class="line">m.has(<span class="string">'Adam'</span>); <span class="comment">// 是否存在key 'Adam': true</span></span><br><span class="line">m.get(<span class="string">'Adam'</span>); <span class="comment">// 67</span></span><br><span class="line">m.delete(<span class="string">'Adam'</span>); <span class="comment">// 删除key 'Adam'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> s = <span class="keyword">new</span> <span class="built_in">Set</span>([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">3</span>, <span class="string">'3'</span>]);</span><br><span class="line">s.add(<span class="number">4</span>);</span><br><span class="line">s.delete(<span class="number">3</span>);</span><br><span class="line">s.has(<span class="number">3</span>);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>iterable与遍历：<strong>Array、Map和Set都属于iterable类型</strong>。遍历Array可以采用下标循环，遍历Map和Set就无法使用下标。为了统一集合类型，ES6标准引入了新的iterable类型。</p>
+<ul>
+<li><p><code>for .. of ..</code></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = [<span class="string">'A'</span>, <span class="string">'B'</span>, <span class="string">'C'</span>];</span><br><span class="line"><span class="keyword">var</span> s = <span class="keyword">new</span> <span class="built_in">Set</span>([<span class="string">'A'</span>, <span class="string">'B'</span>, <span class="string">'C'</span>]);</span><br><span class="line"><span class="keyword">var</span> m = <span class="keyword">new</span> <span class="built_in">Map</span>([[<span class="number">1</span>, <span class="string">'x'</span>], [<span class="number">2</span>, <span class="string">'y'</span>], [<span class="number">3</span>, <span class="string">'z'</span>]]);</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> x <span class="keyword">of</span> a) &#123; <span class="comment">// 遍历Array</span></span><br><span class="line">    alert(x);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> x <span class="keyword">of</span> s) &#123; <span class="comment">// 遍历Set</span></span><br><span class="line">    alert(x);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> x <span class="keyword">of</span> m) &#123; <span class="comment">// 遍历Map</span></span><br><span class="line">    alert(x[<span class="number">0</span>] + <span class="string">'='</span> + x[<span class="number">1</span>]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>forEach</code></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 数组，如果对某些参数不感兴趣，由于JavaScript的函数调用不要求参数必须一致，因此可以忽略它们。例如，只需要获得Array的element：</span></span><br><span class="line"><span class="keyword">var</span> a = [<span class="string">'A'</span>, <span class="string">'B'</span>, <span class="string">'C'</span>];</span><br><span class="line">a.forEach(<span class="function"><span class="keyword">function</span> (<span class="params">element</span>) </span>&#123;</span><br><span class="line">    alert(element);</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// 集合，前两个元素相同</span></span><br><span class="line"><span class="keyword">var</span> s = <span class="keyword">new</span> <span class="built_in">Set</span>([<span class="string">'A'</span>, <span class="string">'B'</span>, <span class="string">'C'</span>]);</span><br><span class="line">s.forEach(<span class="function"><span class="keyword">function</span> (<span class="params">element, sameElement, set</span>) </span>&#123;</span><br><span class="line">    alert(element);</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// map,</span></span><br><span class="line"><span class="keyword">var</span> m = <span class="keyword">new</span> <span class="built_in">Map</span>([[<span class="number">1</span>, <span class="string">'x'</span>], [<span class="number">2</span>, <span class="string">'y'</span>], [<span class="number">3</span>, <span class="string">'z'</span>]]);</span><br><span class="line">m.forEach(<span class="function"><span class="keyword">function</span> (<span class="params">value, key, map</span>) </span>&#123;</span><br><span class="line">    alert(value);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="函数-1"><a href="#函数-1" class="headerlink" title="函数"></a>函数</h3><ul>
+<li><p>rest参数：不定个数参数时使用，代替arguments</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params">a, b, ...rest</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'a = '</span> + a);</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'b = '</span> + b);</span><br><span class="line">    <span class="built_in">console</span>.log(rest);</span><br><span class="line">&#125;</span><br><span class="line">foo(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>); <span class="comment">// 1 2 [3,4,5]</span></span><br><span class="line">foo() <span class="comment">// undefined undefined []</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>箭头函数：修正了this问题</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">x =&gt; x * x</span><br><span class="line">x =&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> (x &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> x * x;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> - x * x;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 两个参数:</span></span><br><span class="line">(x, y) =&gt; x * x + y * y</span><br><span class="line"><span class="comment">// 修正this指向</span></span><br><span class="line"><span class="keyword">var</span> obj = &#123;</span><br><span class="line">    birth: <span class="number">1990</span>,</span><br><span class="line">    getAge: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> b = <span class="keyword">this</span>.birth; <span class="comment">// 1990</span></span><br><span class="line">        <span class="keyword">var</span> fn = <span class="function"><span class="params">()</span> =&gt;</span> <span class="keyword">new</span> <span class="built_in">Date</span>().getFullYear() - <span class="keyword">this</span>.birth; <span class="comment">// this指向obj对象</span></span><br><span class="line">        <span class="keyword">return</span> fn();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line">obj.getAge(); <span class="comment">// 25</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>generator函数 ：一个函数返回多次值</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span>* <span class="title">foo</span>(<span class="params">x</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">yield</span> x + <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">yield</span> x + <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">return</span> x + <span class="number">3</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> f= foo(<span class="number">1</span>); <span class="comment">// 没有开始运行</span></span><br><span class="line">f.next(); <span class="comment">// &#123;value: 2, done: false&#125;</span></span><br><span class="line">f.next(); <span class="comment">// &#123;value: 3, done: false&#125;</span></span><br><span class="line">f.next(); <span class="comment">// &#123;value: 4, done: true&#125;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>应用：异步回调代码变成“同步”代码???</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="变量-1"><a href="#变量-1" class="headerlink" title="变量"></a>变量</h3><ul>
+<li><p>块作用域变量</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> sum = <span class="number">0</span>;</span><br><span class="line">  <span class="comment">// 使用let代替var</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i=<span class="number">0</span>; i&lt;<span class="number">100</span>; i++) &#123;</span><br><span class="line">        sum += i;</span><br><span class="line">    &#125;</span><br><span class="line">    i += <span class="number">1</span>; <span class="comment">// SyntaxError</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>常量const</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> PI = <span class="number">3.14</span>;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="面向对象"><a href="#面向对象" class="headerlink" title="面向对象"></a>面向对象</h3><ul>
+<li><p>class关键字：实现继承的语法糖</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Student</span> </span>&#123;</span><br><span class="line">    <span class="keyword">constructor</span>(name) &#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    hello() &#123;</span><br><span class="line">        alert(<span class="string">'Hello, '</span> + <span class="keyword">this</span>.name + <span class="string">'!'</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// class extends关键字隐含了原型的处理</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PrimaryStudent</span> <span class="keyword">extends</span> <span class="title">Student</span> </span>&#123;</span><br><span class="line">    <span class="keyword">constructor</span>(name, grade) &#123;</span><br><span class="line">      <span class="comment">// 类似与apply与call的功能</span></span><br><span class="line">        <span class="keyword">super</span>(name); <span class="comment">// 记得用super调用父类的构造方法!</span></span><br><span class="line">        <span class="keyword">this</span>.grade = grade;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 添加到PrimaryStudent的原型中</span></span><br><span class="line">    myGrade() &#123;</span><br><span class="line">        alert(<span class="string">'I am at grade '</span> + <span class="keyword">this</span>.grade);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="库"><a href="#库" class="headerlink" title="库"></a>库</h3><ul>
+<li><p>Promise：</p>
+<ul>
+<li><p>链式调用 <code>job1.then(handleSuccess).catch(handleError);</code></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 执行函数，两个参数，一个成功的回调，一个失败的回调</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">test</span>(<span class="params">resolve, reject</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> timeOut = <span class="built_in">Math</span>.random() * <span class="number">2</span>;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'set timeout to: '</span> + timeOut + <span class="string">' seconds.'</span>);</span><br><span class="line">    setTimeout(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (timeOut &lt; <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">'call resolve()...'</span>);</span><br><span class="line">            resolve(<span class="string">'200 OK'</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">'call reject()...'</span>);</span><br><span class="line">            reject(<span class="string">'timeout in '</span> + timeOut + <span class="string">' seconds.'</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;, timeOut * <span class="number">1000</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 链式调用</span></span><br><span class="line"><span class="keyword">new</span> <span class="built_in">Promise</span>(test).then(<span class="function"><span class="keyword">function</span> (<span class="params">result</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'成功：'</span> + result);</span><br><span class="line">&#125;).catch(<span class="function"><span class="keyword">function</span> (<span class="params">reason</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'失败：'</span> + reason);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>链式调用 <code>job1.then(job2).then(job3).catch(handleError);</code>其中，<strong><code>job1</code>、<code>job2</code>和<code>job3</code>都是返回Promise对象的函数</strong>。即会自动执行函数返回的Promise对象，然后把结果传递给下一个then/catch。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">log</span>(<span class="params">s</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(s);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">multiply</span>(<span class="params">input</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 注意返回的是promise对象</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">resolve, reject</span>) </span>&#123;</span><br><span class="line">        log(<span class="string">'calculating '</span> + input + <span class="string">' x '</span> + input + <span class="string">'...'</span>);</span><br><span class="line">        setTimeout(resolve, <span class="number">500</span>, input * input);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 0.5秒后返回input+input的计算结果:</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">add</span>(<span class="params">input</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">resolve, reject</span>) </span>&#123;</span><br><span class="line">        log(<span class="string">'calculating '</span> + input + <span class="string">' + '</span> + input + <span class="string">'...'</span>);</span><br><span class="line">        setTimeout(resolve, <span class="number">500</span>, input + input);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> p = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">resolve, reject</span>) </span>&#123;</span><br><span class="line">    log(<span class="string">'start new Promise...'</span>);</span><br><span class="line">    resolve(<span class="number">123</span>);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">p.then(multiply)</span><br><span class="line"> .then(add)</span><br><span class="line"> .then(multiply)</span><br><span class="line"> .then(add)</span><br><span class="line"> .then(<span class="function"><span class="keyword">function</span> (<span class="params">result</span>) </span>&#123;</span><br><span class="line">    log(<span class="string">'Got value: '</span> + result);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>并行调用</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> p1 = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">resolve, reject</span>) </span>&#123;</span><br><span class="line">    setTimeout(resolve, <span class="number">500</span>, <span class="string">'P1'</span>);</span><br><span class="line">&#125;);</span><br><span class="line"><span class="keyword">var</span> p2 = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">resolve, reject</span>) </span>&#123;</span><br><span class="line">    setTimeout(resolve, <span class="number">600</span>, <span class="string">'P2'</span>);</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// 同时执行p1和p2，并在它们都完成后执行then:</span></span><br><span class="line"><span class="built_in">Promise</span>.all([p1, p2]).then(<span class="function"><span class="keyword">function</span> (<span class="params">results</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(results); <span class="comment">// 获得一个Array: ['P1', 'P2']</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>并行竞争调用，常用于容错设计，获得先返回的结果。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> p1 = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">resolve, reject</span>) </span>&#123;</span><br><span class="line">    setTimeout(resolve, <span class="number">500</span>, <span class="string">'P1'</span>);</span><br><span class="line">&#125;);</span><br><span class="line"><span class="keyword">var</span> p2 = <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="keyword">function</span> (<span class="params">resolve, reject</span>) </span>&#123;</span><br><span class="line">    setTimeout(resolve, <span class="number">600</span>, <span class="string">'P2'</span>);</span><br><span class="line">&#125;);</span><br><span class="line"><span class="built_in">Promise</span>.race([p1, p2]).then(<span class="function"><span class="keyword">function</span> (<span class="params">result</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(result); <span class="comment">// 'P1'</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>​</p>
+</li>
+</ul>
+<h2 id="理解点"><a href="#理解点" class="headerlink" title="理解点"></a>理解点</h2><ol>
+<li><p>为什么访问<code>o.xx</code>，即使xx没有定义，也会返回undefined，不会报错Error，但是直接访问变量xx，会报错。</p>
+<p>答：o对象的本质是hashmap，<code>o.xx</code>理解成<code>o[xx]</code>，既没有查找到key值。但是，直接访问xx，本质上他是root（window）的属性window[xx]，但是编译器特殊处理了，返回error。当然你访问<code>this.xx</code>（当然要看作用域）或者<code>window.xx</code>就可以避免了。</p>
+</li>
+<li><p>理解静态方法，实例方法，内部方法。</p>
+</li>
+<li><p>理解this，理解call，apply，bind，以及混合使用。</p>
+</li>
+<li><p>理解原型，原型实体，原型实体与构造函数的关系。为什么是1：1的关系？</p>
+</li>
+<li><p>typeof 与 instanceOf 与 Object.prototype.isPrototypeOf()</p>
+<p>答：</p>
+<ul>
+<li>typeof，返回类型的字符串,只有这几个值 “undefined” “number” “string” “boolean” “function” “object”,其中null也是”object”</li>
+<li>instanceof，通过原型链，判断对象是不是某个模板生成的。注意null instanof Object 是false。(xxx === Object.prototype.constructor）</li>
+<li>Object.prototype.isPrototypeOf() 功能与instanceof类似。但是参数不同o1.isPrototTypeOf(o2)</li>
+</ul>
+</li>
+<li><p>原型链是什么，存放在哪里？原型链中存放的是什么，继承为什么通过原型链实现？</p>
+</li>
+</ol>
+<h2 id="最佳实践"><a href="#最佳实践" class="headerlink" title="最佳实践"></a>最佳实践</h2><ul>
+<li><p>括号使用java风格的：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> &#123;</span><br><span class="line">  key : value</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// 不要这样</span></span><br><span class="line"><span class="keyword">return</span> <span class="comment">// 相当于这里会自动加上分号</span></span><br><span class="line">&#123;</span><br><span class="line">  key: value</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>建议不省略行尾分号。</strong>js会自动添加分号，如果下一行会和上一行连起来就不自动添加了</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 等同于 3 * 2 + 10 * (27 / 6)</span></span><br><span class="line"><span class="number">3</span> * <span class="number">2</span></span><br><span class="line">+</span><br><span class="line"><span class="number">10</span> * (<span class="number">27</span> / <span class="number">6</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>避免使用全局变量。如果不得不使用，用大写字母表示变量名，比如<code>UPPER_CASE</code>。减少冲突的一个方法是把自己的所有变量和函数全部绑定到一个全局变量中。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 唯一的全局变量MYAPP:把自己的代码全部放入唯一的名字空间MYAPP中，会大大减少全局变量冲突的可能。</span></span><br><span class="line"><span class="keyword">var</span> MYAPP = &#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 其他变量:</span></span><br><span class="line">MYAPP.name = <span class="string">'myapp'</span>;</span><br><span class="line">MYAPP.version = <span class="number">1.0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 其他函数:</span></span><br><span class="line">MYAPP.foo = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">'foo'</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>最好把变量声明都放在代码块的头部。为了避免声明”提升”</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 写成</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> i;</span><br><span class="line"><span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>建议使用let代替var定义布局变量，使用const定义常量（ES6特性，Nodejs上使用）</p>
+</li>
+<li><p>关于数据类型</p>
+<ul>
+<li>不要使用<code>new Number()</code>、<code>new Boolean()</code>、<code>new String()</code>创建包装对象；</li>
+<li>用<code>parseInt()</code>或<code>parseFloat()</code>来转换任意类型到<code>number</code>；</li>
+<li>用<code>String()</code>来转换任意类型到<code>string</code>，或者直接调用某个对象的<code>toString()</code>方法；</li>
+<li>通常不必把任意类型转换为<code>boolean</code>再判断，因为可以直接写<code>if (myVar) {...}</code>；</li>
+<li><code>typeof</code>操作符可以判断出<code>number</code>、<code>boolean</code>、<code>string</code>、<code>function</code>和<code>undefined</code>；</li>
+<li>判断<code>Array</code>要使用<code>Array.isArray(arr)</code>；</li>
+<li>判断<code>null</code>请使用<code>myVar === null</code>；</li>
+<li>判断某个全局变量是否存在用<code>typeof window.myVar === &#39;undefined&#39;</code>；</li>
+<li>函数内部判断某个变量是否存在用<code>typeof myVar === &#39;undefined&#39;</code>。</li>
+</ul>
+</li>
+<li><p>建议使用<code>Object.create(null/prototype)</code>命令，替代<code>new</code>命令。如果不得不使用<code>new</code>，为了防止出错，最好在视觉上把构造函数与其他函数区分开来。比如，构造函数的函数名，采用首字母大写（InitialCap），其他函数名一律首字母小写。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 忘了加上new，myObject()内部的this关键字就会指向全局对象，导致所有绑定在this上面的变量，都变成全局变量。</span></span><br><span class="line"><span class="keyword">var</span> o = <span class="keyword">new</span> myObject();</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>不要使用“相等”（<code>==</code>）运算符，只使用“严格相等”（<code>===</code>）运算符。</p>
+</li>
+<li><p>装饰器：替换某个对象中某个方法默认实现，添加自己的功能</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> count = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">var</span> oldParseInt = <span class="built_in">parseInt</span>; </span><br><span class="line"><span class="built_in">window</span>.parseInt = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    count += <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">window</span>.apply(<span class="literal">null</span>, <span class="built_in">arguments</span>); <span class="comment">// 调用原函数</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 测试:</span></span><br><span class="line"><span class="built_in">parseInt</span>(<span class="string">'10'</span>);</span><br><span class="line"><span class="built_in">parseInt</span>(<span class="string">'20'</span>);</span><br><span class="line"><span class="built_in">parseInt</span>(<span class="string">'30'</span>);</span><br><span class="line">count; <span class="comment">// 3</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>高阶函数的使用</p>
+<ul>
+<li>map/reduce/filter/sort处理数组</li>
+</ul>
+</li>
+<li><p>闭包使用：封装私有变量、模块化</p>
+</li>
+</ul>
+<h2 id="疑问"><a href="#疑问" class="headerlink" title="疑问"></a>疑问</h2><p><a href="http://cnodejs.org/topic/5056e007433135ca35034e8d" target="_blank" rel="noopener">http://cnodejs.org/topic/5056e007433135ca35034e8d</a></p>
+<h2 id="code-snippet"><a href="#code-snippet" class="headerlink" title="code snippet"></a>code snippet</h2><ul>
+<li><p>判断一个变量是否声明</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 检查a变量是否被声明</span></span><br><span class="line"><span class="keyword">if</span> (a) &#123;...&#125; <span class="comment">// 报错</span></span><br><span class="line"><span class="comment">// 写法1</span></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">typeof</span> a === <span class="string">"undefined"</span>) &#123; <span class="comment">// 注意引号</span></span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 写法2 浏览器环境，所有全局变量都是window对象的属性。</span></span><br><span class="line"><span class="keyword">if</span> (<span class="built_in">window</span>.a === <span class="literal">undefined</span>) &#123; <span class="comment">// 注意没有引号</span></span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 写法3</span></span><br><span class="line"><span class="keyword">if</span> (<span class="string">'a'</span> <span class="keyword">in</span> <span class="built_in">window</span>) &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 下面方法有漏洞，a=""是可能声明过</span></span><br><span class="line"><span class="comment">// if (window.a) &#123;...&#125; // 不报错</span></span><br><span class="line"><span class="comment">// if (window['a']) &#123;...&#125; // 不报错</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>base64：编解码url参数用</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">b64Encode</span>(<span class="params">str</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// encodeURIComponent支持中文，但是对url的斜杠也会编码</span></span><br><span class="line">  <span class="keyword">return</span> btoa(<span class="built_in">encodeURIComponent</span>(str));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">b64Decode</span>(<span class="params">str</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">decodeURIComponent</span>(atob(str));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">b64Encode(<span class="string">'你好'</span>) <span class="comment">// "JUU0JUJEJUEwJUU1JUE1JUJE"</span></span><br><span class="line">b64Decode(<span class="string">'JUU0JUJEJUEwJUU1JUE1JUJE'</span>) <span class="comment">// "你好"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>对象属性遍历</p>
+<ul>
+<li><p>遍历自身对象（可枚举），不含继承</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// for test</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Person</span>(<span class="params">name</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.name = name;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// describe是Person.prototype的属性</span></span><br><span class="line">Person.prototype.describe = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="string">'Name: '</span>+<span class="keyword">this</span>.name;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">var</span> person = <span class="keyword">new</span> Person(<span class="string">'Jane'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 方法1</span></span><br><span class="line"><span class="keyword">var</span> allkeys=<span class="built_in">Object</span>.keys(person);</span><br><span class="line"><span class="keyword">for</span> (index <span class="keyword">in</span> allkeys) &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(allkeys[index]);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 方法2</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> key <span class="keyword">in</span> person) &#123;</span><br><span class="line">  <span class="keyword">if</span> (person.hasOwnProperty(key)) &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(key);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>遍历所有对象（可枚举），包括继承</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> key <span class="keyword">in</span> person) &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(key);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>遍历所有属性（包括不可枚举），不包括继承</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Object</span>.getOwnPropertyNames(<span class="built_in">Date</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>获得对象的所有属性（不管是自身的还是继承的，以及是否可枚举）</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">inheritedPropertyNames</span>(<span class="params">obj</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> props = &#123;&#125;;</span><br><span class="line">  <span class="keyword">while</span>(obj) &#123;</span><br><span class="line">    <span class="built_in">Object</span>.getOwnPropertyNames(obj).forEach(<span class="function"><span class="keyword">function</span>(<span class="params">p</span>) </span>&#123;</span><br><span class="line">      props[p] = <span class="literal">true</span>;</span><br><span class="line">    &#125;);</span><br><span class="line">    obj = <span class="built_in">Object</span>.getPrototypeOf(obj);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">Object</span>.getOwnPropertyNames(props);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>模板引擎</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> str = <span class="string">'Hello &lt;%= name %&gt;!'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> o = &#123;</span><br><span class="line">  name: <span class="string">'Alice'</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">parser</span>(<span class="params">str</span>)</span>&#123;</span><br><span class="line">  <span class="comment">// 'Hello &lt;%= name %&gt;!'--&gt; '"Hello ", name, "!"'</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">tmpl</span>(<span class="params">str, obj</span>) </span>&#123;</span><br><span class="line">  str = <span class="string">'var p = [];'</span> +</span><br><span class="line">    <span class="string">'with (obj) &#123;p.push('</span> + parser(str) + <span class="string">')&#125;;'</span> +</span><br><span class="line">    <span class="string">'return p;'</span></span><br><span class="line">  <span class="keyword">var</span> r = (<span class="keyword">new</span> <span class="built_in">Function</span>(<span class="string">'obj'</span>, str))(obj);</span><br><span class="line">  <span class="keyword">return</span> r.join(<span class="string">''</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">tmpl(str, o)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>为函数参数设置默认值</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 方法一：简单，但是0，false会误判，如果默认值是0，用这个方法不错</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params">a</span>)</span>&#123;</span><br><span class="line">  a = a || <span class="number">1</span>; <span class="comment">//  这句话</span></span><br><span class="line">  <span class="keyword">return</span> a;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 方法二：更完善一些</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f</span>(<span class="params">a</span>) </span>&#123;</span><br><span class="line">  (a !== <span class="literal">undefined</span> &amp;&amp; a !== <span class="literal">null</span>) ? a = a : a = <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">return</span> a;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>类似数组与数组的转化：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> args = <span class="built_in">Array</span>.prototype.slice.call(<span class="built_in">arguments</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// or</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> args = [];</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="built_in">arguments</span>.length; i++) &#123;</span><br><span class="line">  args.push(<span class="built_in">arguments</span>[i]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>asset方法：规范化异常抛出</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 没必要自己实现</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">assert</span>(<span class="params">expression, message</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (!expression)</span><br><span class="line">    <span class="keyword">throw</span> &#123;<span class="attr">name</span>: <span class="string">'Assertion Exception'</span>, <span class="attr">message</span>: message&#125;;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 建议</span></span><br><span class="line"><span class="built_in">console</span>.assert(<span class="keyword">typeof</span> myVar != <span class="string">'undefined'</span>, <span class="string">'myVar is undefined!'</span>);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>定义构造函数的一个模板代码，避免忘记new引起全局变量污染</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Fubar</span> (<span class="params">foo, bar</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">this</span> <span class="keyword">instanceof</span> Fubar) &#123;</span><br><span class="line">    <span class="keyword">this</span>._foo = foo;</span><br><span class="line">    <span class="keyword">this</span>._bar = bar;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Fubar(foo, bar);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>深拷贝对象：1.确保拷贝后的对象，与原对象具有同样的prototype原型对象。2.确保拷贝后的对象，与原对象具有同样的属性。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">copyObject</span>(<span class="params">orig</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> copy = <span class="built_in">Object</span>.create(<span class="built_in">Object</span>.getPrototypeOf(orig));</span><br><span class="line">  copyOwnPropertiesFrom(copy, orig);</span><br><span class="line">  <span class="keyword">return</span> copy;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">copyOwnPropertiesFrom</span>(<span class="params">target, source</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">Object</span></span><br><span class="line">  .getOwnPropertyNames(source)</span><br><span class="line">  .forEach(<span class="function"><span class="keyword">function</span>(<span class="params">propKey</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> desc = <span class="built_in">Object</span>.getOwnPropertyDescriptor(source, propKey);</span><br><span class="line">    <span class="built_in">Object</span>.defineProperty(target, propKey, desc);</span><br><span class="line">  &#125;);</span><br><span class="line">  <span class="keyword">return</span> target;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>继承的例子：方法共享，属性私有（除非模拟静态变量）</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Shape</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.x = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">this</span>.y = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Shape.prototype.move = <span class="function"><span class="keyword">function</span> (<span class="params">x, y</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.x += x;</span><br><span class="line">  <span class="keyword">this</span>.y += y;</span><br><span class="line">  <span class="built_in">console</span>.info(<span class="string">'Shape moved.'</span>);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Rectangle</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 第一步：调用父类构造函数，动态构造属性</span></span><br><span class="line">  Shape.call(<span class="keyword">this</span>); </span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 另一种写法</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Rectangle</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.base = Shape;</span><br><span class="line">  <span class="keyword">this</span>.base();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 第二步:</span></span><br><span class="line"><span class="comment">// 子类继承父类的方法，继承的核心 对比这两种写法，下面的更好</span></span><br><span class="line"><span class="comment">// Rectangle.prototype =  new Shape()</span></span><br><span class="line">Rectangle.prototype = <span class="built_in">Object</span>.create(Shape.prototype);</span><br><span class="line">Rectangle.prototype.constructor = Rectangle;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> rect = <span class="keyword">new</span> Rectangle();</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>封装继承的工具方法</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 处理原型链</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">inherits</span>(<span class="params">Child, Parent</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 构造原型</span></span><br><span class="line">    Child.prototype = <span class="built_in">Object</span>.create(Parent.prototype)</span><br><span class="line">    <span class="comment">// var F = function () &#123;&#125;;</span></span><br><span class="line">    <span class="comment">// F.prototype = Parent.prototype;</span></span><br><span class="line">    <span class="comment">// Child.prototype = new F();</span></span><br><span class="line">    Child.prototype.constructor = Child;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 处理属性，别忘了调用call</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+            <div class="social-item">
+              <a target="_blank" class="social-link" href="https://t.me/mltalk">
+                <span class="icon">
+                  <i class="fa fa-telegram"></i>
+                </span>
+
+                <span class="label">机器学习碎碎念</span>
+              </a>
+            </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/web开发/" rel="tag"># web开发</a>
+              <a href="/tags/javascript/" rel="tag"># javascript</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/07/17/CSS与HTML学习笔记与知识图谱/" rel="prev" title="CSS与HTML学习笔记与知识图谱">
+      <i class="fa fa-chevron-left"></i> CSS与HTML学习笔记与知识图谱
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2016/07/30/JS相关API与Lib学习笔记与知识图谱/" rel="next" title="JS相关API/Lib学习笔记与知识图谱">
+      JS相关API/Lib学习笔记与知识图谱 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#变量"><span class="nav-number">2.</span> <span class="nav-text">变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#if-while-for-switch等注意点"><span class="nav-number">3.</span> <span class="nav-text">if while for switch等注意点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据类型"><span class="nav-number">4.</span> <span class="nav-text">数据类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数值"><span class="nav-number">5.</span> <span class="nav-text">数值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#字符串"><span class="nav-number">6.</span> <span class="nav-text">字符串</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对象"><span class="nav-number">7.</span> <span class="nav-text">对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数组"><span class="nav-number">8.</span> <span class="nav-text">数组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#函数"><span class="nav-number">9.</span> <span class="nav-text">函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#函数闭包"><span class="nav-number">10.</span> <span class="nav-text">函数闭包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#运算符"><span class="nav-number">11.</span> <span class="nav-text">运算符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据类型转换"><span class="nav-number">12.</span> <span class="nav-text">数据类型转换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#错误处理"><span class="nav-number">13.</span> <span class="nav-text">错误处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#标准库"><span class="nav-number">14.</span> <span class="nav-text">标准库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Object"><span class="nav-number">14.1.</span> <span class="nav-text">Object</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Array"><span class="nav-number">14.2.</span> <span class="nav-text">Array</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他标准库对象"><span class="nav-number">14.3.</span> <span class="nav-text">其他标准库对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#属性描述对象（了解）"><span class="nav-number">14.4.</span> <span class="nav-text">属性描述对象（了解）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#面向对象编程"><span class="nav-number">15.</span> <span class="nav-text">面向对象编程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本概念"><span class="nav-number">15.1.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#this关键字"><span class="nav-number">15.2.</span> <span class="nav-text">this关键字</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#原型prototype与继承"><span class="nav-number">15.3.</span> <span class="nav-text">原型prototype与继承</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#模块化"><span class="nav-number">16.</span> <span class="nav-text">模块化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#方式一"><span class="nav-number">16.1.</span> <span class="nav-text">方式一</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方式二"><span class="nav-number">16.2.</span> <span class="nav-text">方式二</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线程模型"><span class="nav-number">17.</span> <span class="nav-text">线程模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#单线程-队列-异步"><span class="nav-number">17.1.</span> <span class="nav-text">单线程+队列+异步</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#事件循环"><span class="nav-number">17.2.</span> <span class="nav-text">事件循环</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ES6有用新特性"><span class="nav-number">18.</span> <span class="nav-text">ES6有用新特性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#字符串-1"><span class="nav-number">18.1.</span> <span class="nav-text">字符串</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据结构"><span class="nav-number">18.2.</span> <span class="nav-text">数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#函数-1"><span class="nav-number">18.3.</span> <span class="nav-text">函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#变量-1"><span class="nav-number">18.4.</span> <span class="nav-text">变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#面向对象"><span class="nav-number">18.5.</span> <span class="nav-text">面向对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#库"><span class="nav-number">18.6.</span> <span class="nav-text">库</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#理解点"><span class="nav-number">19.</span> <span class="nav-text">理解点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#最佳实践"><span class="nav-number">20.</span> <span class="nav-text">最佳实践</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#疑问"><span class="nav-number">21.</span> <span class="nav-text">疑问</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#code-snippet"><span class="nav-number">22.</span> <span class="nav-text">code snippet</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">limuzhi</p>
+  <div class="site-description" itemprop="description">something about tech, android etc...</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muzhi1991" title="GitHub → https://github.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:muzhi1991@gmail.com" title="E-Mail → mailto:muzhi1991@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/muzhi1991" title="Twitter → https://twitter.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.chenyupeng.com/" title="https://www.chenyupeng.com/" rel="noopener" target="_blank">陈玉鹏的个人空间</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://macshuo.com/" title="http://macshuo.com/" rel="noopener" target="_blank">MacTalk</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">limuzhi</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'G5HLDFmPsllxIjax4F2JTLnl-gzGzoHsz',
+      appKey     : 'A5PTgbvpJwjPlcBJ3Brl8rDs',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

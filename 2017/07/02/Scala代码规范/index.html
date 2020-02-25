@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="在工作中，我们使用Scala作为在Spark应用的开发语言，由于公司的代码托管平台暂不支持Scala代码的规范检测，团队内部拟定了一个的代码规范，希望能在统一代码风格的同时，足够简单且可操作。 基本原则 遵循Baidu Java代码规范 使用Eclipse/IntelliJ idea的format文件格式化代码，地址 使用空格代替tab/文件编码UTF-8 使用驼峰命名法则">
+<meta name="keywords" content="Spark,Scala">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Scala代码规范">
+<meta property="og:url" content="http://limuzhi.com/2017/07/02/Scala代码规范/index.html">
+<meta property="og:site_name" content="Night Piece">
+<meta property="og:description" content="在工作中，我们使用Scala作为在Spark应用的开发语言，由于公司的代码托管平台暂不支持Scala代码的规范检测，团队内部拟定了一个的代码规范，希望能在统一代码风格的同时，足够简单且可操作。 基本原则 遵循Baidu Java代码规范 使用Eclipse/IntelliJ idea的format文件格式化代码，地址 使用空格代替tab/文件编码UTF-8 使用驼峰命名法则">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-02-25T09:44:15.449Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Scala代码规范">
+<meta name="twitter:description" content="在工作中，我们使用Scala作为在Spark应用的开发语言，由于公司的代码托管平台暂不支持Scala代码的规范检测，团队内部拟定了一个的代码规范，希望能在统一代码风格的同时，足够简单且可操作。 基本原则 遵循Baidu Java代码规范 使用Eclipse/IntelliJ idea的format文件格式化代码，地址 使用空格代替tab/文件编码UTF-8 使用驼峰命名法则">
+
+<link rel="canonical" href="http://limuzhi.com/2017/07/02/Scala代码规范/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>Scala代码规范 | Night Piece</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Night Piece</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">white && black</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tools">
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-wrench"></i>利器</a>
+
+  </li>
+        <li class="menu-item menu-item-read">
+
+    <a href="/read/" rel="section"><i class="fa fa-fw fa-book"></i>阅读</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://limuzhi.com/2017/07/02/Scala代码规范/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="limuzhi">
+      <meta itemprop="description" content="something about tech, android etc...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Night Piece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Scala代码规范
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-07-02 16:34:01" itemprop="dateCreated datePublished" datetime="2017-07-02T16:34:01+08:00">2017-07-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-25 17:44:15" itemprop="dateModified" datetime="2020-02-25T17:44:15+08:00">2020-02-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2017/07/02/Scala代码规范/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2017/07/02/Scala代码规范/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>在工作中，我们使用Scala作为在Spark应用的开发语言，由于公司的代码托管平台暂不支持Scala代码的规范检测，团队内部拟定了一个的代码规范，希望能在统一代码风格的同时，足够简单且可操作。</p>
+<h2 id="基本原则"><a href="#基本原则" class="headerlink" title="基本原则"></a>基本原则</h2><ul>
+<li>遵循<a href="http://styleguide.baidu.com/style/java/index.html" target="_blank" rel="noopener">Baidu Java代码规范</a></li>
+<li>使用Eclipse/IntelliJ idea的format文件格式化代码，<a href="http://gitlab.baidu.com/dingxuefeng/java-style/tree/master" target="_blank" rel="noopener">地址</a></li>
+<li>使用空格代替tab/文件编码UTF-8</li>
+<li>使用驼峰命名法则</li>
+</ul>
+<h2 id="通用规范"><a href="#通用规范" class="headerlink" title="通用规范"></a>通用规范</h2><h3 id="源文件规范"><a href="#源文件规范" class="headerlink" title="源文件规范"></a>源文件规范</h3><h4 id="文件名"><a href="#文件名" class="headerlink" title="文件名"></a>文件名</h4><p>源文件名必须和它包含的顶层类名保持一致，包括大小写，并以<code>.scala</code>作为后缀名。</p>
+<h4 id="文件编码"><a href="#文件编码" class="headerlink" title="文件编码"></a>文件编码</h4><p>所有源文件编码必须是 <strong>UTF-8</strong></p>
+<h4 id="特殊字符"><a href="#特殊字符" class="headerlink" title="特殊字符"></a>特殊字符</h4><h5 id="空格"><a href="#空格" class="headerlink" title="空格"></a>空格</h5><p>除了换行符之外，ASCII空格（0x20）是唯一合法的空格字符。这意味着</p>
+<ul>
+<li><p>所有在源代码中（包括字符、字符串以及注释中）出现的其他空格字符需要转义,例如 <code>Tab</code> 用<code>\t</code>表示。</p>
+</li>
+<li><p>缩进必须使用 <strong>4个空格</strong> 而不是 <code>Tab</code></p>
+<blockquote>
+<p>新增 <strong>4个</strong> 空格</p>
+</blockquote>
+</li>
+</ul>
+<h5 id="特殊转义字符"><a href="#特殊转义字符" class="headerlink" title="特殊转义字符"></a>特殊转义字符</h5><p>对于有特殊转义表示的字符 <code>\b, \t, \n, \f, \r, \&quot;, \&#39;, \\</code>，禁止使用其它等价转义方式。例如<code>\012</code>或者<code>\u00a</code>表示。</p>
+<h5 id="非ASCII字符"><a href="#非ASCII字符" class="headerlink" title="非ASCII字符"></a>非ASCII字符</h5><p>对于非ASCII字符，可以使用实际字符（如 <code>∞</code>）或者它的Unicode转义（如<code>\u221e</code>），取决于哪种写法的可读性更好。<br>使用注释有助于增强可读性<br>示例：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>示例</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>val unitAbbrev = “\u03bcs”; // “μs”</td>
+<td>虽然合法但是很没有必要的写法</td>
+</tr>
+<tr>
+<td>val unitAbbrev = “\u03bcs”; // Greek letter mu, “s”</td>
+<td>虽然合法但是很难理解的写法</td>
+</tr>
+<tr>
+<td>val unitAbbrev = “\u03bcs”;</td>
+<td>让人完全读不懂的写法</td>
+</tr>
+<tr>
+<td>return ‘\ufeff’ + content; // byte order mark</td>
+<td>很好的写法，用Unicode转义来表示非打印字符，并且有合适的注释帮助阅读者理解</td>
+</tr>
+<tr>
+<td>val unitAbbrev = “μs”;</td>
+<td>最佳写法，无需注释就可以理解</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h4 id="组织结构"><a href="#组织结构" class="headerlink" title="组织结构"></a>组织结构</h4><p>源文件必须按顺序由以下部分组成：</p>
+<ul>
+<li>许可证（License）或版权声明（Copyright）</li>
+<li>package语句</li>
+<li>import语句</li>
+<li>唯一的顶层类</li>
+<li>每两部分之间用一个空行分隔</li>
+</ul>
+<h3 id="代码书写规范"><a href="#代码书写规范" class="headerlink" title="代码书写规范"></a>代码书写规范</h3><h4 id="列宽"><a href="#列宽" class="headerlink" title="列宽"></a>列宽</h4><p>每行不超过<strong>150个字符</strong></p>
+<h4 id="缩进"><a href="#缩进" class="headerlink" title="缩进"></a>缩进</h4><p>4个<strong>空格</strong>，严禁使用Tab</p>
+<h4 id="括号的使用"><a href="#括号的使用" class="headerlink" title="括号的使用"></a>括号的使用</h4><p>基本原则：K&amp;R风格。</p>
+<ul>
+<li>左花括号（{）前不能换行，在其后换行。</li>
+<li>在右花括号（}）前要有换行。</li>
+<li>如果右花括号是一句语句、一个方法、构造函数或非匿名类的结尾，其后需要换行。</li>
+</ul>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> <span class="type">MyClass</span>() &#123; <span class="comment">// 左花括号前不能换行，在其后换行</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">method</span></span>():<span class="type">Unit</span>= &#123;</span><br><span class="line">        <span class="keyword">if</span> (condition()) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                do &#123;</span><br><span class="line">                    something()</span><br><span class="line">                &#125; <span class="keyword">while</span> (!stop()) <span class="comment">// do-while中间的右花括号后</span></span><br><span class="line">            &#125; <span class="keyword">catch</span>  &#123; <span class="comment">// try-catch中间的右花括号后无需换行</span></span><br><span class="line">                <span class="keyword">case</span> e:<span class="type">Exception</span> =&gt;recover()</span><br><span class="line">            &#125; <span class="comment">// try-catch结束，右花括号后需要换行</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123; <span class="comment">// if-else中间的右花括号后无需换行</span></span><br><span class="line">            doSomethingElese()</span><br><span class="line">        &#125; <span class="comment">// if-else结束，右花括号后需要换行</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>其他：scala中的简单<strong>表达式</strong>可以省略括号</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 推荐</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">square</span></span>(x: <span class="type">Int</span>) = x * x</span><br><span class="line"><span class="keyword">val</span> y = <span class="keyword">if</span> (x &lt; <span class="number">0</span>) -x <span class="keyword">else</span> x </span><br><span class="line"><span class="keyword">if</span>(cond1)&#123;</span><br><span class="line">  <span class="comment">// one line statement</span></span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">  <span class="comment">// one line statement</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 避免</span></span><br><span class="line"><span class="keyword">if</span> (x &lt; <span class="number">0</span>) </span><br><span class="line">	-x</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	x</span><br></pre></td></tr></table></figure>
+<h4 id="空行的使用"><a href="#空行的使用" class="headerlink" title="空行的使用"></a>空行的使用</h4><p>在以下情况下增加空行：</p>
+<ul>
+<li>在类的不同的成员间增加空行，包括：成员变量、构造函数、方法、内部类、静态初始化块、实例初始化块等两个成员变量声明之间可以不加空行。空行通常用于对成员变量进行逻辑分组。</li>
+<li>方法体内，按需增加空行，以便从逻辑上对语句进行分组</li>
+<li><strong>禁止使用连续的空行</strong>。</li>
+</ul>
+<h4 id="注释风格"><a href="#注释风格" class="headerlink" title="注释风格"></a>注释风格</h4><p>使用java风格的注释，不用使用scala风格</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** 单行注释 */</span></span><br><span class="line"><span class="comment">// 单行注释</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * java风格的多行注释</span></span><br><span class="line"><span class="comment"> * 推荐使用</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/** scala风格的注释</span></span><br><span class="line"><span class="comment">  * 不推荐使用</span></span><br><span class="line"><span class="comment">  */</span></span><br></pre></td></tr></table></figure>
+<h2 id="命名规范"><a href="#命名规范" class="headerlink" title="命名规范"></a>命名规范</h2><p>基本原则：<strong>驼峰命名</strong>，命名有业务含义。这里列举了Spark编程中常见是变量/数据结构，在工程中尽量统一使用下列的命名规则。</p>
+<ul>
+<li>输入输出目录的命名<ul>
+<li>input命名：<code>xxInput</code></li>
+<li>output命名：<code>txtOutput/parquetOutput</code> / <code>output</code></li>
+</ul>
+</li>
+<li>Spark中的RDD/DataFrame/DataSet数据结构的命名，使用具有业务含义的命名，并带上后缀，禁止无意义的名字，如a,b。<ul>
+<li>DataFrame：<code>xxDF</code></li>
+<li>RDD: <code>xxRDD</code></li>
+<li>DataSet: <code>xxDS</code></li>
+</ul>
+</li>
+<li>UDF命名规范<ul>
+<li><code>xxUDF</code></li>
+</ul>
+</li>
+<li>函数参数命名<ul>
+<li>Column作为参数的命名<code>def min(col: Column)</code></li>
+<li>用String作为列名的参数<code>def min(colName: String)</code></li>
+</ul>
+</li>
+<li>特别地，存储落地文件的列名可以使用自定义的规则，如Person表的<code>min_age</code>列</li>
+</ul>
+<h2 id="Scala相关规范"><a href="#Scala相关规范" class="headerlink" title="Scala相关规范"></a>Scala相关规范</h2><h3 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h3><ul>
+<li>一行只声明一个变量</li>
+<li><strong>scala中尽量使用val代替var</strong></li>
+<li>一个不变的val 必须被初始化，也就是说在声明的时候就必须定义</li>
+<li>一个可变的变量用关键字var 来声明，声明一个var 时将其初始化</li>
+</ul>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 推荐</span></span><br><span class="line"><span class="keyword">val</span> name = <span class="string">"abc"</span></span><br><span class="line"><span class="comment">// 不推荐</span></span><br><span class="line"><span class="keyword">var</span> name = <span class="string">"abc"</span>;</span><br></pre></td></tr></table></figure>
+<h3 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h3><h4 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h4><ul>
+<li>显示指定调用的参数类型与返回类型</li>
+</ul>
+<h4 id="方法调用避免中缀表示法"><a href="#方法调用避免中缀表示法" class="headerlink" title="方法调用避免中缀表示法"></a>方法调用避免中缀表示法</h4><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 推荐</span></span><br><span class="line">list.map(func)</span><br><span class="line">string.contains(<span class="string">"foo"</span>)</span><br><span class="line"><span class="comment">// 不推荐</span></span><br><span class="line">list map (func)</span><br><span class="line">string contains <span class="string">"foo"</span></span><br></pre></td></tr></table></figure>
+<h4 id="Return的使用"><a href="#Return的使用" class="headerlink" title="Return的使用"></a>Return的使用</h4><p>原则：在方法中避免使用Return语句，而是直接使用值返回，否则容易出现错误</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">receive</span></span>(rpc: <span class="type">WebSocketRPC</span>): <span class="type">Option</span>[<span class="type">Response</span>] = &#123;</span><br><span class="line">  tableFut.onComplete &#123; table =&gt;</span><br><span class="line">    <span class="keyword">if</span> (table.isFailure) &#123;</span><br><span class="line">       <span class="type">None</span> <span class="comment">// Do not do that!</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123; ... &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 避免，下面会导致onComplete返回的是NonLocalReturnControl</span></span><br><span class="line"><span class="comment">// return的意思是：退出包含 return 的最近的一个方法（不是函数）,这里是receive</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">receive</span></span>(rpc: <span class="type">WebSocketRPC</span>): <span class="type">Option</span>[<span class="type">Response</span>] = &#123;</span><br><span class="line">  tableFut.onComplete &#123; table =&gt;</span><br><span class="line">    <span class="keyword">if</span> (table.isFailure) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="type">None</span> <span class="comment">// Do not do that!</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123; ... &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>下面几种情况可以方法Method可有使用return</p>
+<ul>
+<li><p>简化控制逻辑，使用guard</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">doSomething</span></span>(obj: <span class="type">Any</span>): <span class="type">Any</span> = &#123;</span><br><span class="line">  <span class="keyword">if</span> (obj eq <span class="literal">null</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">null</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// do something ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>退出循环逻辑</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">  <span class="keyword">if</span> (cond) &#123;</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>​</p>
+</li>
+</ul>
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><h4 id="使用-Override"><a href="#使用-Override" class="headerlink" title="使用@Override"></a>使用<code>@Override</code></h4><p>Scala中，虽然有的时候override是可选的，但是坚持使用override是安全的。</p>
+<h4 id="应尽量避免让trait去extend一个class。"><a href="#应尽量避免让trait去extend一个class。" class="headerlink" title="应尽量避免让trait去extend一个class。"></a>应尽量避免让trait去extend一个class。</h4><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">StarfleetComponent</span> </span></span><br><span class="line"><span class="class"><span class="title">//</span> <span class="title">不推荐</span></span></span><br><span class="line"><span class="class"><span class="title">trait</span> <span class="title">StarfleetWarpCore</span> <span class="keyword">extends</span> <span class="title">StarfleetComponent</span> </span></span><br><span class="line"><span class="class"><span class="title">//</span> <span class="title">推荐</span></span></span><br><span class="line"><span class="class"><span class="title">class</span> <span class="title">Starship</span> <span class="keyword">extends</span> <span class="title">StarfleetComponent</span> <span class="keyword">with</span> <span class="title">StarfleetWarpCore</span> </span></span><br><span class="line"><span class="class"><span class="title">class</span> <span class="title">RomulanStuff</span> <span class="title">//</span> <span class="title">won</span>'<span class="title">t</span> <span class="title">compile</span> </span></span><br><span class="line"><span class="class"><span class="title">class</span> <span class="title">Warbird</span> <span class="keyword">extends</span> <span class="title">RomulanStuff</span> <span class="keyword">with</span> <span class="title">StarfleetWarpCore</span></span></span><br></pre></td></tr></table></figure>
+<h4 id="链式数据结构的选择"><a href="#链式数据结构的选择" class="headerlink" title="链式数据结构的选择"></a>链式数据结构的选择</h4><p>选择使用Seq时</p>
+<ul>
+<li>若需要索引下标功能，优先考虑选择Vector</li>
+<li>若需要Mutable的集合，则选择ArrayBuffer：</li>
+<li>若要选择Linear集合，优先选择List</li>
+<li>若需要Mutable的集合，则选择ListBuffer。</li>
+</ul>
+<ul>
+<li>若需要快速、通用、不变、带顺序的集合，应优先考虑使用Vector。</li>
+<li>如果需要选择通用的可变集合，应优先考虑使用ArrayBuffer。</li>
+</ul>
+<p>一个原则是：<strong>当你对选择集合类型犹疑不定时，就应选择使用Vector。</strong><br>需要注意的是：当我们创建了一个IndexSeq时，Scala实际上会创建Vector对象：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">scala&gt; <span class="keyword">val</span> x = <span class="type">IndexedSeq</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>) </span><br><span class="line">x: <span class="type">IndexedSeq</span>[<span class="type">Int</span>]  = <span class="type">Vector</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br></pre></td></tr></table></figure>
+<p>Vector很好地平衡了快速的随机选择和快速的随机更新（函数式）操作。Vector是Scala集合库中最灵活的高效集合。</p>
+<p>当面对一个大的集合，且新元素总是要添加到集合末尾时，就可以选择ArrayBuffer。如果使用的可变集合特性更近似于List这样的线性集合，则考虑使用ListBuffer。</p>
+<p>如果需要将大量数据添加到集合中，建议选择使用List的prepend操作，将这些数据添加到List头部，最后做一次reverse操作。</p>
+<h4 id="Lazy的使用"><a href="#Lazy的使用" class="headerlink" title="Lazy的使用"></a>Lazy的使用</h4><p>当一个类的某个字段在获取值时需要耗费资源，并且，该字段的值并非一开始就需要使用，则应将该字段声明为lazy。</p>
+<h4 id="异步"><a href="#异步" class="headerlink" title="异步"></a>异步</h4><h5 id="Future的使用"><a href="#Future的使用" class="headerlink" title="Future的使用"></a>Future的使用</h5><p>在使用Future进行并发处理时，应使用回调的方式，而非阻塞。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 避免</span></span><br><span class="line"><span class="keyword">val</span> f = <span class="type">Future</span> &#123;</span><br><span class="line"> <span class="comment">//executing long time</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">val</span> result = <span class="type">Await</span>.result(f, <span class="number">5</span> second)</span><br><span class="line"></span><br><span class="line"><span class="comment">//推荐</span></span><br><span class="line"><span class="keyword">val</span> f = <span class="type">Future</span> &#123;</span><br><span class="line"> <span class="comment">//executing long time</span></span><br><span class="line">&#125;</span><br><span class="line">f.onComplete &#123;</span><br><span class="line"> <span class="keyword">case</span> <span class="type">Success</span>(result) =&gt; <span class="comment">//handle result</span></span><br><span class="line"> <span class="keyword">case</span> <span class="type">Failure</span>(e) =&gt; e.printStackTrace</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="使用par对集合的操作并行化"><a href="#使用par对集合的操作并行化" class="headerlink" title="使用par对集合的操作并行化"></a>使用par对集合的操作并行化</h4><p>若有多个操作需要并行进行同步操作，可以选择使用par集合</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 同时访问</span></span><br><span class="line"><span class="keyword">val</span> urls = <span class="type">List</span>(<span class="string">"http://scala-lang.org"</span>,</span><br><span class="line">  <span class="string">"http://agiledon.github.com"</span>)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fromURL</span></span>(url:  <span class="type">String</span>)  = scala.io.<span class="type">Source</span>.fromURL(url)</span><br><span class="line">  .getLines().mkString(<span class="string">"\n"</span>)</span><br><span class="line"><span class="keyword">val</span> t = <span class="type">System</span>.currentTimeMillis()</span><br><span class="line">urls.par.map(fromURL(_))</span><br><span class="line">println(<span class="string">"time: "</span> + (<span class="type">System</span>.currentTimeMillis - t) + <span class="string">"ms"</span>)</span><br></pre></td></tr></table></figure>
+<h5 id="线程联合操作"><a href="#线程联合操作" class="headerlink" title="线程联合操作"></a>线程联合操作</h5><p>若有多个操作需要并行进行异步操作，并在全部完成后进行某些操作，则采用for comprehension对future进行join方式的执行。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> result1 = <span class="type">Cloud</span>.runAlgorithm(<span class="number">10</span>)</span><br><span class="line"><span class="keyword">val</span> result2 = <span class="type">Cloud</span>.runAlgorithm(<span class="number">20</span>)</span><br><span class="line"><span class="keyword">val</span> result3 = <span class="type">Cloud</span>.runAlgorithm(<span class="number">30</span>)</span><br><span class="line"><span class="keyword">val</span> result = <span class="keyword">for</span> &#123;</span><br><span class="line">  r1 &lt;- result1 r2 &lt;- result2 r3 &lt;- result3 &#125; <span class="keyword">yield</span> (r1 + r2 + r3) result onSuccess &#123; <span class="keyword">case</span> result =&gt;  println(<span class="string">s"total = <span class="subst">$result</span>"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Spark相关规范"><a href="#Spark相关规范" class="headerlink" title="Spark相关规范"></a>Spark相关规范</h2><p>由于Spark API的特点，我们特殊规定了几种规则，适用于Spark应用的开发。</p>
+<h3 id="链式调用规范"><a href="#链式调用规范" class="headerlink" title="链式调用规范"></a>链式调用规范</h3><p>如果链式调用过长，尽量一个方法调用占用一行，增加可读性。注意：spark-shell下直接粘贴代码会出错，输入<code>:p</code>或者<code>:paste</code><strong>进入粘贴模式</strong>，<code>ctrl-D</code>退出并<strong>开始执行</strong>。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> extractDF = spark.read.parquet(<span class="string">"someS3Path"</span>)</span><br><span class="line">  .select(</span><br><span class="line">    <span class="string">"name"</span>,</span><br><span class="line">    <span class="string">"Date of Birth"</span></span><br><span class="line">  )</span><br><span class="line">  .transform(someCustomTransformation)</span><br><span class="line">  .withColumnRenamed(<span class="string">"Date of Birth"</span>, <span class="string">"date_of_birth"</span>)</span><br><span class="line">  .filter(</span><br><span class="line">    col(<span class="string">"date_of_birth"</span>) &gt; <span class="string">"1999-01-02"</span></span><br><span class="line">  )</span><br></pre></td></tr></table></figure>
+<h3 id="Spark-SQL书写规范"><a href="#Spark-SQL书写规范" class="headerlink" title="Spark SQL书写规范"></a>Spark SQL书写规范</h3><p>Spark SQL中属性的SQL语句往往很长，且可读性很差，我们规范: 使用<code>&quot;&quot;&quot;</code>表示多行字符串来书写语句。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> firstDF = sqlContext.sql(</span><br><span class="line">  <span class="string">""</span><span class="string">" select</span></span><br><span class="line"><span class="string">        ip,</span></span><br><span class="line"><span class="string">        sum(ip_line_cnt) as ip_line_cnt,</span></span><br><span class="line"><span class="string">        sum(ip_click_cnt) as ip_click_cnt,</span></span><br><span class="line"><span class="string">        sum(ip_zhudong_cnt) as ip_zhudong_cnt,</span></span><br><span class="line"><span class="string">        sum(ip_line_cookieage_less1d) as ip_line_cookieage_less1d,</span></span><br><span class="line"><span class="string">        sum(ip_ua_abnormal_cnt) as ip_ua_abnormal_cnt</span></span><br><span class="line"><span class="string">      from table_day_temp_ip</span></span><br><span class="line"><span class="string">      group by ip</span></span><br><span class="line"><span class="string">  "</span><span class="string">""</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="工具篇"><a href="#工具篇" class="headerlink" title="工具篇"></a>工具篇</h2><h3 id="scala-style工具"><a href="#scala-style工具" class="headerlink" title="scala-style工具"></a>scala-style工具</h3><p>为了使得团队代码风格一致，我们可以使用一些<a href="http://www.scalastyle.org" target="_blank" rel="noopener">静态代码检测工具</a>。该工具对代码Scala代码进行基本的格式检查，并输出检测结果。可以配置为<strong>maven插件</strong>，作为例行的代码检测。在官方的默认配置中有一些配置可能并不使用，例如println配置。</p>
+<p>推荐：<a href="https://github.com/apache/spark/blob/master/scalastyle-config.xml" target="_blank" rel="noopener">Spark官方的配置文件</a></p>
+<h2 id="read-more"><a href="#read-more" class="headerlink" title="read more"></a>read more</h2><p><a href="https://github.com/databricks/scala-style-guide/blob/master/README-ZH.md" target="_blank" rel="noopener">spark 官方scala编程风格指南</a><br><a href="https://github.com/MrPowers/spark-style-guide" target="_blank" rel="noopener">spark-style-guide</a><br><a href="http://wiki.baidu.com/pages/viewpage.action?pageId=156874244" target="_blank" rel="noopener">内网Scala编程规范</a></p>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+            <div class="social-item">
+              <a target="_blank" class="social-link" href="https://t.me/mltalk">
+                <span class="icon">
+                  <i class="fa fa-telegram"></i>
+                </span>
+
+                <span class="label">机器学习碎碎念</span>
+              </a>
+            </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Spark/" rel="tag"># Spark</a>
+              <a href="/tags/Scala/" rel="tag"># Scala</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/06/18/深度学习系列1-数据科学开发环境与工具/" rel="prev" title="深度学习系列（一）——数据科学开发环境与工具">
+      <i class="fa fa-chevron-left"></i> 深度学习系列（一）——数据科学开发环境与工具
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/11/18/cardinality-counting/" rel="next" title="大数据算法：基数统计">
+      大数据算法：基数统计 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本原则"><span class="nav-number">1.</span> <span class="nav-text">基本原则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#通用规范"><span class="nav-number">2.</span> <span class="nav-text">通用规范</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#源文件规范"><span class="nav-number">2.1.</span> <span class="nav-text">源文件规范</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#文件名"><span class="nav-number">2.1.1.</span> <span class="nav-text">文件名</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#文件编码"><span class="nav-number">2.1.2.</span> <span class="nav-text">文件编码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#特殊字符"><span class="nav-number">2.1.3.</span> <span class="nav-text">特殊字符</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#空格"><span class="nav-number">2.1.3.1.</span> <span class="nav-text">空格</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#特殊转义字符"><span class="nav-number">2.1.3.2.</span> <span class="nav-text">特殊转义字符</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#非ASCII字符"><span class="nav-number">2.1.3.3.</span> <span class="nav-text">非ASCII字符</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#组织结构"><span class="nav-number">2.1.4.</span> <span class="nav-text">组织结构</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#代码书写规范"><span class="nav-number">2.2.</span> <span class="nav-text">代码书写规范</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#列宽"><span class="nav-number">2.2.1.</span> <span class="nav-text">列宽</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#缩进"><span class="nav-number">2.2.2.</span> <span class="nav-text">缩进</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#括号的使用"><span class="nav-number">2.2.3.</span> <span class="nav-text">括号的使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#空行的使用"><span class="nav-number">2.2.4.</span> <span class="nav-text">空行的使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#注释风格"><span class="nav-number">2.2.5.</span> <span class="nav-text">注释风格</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#命名规范"><span class="nav-number">3.</span> <span class="nav-text">命名规范</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Scala相关规范"><span class="nav-number">4.</span> <span class="nav-text">Scala相关规范</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#变量"><span class="nav-number">4.1.</span> <span class="nav-text">变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方法"><span class="nav-number">4.2.</span> <span class="nav-text">方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#定义"><span class="nav-number">4.2.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方法调用避免中缀表示法"><span class="nav-number">4.2.2.</span> <span class="nav-text">方法调用避免中缀表示法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Return的使用"><span class="nav-number">4.2.3.</span> <span class="nav-text">Return的使用</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他"><span class="nav-number">4.3.</span> <span class="nav-text">其他</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#使用-Override"><span class="nav-number">4.3.1.</span> <span class="nav-text">使用@Override</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#应尽量避免让trait去extend一个class。"><span class="nav-number">4.3.2.</span> <span class="nav-text">应尽量避免让trait去extend一个class。</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#链式数据结构的选择"><span class="nav-number">4.3.3.</span> <span class="nav-text">链式数据结构的选择</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Lazy的使用"><span class="nav-number">4.3.4.</span> <span class="nav-text">Lazy的使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#异步"><span class="nav-number">4.3.5.</span> <span class="nav-text">异步</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Future的使用"><span class="nav-number">4.3.5.1.</span> <span class="nav-text">Future的使用</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用par对集合的操作并行化"><span class="nav-number">4.3.6.</span> <span class="nav-text">使用par对集合的操作并行化</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#线程联合操作"><span class="nav-number">4.3.6.1.</span> <span class="nav-text">线程联合操作</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spark相关规范"><span class="nav-number">5.</span> <span class="nav-text">Spark相关规范</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#链式调用规范"><span class="nav-number">5.1.</span> <span class="nav-text">链式调用规范</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Spark-SQL书写规范"><span class="nav-number">5.2.</span> <span class="nav-text">Spark SQL书写规范</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#工具篇"><span class="nav-number">6.</span> <span class="nav-text">工具篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#scala-style工具"><span class="nav-number">6.1.</span> <span class="nav-text">scala-style工具</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#read-more"><span class="nav-number">7.</span> <span class="nav-text">read more</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">limuzhi</p>
+  <div class="site-description" itemprop="description">something about tech, android etc...</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muzhi1991" title="GitHub → https://github.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:muzhi1991@gmail.com" title="E-Mail → mailto:muzhi1991@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/muzhi1991" title="Twitter → https://twitter.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.chenyupeng.com/" title="https://www.chenyupeng.com/" rel="noopener" target="_blank">陈玉鹏的个人空间</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://macshuo.com/" title="http://macshuo.com/" rel="noopener" target="_blank">MacTalk</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">limuzhi</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'G5HLDFmPsllxIjax4F2JTLnl-gzGzoHsz',
+      appKey     : 'A5PTgbvpJwjPlcBJ3Brl8rDs',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

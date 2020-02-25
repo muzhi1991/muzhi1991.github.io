@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="近日，在Google开发者的微博上推荐了一个视频，是2015年开发者峰会上两位Google的Coder的演讲，关于Android应用框架，中文相关介绍文章看这里。演讲中有个demo，类似于一个QQ的聊天界面的程序，用这个例子讲解了如何优雅地处理在各种网络异常的情况下的UI界面，既如何设计一个offline的应用。网络请求与本地缓存相结合以获取最好的用户体验应当是几乎所有Android应用的基本需求">
+<meta name="keywords" content="Android,主框架">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Google推荐的Android应用框架之demo">
+<meta property="og:url" content="http://limuzhi.com/2016/01/31/Google推荐的Android应用框架之demo/index.html">
+<meta property="og:site_name" content="Night Piece">
+<meta property="og:description" content="近日，在Google开发者的微博上推荐了一个视频，是2015年开发者峰会上两位Google的Coder的演讲，关于Android应用框架，中文相关介绍文章看这里。演讲中有个demo，类似于一个QQ的聊天界面的程序，用这个例子讲解了如何优雅地处理在各种网络异常的情况下的UI界面，既如何设计一个offline的应用。网络请求与本地缓存相结合以获取最好的用户体验应当是几乎所有Android应用的基本需求">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://camo.githubusercontent.com/590b0315c04a7e5c0b429fbd521f99062aacde1d/68747470733a2f2f7777772e657665726e6f74652e636f6d2f73686172642f7331392f73682f31313036313730662d346637332d343531392d616537642d3466346166313364343138322f366562656436376534613734613461342f7265732f62656166626235362d633564632d346563622d393934662d3330653036616232313961342f736b697463682e706e67">
+<meta property="og:updated_time" content="2020-02-25T09:44:15.422Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Google推荐的Android应用框架之demo">
+<meta name="twitter:description" content="近日，在Google开发者的微博上推荐了一个视频，是2015年开发者峰会上两位Google的Coder的演讲，关于Android应用框架，中文相关介绍文章看这里。演讲中有个demo，类似于一个QQ的聊天界面的程序，用这个例子讲解了如何优雅地处理在各种网络异常的情况下的UI界面，既如何设计一个offline的应用。网络请求与本地缓存相结合以获取最好的用户体验应当是几乎所有Android应用的基本需求">
+<meta name="twitter:image" content="https://camo.githubusercontent.com/590b0315c04a7e5c0b429fbd521f99062aacde1d/68747470733a2f2f7777772e657665726e6f74652e636f6d2f73686172642f7331392f73682f31313036313730662d346637332d343531392d616537642d3466346166313364343138322f366562656436376534613734613461342f7265732f62656166626235362d633564632d346563622d393934662d3330653036616232313961342f736b697463682e706e67">
+
+<link rel="canonical" href="http://limuzhi.com/2016/01/31/Google推荐的Android应用框架之demo/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>Google推荐的Android应用框架之demo | Night Piece</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Night Piece</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">white && black</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tools">
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-wrench"></i>利器</a>
+
+  </li>
+        <li class="menu-item menu-item-read">
+
+    <a href="/read/" rel="section"><i class="fa fa-fw fa-book"></i>阅读</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://limuzhi.com/2016/01/31/Google推荐的Android应用框架之demo/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="limuzhi">
+      <meta itemprop="description" content="something about tech, android etc...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Night Piece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Google推荐的Android应用框架之demo
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-01-31 16:04:50" itemprop="dateCreated datePublished" datetime="2016-01-31T16:04:50+08:00">2016-01-31</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-25 17:44:15" itemprop="dateModified" datetime="2020-02-25T17:44:15+08:00">2020-02-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2016/01/31/Google推荐的Android应用框架之demo/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2016/01/31/Google推荐的Android应用框架之demo/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>近日，在Google开发者的微博上推荐了一个视频，是2015年开发者峰会上两位Google的Coder的演讲，关于Android应用框架，中文相关介绍文章<a href="http://blog.zhaiyifan.cn/2016/01/29/android-app-architecture-2015/" target="_blank" rel="noopener">看这里</a>。<br>演讲中有个demo，类似于一个QQ的聊天界面的程序，用这个例子讲解了如何优雅地处理在各种网络异常的情况下的UI界面，既如何设计一个offline的应用。<br>网络请求与本地缓存相结合以获取最好的用户体验应当是几乎所有Android应用的基本需求。从我的开发经验看，我们往往会忽略之一点。大部分情况下，都是直接从网络拿回数据显示在界面上，如果网络不好，就不断loading。。。在无网情况下，app是不可用的。</p>
+<ul>
+<li>拉逻辑—获取列表，此过程是我们最常用，我们大部分是获取数据然后展示给用户，仅仅需要本地有一份数据以备在无网时使用。这个逻辑在应用中基本是通用的。</li>
+<li><p>推逻辑—提交post，demo中对某些请求进行排队，在后台不断重试，这种逻辑对于某些应用应该是不适用的，毕竟大部分应用是不需要这种『强同步』的（既server与local完全一致，如聊天list或记账，微信发朋友圈）。在一般应用中以下两种情况更加常见：</p>
+<ul>
+<li>结果失败与否并不重要。如点赞这些功能，当然也可以这么干。</li>
+<li>操作是一些重要的不可重复操作，必须锁死屏幕。如提交订单，付款等。</li>
+</ul>
+</li>
+</ul>
+<p>选择哪一种交互是设计阶段必须考虑的，这直接决定了编码方式。当然，一个设计良好的框架必须要提供这些能力:</p>
+<ul>
+<li>封装网络请求与本地数据支持拉逻辑的操作，开发者可以选择是否先使用本地数据再等待网络更新。还是只使用网络数据。</li>
+<li>支持简单请求，锁死等待，还是异步的。</li>
+<li>支持后台可重复发送的请求—强同步—既Act locally, Sync globally。</li>
+</ul>
+<p>扯远了，需要一篇文章写一些app中可能用到各种交互与请求逻辑。</p>
+<p>下面翻译下Google这个demo的README文件。了解一下设计思想。</p>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>这是个简单的社交软件，列表可以展示其他人的消息（我们叫他feed流），用户还可以发送文本信息。</p>
+<p>本文的目的是讲述如何设计一个应用，可以离线使用，并在网络可用时同步信息到服务器，尽量不影响用户。</p>
+<ul>
+<li>如何工作</li>
+<li>组件</li>
+<li>数据流<ul>
+<li>发送信息</li>
+<li>同步feed流</li>
+<li>保持UI更新</li>
+</ul>
+</li>
+<li>安装&amp;运行&amp;测试<ul>
+<li>安装</li>
+<li>运行</li>
+<li>测试</li>
+</ul>
+</li>
+<li>其他<ul>
+<li>避免重复发送信息 </li>
+</ul>
+</li>
+<li>版权许可</li>
+</ul>
+<h2 id="如何工作"><a href="#如何工作" class="headerlink" title="如何工作"></a>如何工作</h2><p>关于『离线设计』这个主题，许多解决方案都是依赖于特定的需求，如果想要运用到其他场景，需要一些修改。因此，这个demo的同步逻辑可能并不适合你的需求。你应当把它当做一个例子学习，然后找出适合你的应用的解决方案。不幸的是，没有设计离线应用的万金油。<br>这里，我们会解释用户的交互流是如何工作的，会给你的应用提供一些不错的想法。<br>这个例子没有严格依照任何的构架模式，它使用混合方法满足自己的需求。我们假设这个应用会不断成长为一个大的app（因此下面比较复杂）。尽管增加了复杂度，但是我没尽量是这个demo更加真实有用。</p>
+<h2 id="组件"><a href="#组件" class="headerlink" title="组件"></a>组件</h2><ul>
+<li>Value Objects:<ul>
+<li>这些对象通常保持着数据库中存储的数据，这些对象也知道如何校验这些数据的合法性。如果Server发送了一下无效数据（比如，API改变了），我们可以在它们影响Model之前就忽略它们。</li>
+</ul>
+</li>
+<li>Models:<ul>
+<li>扶着数据持久化，保持到本地，并提供方法获取数据。</li>
+</ul>
+</li>
+<li>Controllers:<ul>
+<li>保存着应用程序主要逻辑，它决定如何做某事（如发送消息），处理gcm消息等。</li>
+</ul>
+</li>
+<li>Activities:<ul>
+<li>控制用户界面，他们知道哪里需要加载数据，什么时候需要刷新自己。</li>
+</ul>
+</li>
+<li>Events:<ul>
+<li>本demo使用一个全局的EventBus，它唯一的作用是通知UI更新。</li>
+<li>当UI需要从应用逻辑那里获取数据，直接调用相关方法就可以。这种设计符合Android这个UI生命周期短的设计。这种数据流也避免了UI和后台线程的循环引用。</li>
+</ul>
+</li>
+<li>Jobs:<ul>
+<li>他们可能是定义良好的网络操作（这比较典型，但未必）， 可以把你的应用逻辑拆分成多个job，这更方便测试和扩展。例如发送用户的文本消息到服务器就是一个job，同步用户的feed流到服务器也是个job。</li>
+</ul>
+</li>
+</ul>
+<h2 id="数据流"><a href="#数据流" class="headerlink" title="数据流"></a>数据流</h2><h3 id="发送消息"><a href="#发送消息" class="headerlink" title="发送消息"></a>发送消息</h3><p>当用户点击按钮，首先会发生这么4步：1.验证消息合法性。2.保持消息到本地磁盘存储（这个例子中这是一个job）。3.更新PostModel添加新的信息。4.发送event通知有消息更新。<br>（可选的）4.a.如果UI可见，在收到event后更新内容。<br>注意：上面这些步骤没有涉及网络，但是我已经更新了用户界面&amp;&amp;保持必要的数据到磁盘。最后，我们需要与Server同步。</p>
+<p>同步的步骤如下<br><img src="https://camo.githubusercontent.com/590b0315c04a7e5c0b429fbd521f99062aacde1d/68747470733a2f2f7777772e657665726e6f74652e636f6d2f73686172642f7331392f73682f31313036313730662d346637332d343531392d616537642d3466346166313364343138322f366562656436376534613734613461342f7265732f62656166626235362d633564632d346563622d393934662d3330653036616232313961342f736b697463682e706e67" alt="Sync To Server"></p>
+<ul>
+<li>优先级作业队列，负责处理持久化job，失败时的回退操作等，所以图中没有这些细节。</li>
+<li>一个真实环境的app应该与JobScheduler结合，确保消息在应用关闭后也可以发送。</li>
+<li>当job失败时，你最好保持一些信息到磁盘，那样下次用户打开app时，你可以通知他们发生了什么。这个demo中，当FeedActivity不可见时会显示系统通知。</li>
+</ul>
+<h3 id="同步Feed流"><a href="#同步Feed流" class="headerlink" title="同步Feed流"></a>同步Feed流</h3><p>同步操作有下面三个组件负责：</p>
+<ul>
+<li>FeedModel：<ul>
+<li>为每个feed流保存最后一条FeedItem（既发送的消息）的时间戳。这个时间戳有两个作用<ul>
+<li>当我们刷新feed流时，只接收最新的item。</li>
+<li>创建保存在本地的消息。本地创建的消息会显示在feed查询中是很重要的。 客户端的时间戳可能与server不同，只有当消息与Server同步时，我们分配feed最新的时间戳给这个新的消息。？？？</li>
+</ul>
+</li>
+<li>给UI层提供从数据库获取feed流的方法。</li>
+</ul>
+</li>
+<li>FeedController：<ul>
+<li>负责创建<code>FetchFeedJob</code></li>
+<li>监听消息更新失败，使用系统的通知栏通知用户。除非其他的UI组件（如FeedActivity）已经处理了错误。</li>
+<li>这个示例的app很基础，在真实环境中，它可能还要负责当有GCM推送到达时刷新feed流。以及包括一些防止用户频繁刷新的逻辑。</li>
+</ul>
+</li>
+<li>FetFeedJob：<ul>
+<li>发出API调用，获取某个feed流的最新消息列表。还负责更新model和发出event。</li>
+</ul>
+</li>
+</ul>
+<h3 id="保持UI更新"><a href="#保持UI更新" class="headerlink" title="保持UI更新"></a>保持UI更新</h3><p>后台与UI的交互需要良好的定义。</p>
+<ul>
+<li>等界面需要做某件事情时，UI直接调用某个方法（如发送消息）。</li>
+<li>后台任务结束时发出event通知UI更新（如更新失败）。</li>
+</ul>
+<p>UI组件根据自身的生命周期负责注册/反注册EventBus，因为后台永远不会持有UI的引用，我们不想有内存泄漏的风险。</p>
+<ul>
+<li>EventBus的使用可能引起一些特殊的情况：由于UI错过了一些event时，导致不同步。本Demo使用下面的规则避免这种清空。<ul>
+<li>当组件的生命周期开始时，先注册event，然后在再从model加载数据。</li>
+<li>当正在加载数据时，如果有event到来，会在数据加载完成后再次触发一次同步。</li>
+<li>所有的event都含有一个时间戳，它表示与该event相关的最老的item的时间。当UI访问model层时会使用这个时间戳，那么，如果item插入数据库时顺序不同，我们依然可以获取到这些item，因为我们使用了最老的时间戳。？？？</li>
+<li>当组件的生命周期结束时（例如<code>Activity#onStop</code>）,停止监听event。如果，我们再返回应用，他会做一个完整的同步，确保不会丢失在这期间发生的event。</li>
+</ul>
+</li>
+</ul>
+<p><strong>这不是唯一的办法</strong>：示例中使用的是一个全局的EventBus，你也可以用Rx实现相似的功能，或者手动设置listener，以及其他相似的技术。总之，你需要根据自己的应用来评估。</p>
+<h2 id="安装-amp-amp-运行-amp-amp-测试"><a href="#安装-amp-amp-运行-amp-amp-测试" class="headerlink" title="安装&amp;&amp;运行&amp;&amp;测试"></a>安装&amp;&amp;运行&amp;&amp;测试</h2><h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>demo包含一个简单的server，你需要安装Ruby On Rails来运行它。建议你通过<a href="https://rvm.io/" target="_blank" rel="noopener">Ruby Version Manager</a>来安装。安装完之后，使用下面命令启动server：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; cd server;</span><br><span class="line">&gt; bundle install;</span><br><span class="line">&gt; rake db:migrate RAILS_ENV=development;</span><br></pre></td></tr></table></figure>
+<p>这会安装依赖，创建数据库。</p>
+<h3 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h3><h4 id="服务器"><a href="#服务器" class="headerlink" title="服务器"></a>服务器</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; cd server;</span><br><span class="line">&gt; rails s</span><br></pre></td></tr></table></figure>
+<h4 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h4><p>demo中app使用模拟器环境默认的host地址。（<code>http://10.0.2.2:3000</code>）。如果你在模拟器里运行，已经可以正常工作。你可以在设置菜单中修改，或者在<code>DemoConfig</code>类中直接修改。</p>
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><ul>
+<li>服务器：服务端没有。。我又不关心。</li>
+<li>客户端：你可以这样运行测试 <code>&gt; cd client; &gt; ./gradlew clean app:connectedCheck app:test</code></li>
+</ul>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><h3 id="避免重复发送消息"><a href="#避免重复发送消息" class="headerlink" title="避免重复发送消息"></a>避免重复发送消息</h3><p>编写移动应用意味着你要处理不可靠的网络。通过使用持久化的job（存储在本地），在网络可用时，app工作了很不错，可是并不完美。在不可靠的网络条件下，我们的应用可能出现这种情况：服务端那数据已经更新存储了，但是客户端没有收到成功的返回。那么客户端依然认为消息没有上传，会不断重试。如果server的返回有问题，这就会变得更糟糕。<br>通常情况下，重试就以为这重复上传消息。有很多策略可以解决这个问题。demo中我们使用一个唯一的二维元组<code>(userId, clientId)</code>来避免重复，它的原理如下：</p>
+<ul>
+<li>客户端创建消息时，生成一个唯一的<code>clientId</code>（<code>UUID.randomUUID().toString()</code>,注：随着时间会变化）。这个UUID和用户ID的组合在客户端和服务端都是唯一的。</li>
+<li>当服务端收到消息时，检查这个元组是否存在，如果以及存在，不会新增一条存储记录，而是仅仅返回这个条目已经存在。</li>
+<li>当客户端获取feed时，如果发现一个消息的<code>(userId, client Id)</code>与某个存在的消息相同，会覆盖这存在的消息。这可能发生在这种情况下发生：客户端没有收到服务端的返回，只是本地保存了这个消息，，但是这个消息出现在其他某个请求的返回里面。？？需要这样吗</li>
+</ul>
+<p>你可以在<code>server/app/controllers/posts_controller.rb</code>中使用<code>error_before_saving_post</code>和<code>error_after_saving_post</code>来触发这种特殊的情况。</p>
+<h2 id="版权许可"><a href="#版权许可" class="headerlink" title="版权许可"></a>版权许可</h2><blockquote>
+<p>Copyright (C) 2015 The Android Open Source Project</p>
+<p>Licensed under the Apache License, Version 2.0 (the “License”);<br>you may not use this file except in compliance with the License.</p>
+<p>You may obtain a copy of the License at<br>  <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank" rel="noopener">http://www.apache.org/licenses/LICENSE-2.0</a></p>
+<p>Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</p>
+<p>See the License for the specific language governing permissions and limitations under the License.</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+            <div class="social-item">
+              <a target="_blank" class="social-link" href="https://t.me/mltalk">
+                <span class="icon">
+                  <i class="fa fa-telegram"></i>
+                </span>
+
+                <span class="label">机器学习碎碎念</span>
+              </a>
+            </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Android/" rel="tag"># Android</a>
+              <a href="/tags/主框架/" rel="tag"># 主框架</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/01/24/Android图片库-Glide/" rel="prev" title="Android图片库--Glide Wiki中文翻译">
+      <i class="fa fa-chevron-left"></i> Android图片库--Glide Wiki中文翻译
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2016/03/06/Android注入框架Dagger2学习笔记/" rel="next" title="Android注入框架Dagger2学习笔记">
+      Android注入框架Dagger2学习笔记 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何工作"><span class="nav-number">2.</span> <span class="nav-text">如何工作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#组件"><span class="nav-number">3.</span> <span class="nav-text">组件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据流"><span class="nav-number">4.</span> <span class="nav-text">数据流</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#发送消息"><span class="nav-number">4.1.</span> <span class="nav-text">发送消息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#同步Feed流"><span class="nav-number">4.2.</span> <span class="nav-text">同步Feed流</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#保持UI更新"><span class="nav-number">4.3.</span> <span class="nav-text">保持UI更新</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装-amp-amp-运行-amp-amp-测试"><span class="nav-number">5.</span> <span class="nav-text">安装&amp;&amp;运行&amp;&amp;测试</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装"><span class="nav-number">5.1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运行"><span class="nav-number">5.2.</span> <span class="nav-text">运行</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#服务器"><span class="nav-number">5.2.1.</span> <span class="nav-text">服务器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#客户端"><span class="nav-number">5.2.2.</span> <span class="nav-text">客户端</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#测试"><span class="nav-number">5.3.</span> <span class="nav-text">测试</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他"><span class="nav-number">6.</span> <span class="nav-text">其他</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#避免重复发送消息"><span class="nav-number">6.1.</span> <span class="nav-text">避免重复发送消息</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#版权许可"><span class="nav-number">7.</span> <span class="nav-text">版权许可</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">limuzhi</p>
+  <div class="site-description" itemprop="description">something about tech, android etc...</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muzhi1991" title="GitHub → https://github.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:muzhi1991@gmail.com" title="E-Mail → mailto:muzhi1991@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/muzhi1991" title="Twitter → https://twitter.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.chenyupeng.com/" title="https://www.chenyupeng.com/" rel="noopener" target="_blank">陈玉鹏的个人空间</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://macshuo.com/" title="http://macshuo.com/" rel="noopener" target="_blank">MacTalk</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">limuzhi</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'G5HLDFmPsllxIjax4F2JTLnl-gzGzoHsz',
+      appKey     : 'A5PTgbvpJwjPlcBJ3Brl8rDs',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

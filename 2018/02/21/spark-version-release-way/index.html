@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="发布模式gitk —simplify-by-decoration —all 猜测：">
+<meta name="keywords" content="Spark,大数据">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spark项目发布模式&amp;&amp;各个版本特性（持续更新）">
+<meta property="og:url" content="http://limuzhi.com/2018/02/21/spark-version-release-way/index.html">
+<meta property="og:site_name" content="Night Piece">
+<meta property="og:description" content="发布模式gitk —simplify-by-decoration —all 猜测：">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fy63qd03t3j31ja0u0wwv.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fy63r2jmfbj31q60sa77v.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fy63rb388sj31t80u0tek.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fy63rr4imzj314y0mqt9n.jpg">
+<meta property="og:updated_time" content="2018-10-10T04:12:00.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spark项目发布模式&amp;&amp;各个版本特性（持续更新）">
+<meta name="twitter:description" content="发布模式gitk —simplify-by-decoration —all 猜测：">
+<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fy63qd03t3j31ja0u0wwv.jpg">
+
+<link rel="canonical" href="http://limuzhi.com/2018/02/21/spark-version-release-way/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>Spark项目发布模式&&各个版本特性（持续更新） | Night Piece</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Night Piece</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">white && black</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tools">
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-wrench"></i>利器</a>
+
+  </li>
+        <li class="menu-item menu-item-read">
+
+    <a href="/read/" rel="section"><i class="fa fa-fw fa-book"></i>阅读</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://limuzhi.com/2018/02/21/spark-version-release-way/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="limuzhi">
+      <meta itemprop="description" content="something about tech, android etc...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Night Piece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Spark项目发布模式&&各个版本特性（持续更新）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-02-21 10:49:01" itemprop="dateCreated datePublished" datetime="2018-02-21T10:49:01+08:00">2018-02-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2018-10-10 12:12:00" itemprop="dateModified" datetime="2018-10-10T12:12:00+08:00">2018-10-10</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2018/02/21/spark-version-release-way/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2018/02/21/spark-version-release-way/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="发布模式"><a href="#发布模式" class="headerlink" title="发布模式"></a>发布模式</h2><p>gitk —simplify-by-decoration —all</p>
+<p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1fy63qd03t3j31ja0u0wwv.jpg" alt><br>猜测：</p>
+<ul>
+<li>v0.7.0之前，发布模式是在发布当前主版本（如v0.5.0）时，<ul>
+<li>继续用当前分支作为主版本的子版本开发（v0.5.1），对0.5.0的版本进行bug处理（master发布）</li>
+<li>拉出下个版本的dev分支，同时继续下一个主版本的dev分支，并开发v0.6.0版本（dev发布）</li>
+<li>特点是：master和dev分支都发布版本不受限制，甚至基于master又拉了其他分支也可以发布版本。</li>
+</ul>
+</li>
+<li>v0.7.0之后，统一用master分支开发（红色的线），只用其他分支来发布版本。要发布版本是拉个新分支，然后改bug在master上，需要更新到某个版本时backport过来（应该用的是cherry-pick）</li>
+</ul>
+<h2 id="各个版本特性"><a href="#各个版本特性" class="headerlink" title="各个版本特性"></a>各个版本特性</h2><p><a href="https://spark.apache.org/releases/" target="_blank" rel="noopener">https://spark.apache.org/releases/</a><br><a href="https://spark.apache.org/news/index.html" target="_blank" rel="noopener">https://spark.apache.org/news/index.html</a></p>
+<h3 id="0-5-x"><a href="#0-5-x" class="headerlink" title="0.5.x"></a>0.5.x</h3><ul>
+<li>mesos支持</li>
+<li>新操作<ul>
+<li>sortByKey</li>
+<li>takeSample</li>
+</ul>
+</li>
+<li>性能优化<ul>
+<li>join的相同partitioner处理</li>
+<li>可配置的serializer</li>
+</ul>
+</li>
+<li>Scala 2.9.2</li>
+<li>通用的Accumulators接口，支持自定义</li>
+</ul>
+<h3 id="0-6-x"><a href="#0-6-x" class="headerlink" title="0.6.x"></a>0.6.x</h3><ul>
+<li><strong>standalone的部署模式</strong>（包括webui），<strong>实验性的yarn模式</strong></li>
+<li>java API（略）</li>
+<li>性能提升2x</li>
+<li><strong>架构修改</strong><ul>
+<li>custom storage and communication layers （来自即将发布的[spark streaming] (<a href="https://people.csail.mit.edu/matei/papers/2012/hotcloud_spark_streaming.pdf)）" target="_blank" rel="noopener">https://people.csail.mit.edu/matei/papers/2012/hotcloud_spark_streaming.pdf)）</a></li>
+<li>communication manager：asynchronous Java NIO</li>
+<li>storage manager:  storage level settings</li>
+<li>scheduler优化：better support ultra-low-latency jobs (under 500ms) and high-throughput scheduling decisions</li>
+</ul>
+</li>
+<li>api的变换<ul>
+<li><strong>persisit可以控制缓存策略</strong>：内存，磁盘，序列化的bytes</li>
+<li>SparkContext.addFile/Jar动态添加jar包</li>
+<li>join支持设置partitioner</li>
+</ul>
+</li>
+</ul>
+<h3 id="0-7-x"><a href="#0-7-x" class="headerlink" title="0.7.x"></a>0.7.x</h3><ul>
+<li>一个大版本</li>
+<li>python API</li>
+<li><strong>spark streaming 测试版</strong>— <a href="http://www.eecs.berkeley.edu/Pubs/TechRpts/2012/EECS-2012-259.pdf" target="_blank" rel="noopener">http://www.eecs.berkeley.edu/Pubs/TechRpts/2012/EECS-2012-259.pdf</a></li>
+<li>一个web ui：内存监控Dashboard</li>
+<li>支持maven build</li>
+<li>transformations:keys, values, keyBy, subtract, coalesce, zip</li>
+<li>SparkContext.hadoopConfiguration可以全局配置hadoop input/output settings</li>
+<li>RDD.toDebugString()</li>
+<li>其他提升<ul>
+<li><strong>shuffule并行度</strong>，除非设置spark.default.parallelism，否则用 自动推断</li>
+<li>Standalone提升：默认 spreads jobs out，web UI 添加了json，分离相关配置</li>
+<li>sheduler重构。。支持更好单元测试</li>
+</ul>
+</li>
+<li>New API methods: subtractByKey, foldByKey, mapWith, filterWith, foreachPartition, and others.</li>
+<li><strong>SparkListener interface</strong>, 可以收集各种性能指标metrics，如每个stage的task lengths, bytes shuffled</li>
+<li>standalone支持在一个机器上启动多个worker实例</li>
+<li>spark-shell支持添加jar，通过ADD_JARS变量</li>
+</ul>
+<h3 id="0-8-x"><a href="#0-8-x" class="headerlink" title="0.8.x"></a>0.8.x</h3><p>这个版本开始有了<a href="https://databricks.com/blog/2013/10/27/databricks-and-the-apache-spark-platform.html" target="_blank" rel="noopener">databricks的博客</a>，可以参考这个学习</p>
+<ul>
+<li>dashboard扩展成了<strong>webUI</strong>，和现在的差不多了</li>
+<li><strong>MLlib库</strong>（基于MLBase）：支持的算法 <ul>
+<li>SVMs</li>
+<li>logistic regression</li>
+<li>several regularized variants of linear regression</li>
+<li>a clustering algorithm (KMeans)</li>
+<li>alternating least squares collaborative filtering.</li>
+</ul>
+</li>
+<li>继续提升python API，支持了notebook的ipyhton</li>
+<li><strong>hadoop yarn</strong>的正式支持</li>
+<li><strong>schedule的重构升级</strong>：支持更多调度策略，支持多用户共享Spark实例，机架感知，单机多Executor</li>
+<li>剥离了hadoop-core的jar依赖，而是依赖hadoop-client,可以使用用户自己的任意hadoop版本？？参考<a href="http://spark.apache.org/docs/0.8.0/scala-programming-guide.html#linking-with-spark" target="_blank" rel="noopener">这里</a></li>
+<li>其他升级<ul>
+<li>支持unpersist</li>
+<li>RDD新api：takeOrdered, zipPartitions, top</li>
+<li>JobLogger类，</li>
+<li>RDD.coalesce 升级</li>
+<li>RDD.pipe 支持传递环境变量</li>
+<li>hadoop save 支持compression codec.</li>
+<li>可以把spark打包成一个仅依赖java的二进制包，方便部署？？？</li>
+<li>增加了example</li>
+<li>mesos升级，可以把spark打包成一个mesos jar，直接部署，不需要预安装。</li>
+</ul>
+</li>
+<li>包名变了org.apache.spark</li>
+<li><p>If you are building Spark, you’ll now need to run sbt/sbt assembly instead of package.</p>
+</li>
+<li><p>升级了yarn2.2的支持</p>
+</li>
+<li>Standalone的高可用—master的高可用（使用zk实现），让长期运行spark成为可能（如spark streaming）</li>
+<li>性能优化<ul>
+<li><strong>shuffle的hashtables优化</strong>：减少内存和cpu消耗</li>
+<li><strong>JobConf支持高效的encoding，提升了spark从hdfs读取大块数据的效率</strong></li>
+<li><strong>Shuffle 文件合并</strong>（默认关闭，0.9会打开）—减少shuffle文件输出个数</li>
+<li>Torrent广播（默认关闭）— 大对象的快速广播</li>
+<li><strong>支持获取大的result集合</strong>，而不需要调整akka的buffer</li>
+</ul>
+</li>
+<li>新api<ul>
+<li><strong>repartition</strong>操作</li>
+<li>Spark Streaming operators: transformWith, leftInnerJoin, rightOuterJoin</li>
+</ul>
+</li>
+<li>ui中添加了result fetching状态？？？</li>
+<li>standalone / Mesos 模式支持以不同用户的身份运行spark??</li>
+<li>bug:修复了在某些任务失败后挂起调度程序???</li>
+</ul>
+<h3 id="0-9-x"><a href="#0-9-x" class="headerlink" title="0.9.x"></a>0.9.x</h3><ul>
+<li>Scala 2.10</li>
+<li><strong>SparkConf类</strong>来配置SparkContext（推荐）</li>
+<li><strong>spark streaming正式版</strong>，<ul>
+<li>简化了高可用的设置（standalone）</li>
+<li>window操作提速30-50% </li>
+<li>input source plugins (e.g. for Twitter, Kafka and Flume) are now separate Maven modules</li>
+<li>StreamingListener interface </li>
+<li>大量api<ul>
+<li>StreamingContext.awaitTermination() 允许等待运行结束，捕获异常</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>GraphX的测试版</strong>，目的取代Bagel API.<ul>
+<li>从rdd构建图</li>
+<li>从图中抽取任意子图</li>
+<li>Pregel API </li>
+<li>标准算法，如pagerank</li>
+<li>Interactive use from the Spark shell</li>
+</ul>
+</li>
+<li>mllib库提升，支持python</li>
+<li>spark的脚本放到了bin（spark-shell）、sbin(管理脚本，start/stop standalone)目录中</li>
+<li>core升级<ul>
+<li>spark standalone支持在集群内提交（以前是在集群外提交）</li>
+<li><strong>reduce会spill数据到磁盘上了！！</strong>（以前是存内存，容易oom）</li>
+<li>standalone支持设置使用的cpu cores（以前是使用所有能用的核）</li>
+<li>spark-shell支持<code>-i</code>选项来指定移动运行的脚本</li>
+<li><strong>统计类api</strong>: histogram/countDistinctApprox </li>
+<li><strong>yarn模式升级，支持了发送外部文件</strong>，修复bug</li>
+</ul>
+</li>
+<li>bug修复，<strong>可以看<a href="http://s.apache.org/d0t" target="_blank" rel="noopener">issue tracker</a></strong>，参考release-note <a href="https://spark.apache.org/releases/spark-release-0-9-1.html" target="_blank" rel="noopener">0.9.1-bug列表</a>，<a href="https://spark.apache.org/releases/spark-release-0-9-2.html" target="_blank" rel="noopener">0.9.2-bug列表</a><ul>
+<li>spark-core bug修复</li>
+<li>yarn的bug修复</li>
+</ul>
+</li>
+<li><strong>更方便的整合Tachyon</strong>—一个内存框架！！</li>
+<li>ml优化</li>
+<li>pyspark bug，增加操作</li>
+</ul>
+<blockquote>
+<p>issue tracker使用：<a href="http://s.apache.org/d0t" target="_blank" rel="noopener">地址</a><br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1fy63r2jmfbj31q60sa77v.jpg" alt><br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1fy63rb388sj31t80u0tek.jpg" alt></p>
+</blockquote>
+<h3 id="1-0-x"><a href="#1-0-x" class="headerlink" title="1.0.x"></a>1.0.x</h3><ul>
+<li>yarn安全模式整合？？</li>
+<li>运营优化<ul>
+<li><strong>spark-submit脚本</strong>，统一提交任务的入口</li>
+<li><strong>history-server</strong></li>
+</ul>
+</li>
+<li><strong>Spark SQL 测试版</strong>：提供了对结构化数据的处理<ul>
+<li>支持<strong>加载外部的结构化数据</strong>，如Hive和<strong>Parquet</strong>。</li>
+<li>支持给RDD添加Schema</li>
+<li>spark sql与RDD交互：实现了sql语句与spark代码的转换</li>
+<li>使用 <strong>Catalyst优化器</strong>形成高效的执行图，<strong>自动对parquet格式进行谓词下堆优化</strong></li>
+<li>未来版本中，spark sql会对其他存储提供一个通用的API</li>
+</ul>
+</li>
+<li>mllib<ul>
+<li>增加对稀疏特征向量的支持，可以提速 linear methods, k-means, and naive Bayes.</li>
+<li>新算法：SVD / PCA</li>
+<li>模型评估函数</li>
+<li>L-BFGS?</li>
+</ul>
+</li>
+<li>graphx<ul>
+<li>性能提升</li>
+</ul>
+</li>
+<li>spark streaming<ul>
+<li>状态转换的性能优化</li>
+<li><strong>Flume的支持</strong>（日志收集系统，之前支持kafka，twitter）</li>
+<li>长期运行任务的自动状态清理</li>
+</ul>
+</li>
+<li><strong>java8的支持</strong>：lambda表达式</li>
+<li><p>其他小升级</p>
+<ul>
+<li>instrumentation支持，运行对任务监控</li>
+<li>添加<strong>Tachyon对堆外off-head内存整合的支持</strong>，通过一个build target实现的</li>
+<li>cache添加DISK_ONLY的支持，对大数据集可能有用</li>
+<li>当RDD没有引用时，spark job创建的<strong>中间状态会自动垃圾回收</strong>了？？</li>
+<li>SparkContext.wholeTextFiles方法，可以把小文件看做一个recored来操作</li>
+</ul>
+</li>
+<li><p>bugfix—<a href="http://s.apache.org/5zh" target="_blank" rel="noopener">tracker1.0.1</a> <a href="http://s.apache.org/9NJ" target="_blank" rel="noopener">tracker1.0.2</a></p>
+<ul>
+<li>重大bug参考<a href="https://spark.apache.org/releases/spark-release-1-0-1.html" target="_blank" rel="noopener">release-note1.0.1</a>， <a href="https://spark.apache.org/releases/spark-release-1-0-2.html" target="_blank" rel="noopener">release-note1.0.2</a></li>
+</ul>
+</li>
+<li><p>spark sql新特性</p>
+<ul>
+<li>json数据读取</li>
+<li>parquet提升：支持<strong>嵌套record，和array</strong></li>
+<li>支持一些新sql语句： (CACHE TABLE, DESCRIBE, SHOW TABLES) </li>
+<li><strong>支持sql相关的配置：设置partition数目</strong></li>
+</ul>
+</li>
+</ul>
+<h3 id="1-1-x"><a href="#1-1-x" class="headerlink" title="1.1.x"></a>1.1.x</h3><p>这个版本的spark增强了磁盘（非内存）的排序的速率（并在100tb的比赛中击败了hadoop，2014年11月），涉及几个重要的pr参考：</p>
+<ul>
+<li><a href="https://databricks.com/blog/2014/10/10/spark-petabyte-sort.html" target="_blank" rel="noopener">https://databricks.com/blog/2014/10/10/spark-petabyte-sort.html</a></li>
+<li><a href="https://databricks.com/blog/2015/04/24/recent-performance-improvements-in-apache-spark-sql-python-dataframes-and-more.html" target="_blank" rel="noopener">https://databricks.com/blog/2015/04/24/recent-performance-improvements-in-apache-spark-sql-python-dataframes-and-more.html</a></li>
+<li>spark-core性能提升<ul>
+<li><strong>cache时，对数据倾斜的分区的disk spill</strong><a href="https://issues.apache.org/jira/browse/SPARK-1777" target="_blank" rel="noopener">issue</a></li>
+<li><strong>aggregations操作的disk spill，已经在1.0引入了</strong>，现在加入了PySpark</li>
+<li><strong>一个新的shuffle实现 — Sort-based shuffle</strong>。适用于大规模扩容的场景下。<a href="https://issues.apache.org/jira/browse/SPARK-2045" target="_blank" rel="noopener">issue</a>，将会在<strong>下个版本变成默认</strong>实现。<strong>推荐对reducer很多的任务打开</strong>。</li>
+</ul>
+</li>
+<li>可用性提升，对长期运行的复杂任务的性能监控的提升<ul>
+<li>accumulate在ui中显示名称</li>
+<li>动态更新task的进度条</li>
+<li>对输入数据的文件系统相关指标的监控</li>
+</ul>
+</li>
+<li>spark sql新特性<ul>
+<li>thift jdbc/odbc服务器，运行用户共享使用cache的数据，<a href="http://spark.apache.org/docs/1.1.0/sql-programming-guide.html#json-datasets" target="_blank" rel="noopener">参考</a></li>
+<li>加载json数据为schemaRDD格式，<strong>自动schema推断</strong>。</li>
+<li>使用<strong>动态字节码技术codegen</strong>优化spark sql中表达式计算时间，<a href="https://blog.csdn.net/wl044090432/article/details/52190736" target="_blank" rel="noopener">原理解释：是否scala反射解析代码</a></li>
+<li><strong>支持自定义udf</strong>（spark sql中才需要udf，rdd中都是自己写函数），并且可以在sql中直接调用</li>
+<li><code>StructField</code>/<code>structType</code>从自定义数据源读取数据生成schemaRDD</li>
+<li>对原生parquet的很多优化</li>
+</ul>
+</li>
+<li>mllib<ul>
+<li>新算法：通用的统计函数，特征抽取工具(Word2Vec/ TF-IDF) 非负矩阵分解</li>
+<li>性能提升</li>
+</ul>
+</li>
+<li>spark streaming<ul>
+<li>流式机器学习算法，流式线性回归</li>
+<li>对inputs的速率限制rate limiting </li>
+</ul>
+</li>
+<li>GraphX <ul>
+<li>自定义顶点和边的storage level</li>
+<li>提高数值精度</li>
+</ul>
+</li>
+<li>issue解决<ul>
+<li>Spark Core: <a href="http://s.apache.org/spark-1.1-core" target="_blank" rel="noopener">http://s.apache.org/spark-1.1-core</a></li>
+<li>Spark SQL: <a href="http://s.apache.org/spark-1.1-sql" target="_blank" rel="noopener">http://s.apache.org/spark-1.1-sql</a></li>
+<li>Spark Streaming: <a href="http://s.apache.org/spark-1.1-streaming" target="_blank" rel="noopener">http://s.apache.org/spark-1.1-streaming</a></li>
+<li>MLlib: <a href="http://s.apache.org/spark-1.1-mllib" target="_blank" rel="noopener">http://s.apache.org/spark-1.1-mllib</a></li>
+<li>PySpark: <a href="http://s.apache.org/spark-1.1-pyspark" target="_blank" rel="noopener">http://s.apache.org/spark-1.1-pyspark</a></li>
+<li>All issues: <a href="http://s.apache.org/spark-1.1-all" target="_blank" rel="noopener">http://s.apache.org/spark-1.1-all</a></li>
+<li><a href="https://spark.apache.org/releases/spark-release-1-1-1.html" target="_blank" rel="noopener">spark-1.1.1-release</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="1-2-x"><a href="#1-2-x" class="headerlink" title="1.2.x"></a>1.2.x</h3><ul>
+<li>scala2.11</li>
+<li>spark-core性能优化<ul>
+<li><strong>shuffle大升级</strong><ul>
+<li>使用1.1引入的sort-based作为默认shuffle策略<a href="https://issues.apache.org/jira/browse/SPARK-3280" target="_blank" rel="noopener">参考</a></li>
+<li><strong>使用数据通讯通过bulk传递，并使用netty实现（之前是nio）</strong><a href="https://issues.apache.org/jira/browse/SPARK-2468" target="_blank" rel="noopener">参考</a></li>
+</ul>
+</li>
+<li>在<strong>yarn模式下加入了弹性伸缩</strong>，提高资源利用率。<a href="https://issues.apache.org/jira/browse/SPARK-3174" target="_blank" rel="noopener">参考</a></li>
+</ul>
+</li>
+<li>spark-streaming<ul>
+<li>python api</li>
+<li><strong>引入WAL实现HA</strong>(optional)，把日志写入HDFS，<a href="https://issues.apache.org/jira/browse/SPARK-3129" target="_blank" rel="noopener">参考</a></li>
+</ul>
+</li>
+<li>mllib<ul>
+<li>支持learning pipelines？？</li>
+<li>与spark sql兼容，使用SchemaRDD表示数据集</li>
+<li><strong>决策树算法加入了随机森林和GBDT</strong></li>
+</ul>
+</li>
+<li>spark sql<ul>
+<li>新的api读取外部数据源</li>
+<li>支持读入数据注册成为一个临时表，来支持<strong>谓词下堆</strong>的优化</li>
+<li>json parquet的绑定API重写？？</li>
+<li>hive提升。。。看不懂</li>
+<li><strong>优化了缓存SchemaRDD的架构性能，支持基于统计的分区修剪</strong>。</li>
+</ul>
+</li>
+<li><p>graphX</p>
+<ul>
+<li>作为<strong>正式版发布</strong></li>
+<li>aggregateMessages API的引入：更更大的编程模型和更好性能（1x提升）</li>
+<li>graph支持了checkpointing和lineage truncation（对于大量迭代有优化）</li>
+</ul>
+</li>
+<li><p>bug-fix</p>
+<ul>
+<li><a href="http://s.apache.org/Mpn" target="_blank" rel="noopener">1.2.1 issue tracker</a>， <a href="https://spark.apache.org/releases/spark-release-1-2-1.html" target="_blank" rel="noopener">release-note</a></li>
+<li><a href="https://issues.apache.org/jira/issues/?jql=project%20%3D%20SPARK%20AND%20fixVersion%20%3D%201.2.2%20ORDER%20BY%20priority%2C%20component" target="_blank" rel="noopener">1.2.2 issue tracker</a>，<a href="https://spark.apache.org/releases/spark-release-1-2-2.html" target="_blank" rel="noopener">release-note</a><ul>
+<li>Netty shuffle 线程安全</li>
+<li>JobProgressListener内存泄漏</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="1-3-x"><a href="#1-3-x" class="headerlink" title="1.3.x"></a>1.3.x</h3><ul>
+<li>spark-core<ul>
+<li>加入 <strong>treeAggregate treeReduce这两个api</strong>（对aggregate的升级）</li>
+<li>jetty依赖改成了内置的shade方式（直接打包到内部了）</li>
+<li>某些连接支持ssl（如内存的控制信号的通讯&amp;&amp;httpserver）</li>
+<li>ui界面上加上了垃圾回收时间&amp;&amp;record数目</li>
+</ul>
+</li>
+<li><strong>DataFrame API的加入</strong><ul>
+<li>SchemaRDD已经废弃，改为DataFrame</li>
+<li>目的是记录有schema的RDD数据，统一表示结构化数据，如hive json jdbc等等</li>
+<li>可以作为不同数据源转换的中间数据结构</li>
+</ul>
+</li>
+<li><strong>spark sql 正式版</strong>发布<ul>
+<li>支持data source api 的table的写操作</li>
+<li>新的jdbc data source支持mysql/Postgres等数据库的导入导出</li>
+<li><strong>支持parquet的merge schema</strong></li>
+</ul>
+</li>
+<li>mlLib<ul>
+<li>lda主题建模</li>
+<li>多分类的逻辑回归</li>
+<li>聚类算法：高斯混合模型GMM | power iteration clustering </li>
+<li>FP-growth</li>
+<li>分布式线性代数工具：块矩阵的抽象</li>
+<li><strong>模型的导入导出</strong></li>
+</ul>
+</li>
+<li><p>spark streaming</p>
+<ul>
+<li>direct Kafka API （支持不需要WAL的exactly once）</li>
+<li>在线逻辑回归算法</li>
+<li>支持读取二进制recored</li>
+<li>stateful operations： loading of an initial state RDD</li>
+</ul>
+</li>
+<li><p>graphx：  canonical edge graph.</p>
+</li>
+<li>bug-fix<ul>
+<li><a href="https://issues.apache.org/jira/issues/?jql=project%20%3D%20SPARK%20AND%20fixVersion%20%3D%201.3.1%20ORDER%20BY%20priority%2C%20component" target="_blank" rel="noopener">1.3.1 issue tracker</a>，<a href="https://spark.apache.org/releases/spark-release-1-3-1.html" target="_blank" rel="noopener">release-note</a><ul>
+<li>Thread safety issue in Netty shuffle</li>
+<li>Memory leak in output committer map</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="1-4-x"><a href="#1-4-x" class="headerlink" title="1.4.x"></a>1.4.x</h3><p>从1.4这个版本开始引入了一个重要的优化项目Tungsten（1.5也有），关于<a href="https://databricks.com/glossary/tungsten" target="_blank" rel="noopener">Tungsten的优化列表参考</a>，1.4主要是：</p>
+<ol>
+<li>显式的对内存进行高效的管理（针对df的agg函数）-codegen</li>
+<li>自定义的序列化器（jira中觉得Kryo还是慢）</li>
+</ol>
+<ul>
+<li>sparkR引入</li>
+<li>spark-core 性能优化<ul>
+<li>ui支持显示dag图的可视化</li>
+<li>shuffle<ul>
+<li><strong>减少排序时的内存占用</strong>，sort-base的shuffle在内存中会有很多小的object，如果以serialized的形式存储更节省空间。<a href="https://issues.apache.org/jira/browse/SPARK-4550" target="_blank" rel="noopener">参考</a></li>
+<li><strong>一个测试的shuffle manager—tungsten-sort</strong></li>
+</ul>
+</li>
+<li>mesos的docker支持</li>
+</ul>
+</li>
+<li>spark-sql/DataFrame优化，完整<a href="https://issues.apache.org/jira/issues/?jql=parent%20%3D%20SPARK-6116%20and%20fixVersion%20%3D%201.4.0" target="_blank" rel="noopener">参考</a><ul>
+<li>ORCFile的支持</li>
+<li><strong>对大的join操作支持Sort-merge</strong></li>
+<li>thift server加了一个ui的监控界面</li>
+<li>DataFrame加入一下数学函数，支持列计算</li>
+<li>DataFrame加入窗口函数</li>
+<li>DataFrame的join API支持self join，就是两个表相同的列自动join？？</li>
+<li>data source api支持分区读写（分区目录存储数据）</li>
+<li>支持rollup cube 函数（有点类似groupBy，但是又有<a href="https://stackoverflow.com/questions/37975227/what-is-the-difference-between-cube-rollup-and-groupby-operators" target="_blank" rel="noopener">区别</a>）</li>
+<li>DataFrame支持describe，显示一些基本的统计值，如mean std等</li>
+</ul>
+</li>
+<li>mllib，参考<a href="https://spark.apache.org/releases/spark-release-1-4-0.html" target="_blank" rel="noopener">release-note</a><ul>
+<li>ML pipelines支持更多的tramsform</li>
+</ul>
+</li>
+<li>spark streaming<ul>
+<li>ui支持</li>
+<li>对kafka的input rate 的跟踪</li>
+<li>可插拔的WAL接口</li>
+</ul>
+</li>
+<li>bug-fix<ul>
+<li>1.4.1 <a href="https://issues.apache.org/jira/issues/?jql=project%20%3D%20SPARK%20AND%20fixVersion%20%3D%201.4.1%20ORDER%20BY%20priority%2C%20component" target="_blank" rel="noopener">issue-tracker</a> <a href="https://spark.apache.org/releases/spark-release-1-4-1.html" target="_blank" rel="noopener">realease-note</a> </li>
+</ul>
+</li>
+</ul>
+<h3 id="1-5-x"><a href="#1-5-x" class="headerlink" title="1.5.x"></a>1.5.x</h3><p>这个版本继续优化项目Tungsten，包括：</p>
+<ol>
+<li>expanded binary memory management：更多的操作支持内存管理-codegen</li>
+<li>cache-aware data structures：设计算法和数据结构以充分利用memory hierarchy</li>
+</ol>
+<p>细节变化<a href="https://issues.apache.org/jira/secure/ReleaseNote.jspa?projectId=12315420&amp;version=12332078" target="_blank" rel="noopener">参考</a></p>
+<ul>
+<li>RDD/DataFrame/SQL的api变换<ul>
+<li><strong>UDAF</strong>(experimental)</li>
+<li><strong>DataFrame支持设置broadcast Join</strong>:broadcast函数</li>
+<li>expr函数：支持sql表达转换成DataFrame column</li>
+<li>更新NaN的支持<ul>
+<li>NaN functions: isnan, nanvl</li>
+<li>dropna/fillna also fill/drop NaN values in addition to NULL values</li>
+<li>Equality test on NaN = NaN returns true</li>
+<li>NaN is greater than all other values</li>
+<li>In aggregation, NaN values go into one group</li>
+</ul>
+</li>
+<li><a href="https://issues.apache.org/jira/browse/SPARK-8159" target="_blank" rel="noopener">SPARK-8159</a>: Added ~100 functions, including date/time, string, math.</li>
+<li>一些新的数据类型<ul>
+<li>CalendarIntervalType</li>
+<li>TimestampType</li>
+</ul>
+</li>
+<li><strong>checkpoint优化</strong>，<a href="https://issues.apache.org/jira/browse/SPARK-1855" target="_blank" rel="noopener">参考</a></li>
+</ul>
+</li>
+<li>DataFrame/SQL的底层优化<ul>
+<li><strong>codegen默认打开</strong>了</li>
+<li>agg聚合函数优化<ul>
+<li><strong>Cache friendly in-memory hash map layout</strong></li>
+<li><strong>内存超的时候退回到外部排序的聚合</strong></li>
+<li>agg也会codegen了</li>
+</ul>
+</li>
+<li>join的优化<ul>
+<li><strong>在有shuffle的join操作中，更倾向于使用基于外存的sort-merge算法，使得join只受磁盘大小的限制（而不是内存大小）</strong></li>
+<li>支持sort-merge的left/right outer joins</li>
+<li><strong>支持broadcast outer join</strong></li>
+</ul>
+</li>
+<li>sort的优化<ul>
+<li>Cache-friendly in-memory layout for sorting</li>
+<li>内存超的时候退回到外部排序的聚合</li>
+<li><strong>comparator也使用了codegen技术</strong></li>
+</ul>
+</li>
+<li>Native memory management &amp; representation<ul>
+<li><strong>更紧凑的内存数据表示</strong>，占用内存更低</li>
+<li><strong>优化了运行时内存</strong>，减少JVM GC的影响，更少的GC，更健壮的内存管理</li>
+</ul>
+</li>
+<li>window函数的性能和内存优化，<a href="https://issues.apache.org/jira/browse/SPARK-8638" target="_blank" rel="noopener">https://issues.apache.org/jira/browse/SPARK-8638</a></li>
+<li>执行计划可视化&amp;&amp;内存metric</li>
+</ul>
+</li>
+<li>外部整合<ul>
+<li>mesos：<ul>
+<li>SPARK-6287: <strong>mesos中实现动态资源管理的粗粒度模式</strong></li>
+<li>SPARK-6707: 用户自定义slave的属性</li>
+</ul>
+</li>
+<li>YARN<ul>
+<li>SPARK-4352: **实现了基于位置的动态Yarn作业分配&amp;&amp;</li>
+</ul>
+</li>
+<li>standalone<ul>
+<li>SPARK-4751: 动态资源管理</li>
+</ul>
+</li>
+<li>更好的hive metatore支持</li>
+<li>支持json数据源数据分区？</li>
+<li>parquet<ul>
+<li>优化速率，schema发现和合并</li>
+<li>默认开始谓词下堆</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>mllib<ul>
+<li>更多transform： CountVectorizer, Discrete Cosine transformation, MinMaxScaler, NGram, PCA, RFormula, StopWordsRemover, and VectorSlicer.</li>
+<li>更多Estimators： SPARK-8600 naive Bayes, SPARK-7879 k-means, and SPARK-8671 isotonic regression.<br>New Algorithms: SPARK-9471 multilayer perceptron classifier, SPARK-6487 PrefixSpan for sequential pattern mining, SPARK-8559 association rule generation, SPARK-8598 1-sample Kolmogorov-Smirnov test, etc.</li>
+<li>性能提升</li>
+</ul>
+</li>
+<li>spark-streaming<ul>
+<li><strong>背压算法</strong>：动态控制输入数据流，支持kafka SPARK-7398</li>
+<li>kafka Direct Kafka API正式发布</li>
+<li>ui中加入更多输入信息，如kafka offset</li>
+<li>recevier更好的调度和负载均衡SPARK-8882: </li>
+</ul>
+</li>
+<li><p><strong>手动内存管理Tungsten默认开启</strong></p>
+</li>
+<li><p>bugfix </p>
+<ul>
+<li><a href="http://s.apache.org/spark-1.5.1" target="_blank" rel="noopener">1.5.1</a></li>
+<li><a href="http://s.apache.org/spark-1.5.2" target="_blank" rel="noopener">1.5.2</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="1-6"><a href="#1-6" class="headerlink" title="1.6"></a>1.6</h3><h4 id="spark-core-spark-sql"><a href="#spark-core-spark-sql" class="headerlink" title="spark-core/spark sql"></a>spark-core/spark sql</h4><ul>
+<li>api变换<ul>
+<li><strong>Dataset API</strong></li>
+<li>Session Management:SparkSession？不同用户共享集群，可以配置不同的配置文件，设置不同的tmp表</li>
+<li><strong>Cache数据的高层分布信息</strong>：在扫描内存表时，存储了分区和order的schema信息 且DataFrame添加了distributeBy / localSort API</li>
+<li>支持文件上直接运行sql，不需要先注册成为table</li>
+<li>支持sql的*操作选择schema？？（用structType定义的？）</li>
+<li>json读入功能增强，支持非标准的json，支持设置把数据都读成string</li>
+<li>ui中可以显示每个操作的性能指标</li>
+</ul>
+</li>
+<li>性能提升<ul>
+<li><strong>联合内存管理</strong>：合并了执行内存和cache所用的内存，现在他们共享内存，统一管理。</li>
+<li><strong>提升内存中列式数据缓存的性能</strong>：如DataFrame的数据缓存，如果内部含复杂的数据类型，性能提升14x</li>
+<li>Off-Heap内存：<strong>堆外内存支持</strong></li>
+<li><strong>自适应的查询执行：支持自动配置join/agg的reduce的个数</strong></li>
+<li>更快的 null-safe joins：这中join <a href="https://stackoverflow.com/questions/41728762/including-null-values-in-an-apache-spark-join" target="_blank" rel="noopener">参考</a>，这里优化了速率，之前是使用笛卡儿积来做的，现在使用sortmerge</li>
+<li>Parquet性能提升</li>
+</ul>
+</li>
+</ul>
+<h4 id="spark-streaming"><a href="#spark-streaming" class="headerlink" title="spark-streaming"></a>spark-streaming</h4><ul>
+<li>新的状态管理mapWithState，希望取代updateStateByKey</li>
+</ul>
+<h4 id="mllib"><a href="#mllib" class="headerlink" title="mllib"></a>mllib</h4><ul>
+<li>新算法、模型<ul>
+<li>Online hypothesis testing - A/B testing in the Spark Streaming framework</li>
+<li>New feature transformers - ChiSqSelector, QuantileDiscretizer, SQL transformer</li>
+</ul>
+</li>
+<li>api提升<ul>
+<li>ml-pipeline:支持pipeline持久化，lda</li>
+</ul>
+</li>
+</ul>
+<h4 id="bug-fix"><a href="#bug-fix" class="headerlink" title="bug-fix"></a>bug-fix</h4><p><a href="http://s.apache.org/spark-1.6.1" target="_blank" rel="noopener">1.6.1</a><br><a href="https://s.apache.org/spark-1.6.2" target="_blank" rel="noopener">1.6.2</a><br><a href="https://issues.apache.org/jira/secure/ReleaseNote.jspa?projectId=12315420&amp;version=12336854" target="_blank" rel="noopener">1.6.3</a></p>
+<h3 id="2-0-x"><a href="#2-0-x" class="headerlink" title="2.0.x"></a>2.0.x</h3><p><a href="https://issues.apache.org/jira/secure/ReleaseNote.jspa?projectId=12315420&amp;version=12329449" target="_blank" rel="noopener">detail changes</a></p>
+<h4 id="spark-core-spark-sql-1"><a href="#spark-core-spark-sql-1" class="headerlink" title="spark-core/spark-sql"></a>spark-core/spark-sql</h4><ul>
+<li>api<ul>
+<li><strong>DataFrame与Dataset 统一了</strong></li>
+<li><strong>引入SparkSession</strong>，代替SQLContext HiveContext</li>
+<li><strong>新的accumulator api</strong>，改进之前的设计，更加简单易用</li>
+<li><strong>新的Aggregator API</strong>，用于Datasets中的 typed aggregation</li>
+</ul>
+</li>
+<li>spark sql<ul>
+<li><strong>支持SQL2003标准，可以运行TPC-DS测试基准的所有99个查询</strong></li>
+<li><strong>一个原生的SQL解释器</strong>，支持ANSI-SQL与Hive QL（即原始SQL与HQL）</li>
+<li>原生的DDL实现（表修改操作）,之前推荐使用HiveContext metastore。catalog API。当前默认metastore是in-memory<a href="https://issues.apache.org/jira/browse/SPARK-12228" target="_blank" rel="noopener">参考</a></li>
+<li><strong>支持子查询subquery（嵌套sql）</strong></li>
+<li>View canonicalization？？？</li>
+</ul>
+</li>
+<li>新特性<ul>
+<li>原生的csv文件的读取</li>
+<li>用Off-heap内存管理运行时和cache内存</li>
+<li><strong>使用sketches库实现了近似统计算法</strong>，<a href="https://datasketches.github.io/" target="_blank" rel="noopener">sketches library</a>：包括approximate quantile, Bloom filter, count-min sketch等算法</li>
+<li>Hive 表存储支持 bucketing方式，<code>bucketBy</code><br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1fy63rr4imzj314y0mqt9n.jpg" alt></li>
+</ul>
+</li>
+<li>性能<ul>
+<li><strong>spark-sql支持了whole stage code generation</strong></li>
+<li>通过vectorization提升parquet扫描性能</li>
+<li>Catalyst查询优化负载优化</li>
+<li>sql的窗口函数优化（通过原生实现这些函数）</li>
+<li>本机数据源的自动文件合并（coalescing）</li>
+</ul>
+</li>
+</ul>
+<h4 id="MLlib"><a href="#MLlib" class="headerlink" title="MLlib"></a>MLlib</h4><ul>
+<li>使用DataFrame作为主要API，RDD作为维护</li>
+<li>性能：优化了DataFrame中Vectors和Matrices的性能</li>
+</ul>
+<h4 id="spark-streaming-1"><a href="#spark-streaming-1" class="headerlink" title="spark streaming"></a>spark streaming</h4><ul>
+<li><strong>Structured Streaming实验版</strong>，使用了Catalyst优化</li>
+</ul>
+<h4 id="sparkR"><a href="#sparkR" class="headerlink" title="sparkR"></a>sparkR</h4><p>支持udf</p>
+<h4 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h4><ul>
+<li>no longer requires a fat assembly jar for production deployment.</li>
+<li><strong>异常akka的依赖</strong>，user applications can program against any versions of Akka.（为了解决某些用户已经用了Akka的冲突）</li>
+<li>coarse grained Mesos mode中可以启动多个executors</li>
+<li>使用Scala 2.11构建</li>
+<li>Mesos Fine-grained mode 会在以后2.x中移除</li>
+</ul>
+<h4 id="issue"><a href="#issue" class="headerlink" title="issue"></a>issue</h4><ul>
+<li><a href="https://issues.apache.org/jira/secure/ReleaseNote.jspa?projectId=12315420&amp;version=12336857" target="_blank" rel="noopener">2.0.1</a></li>
+<li><a href="https://issues.apache.org/jira/secure/ReleaseNote.jspa?projectId=12315420&amp;version=12338301" target="_blank" rel="noopener">2.0.1</a></li>
+</ul>
+<h4 id="Catalog和自定义Optimizer"><a href="#Catalog和自定义Optimizer" class="headerlink" title="Catalog和自定义Optimizer"></a>Catalog和自定义Optimizer</h4><p><a href="https://bigdata-ny.github.io/2016/08/21/spark-two-series-part-2/" target="_blank" rel="noopener">https://bigdata-ny.github.io/2016/08/21/spark-two-series-part-2/</a></p>
+<h3 id="2-1-x"><a href="#2-1-x" class="headerlink" title="2.1.x"></a>2.1.x</h3><ul>
+<li>spark streaming<ul>
+<li>Structured Streaming<strong>加入event time watermarks</strong>（在其他api里面没有watermark） SPARK-18124</li>
+<li>Structured Streaming加入kafka 0.10支持 SPARK-17346</li>
+<li>支持长时间稳定运行SPARK-17267</li>
+</ul>
+</li>
+<li>spark-core/spark-sql<ul>
+<li>api<ul>
+<li>加入<code>from_json</code>,<code>to_json</code> 函数可以用在col上了</li>
+<li>修改<code>DataType</code>的api为稳定的（从1.3开始之前是develop状态），他的子类如<code>BinaryType</code>/<code>BinaryType</code>/<code>StringType</code></li>
+</ul>
+</li>
+<li>性能<ul>
+<li>metastore中加入存储了分区信息。没有分区信息的化spark会读取所有分区到内存，查看schema，加入分析信息后只需要加载需要访问的分区的schema就行，提高首次加载速度（如果表很多分区的化）<a href="https://issues.apache.org/jira/browse/SPARK-16980" target="_blank" rel="noopener">https://issues.apache.org/jira/browse/SPARK-16980</a></li>
+<li><strong>提升groupby agg的性能，通过加入聚合cache实现</strong> SPARK-16523</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>MLLib<ul>
+<li><strong>局部敏感Hash</strong></li>
+<li>多类别的逻辑回归的DataFrame API</li>
+</ul>
+</li>
+<li>bugfix<ul>
+<li><a href="http://s.apache.org/spark-2.1.1" target="_blank" rel="noopener">2.1.1</a></li>
+<li><a href="http://s.apache.org/spark-2.1.2" target="_blank" rel="noopener">2.1.2</a></li>
+<li><a href="https://s.apache.org/spark-2.1.3-release-notes" target="_blank" rel="noopener">2.1.3</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="2-2-x"><a href="#2-2-x" class="headerlink" title="2.2.x"></a>2.2.x</h3><ul>
+<li>api<ul>
+<li>Catalog扩展<ul>
+<li>Support creating hive table with DataFrameWriter and Catalog</li>
+<li>添加外部修改catalog的事件监听</li>
+</ul>
+</li>
+<li><strong>支持了<code>LATERAL VIEW OUTER explode()</code> 语法</strong></li>
+<li><strong>对sql增加了BROADCAST, BROADCASTJOIN, and MAPJOIN</strong></li>
+<li>支持sql修改表名： ALTER TABLE table_name ADD COLUMNS</li>
+<li>df加入了<code>hint</code>函数，支持设置broadcast等操作 <a href="https://issues.apache.org/jira/browse/SPARK-20576" target="_blank" rel="noopener">https://issues.apache.org/jira/browse/SPARK-20576</a></li>
+</ul>
+</li>
+<li>性能优化<ul>
+<li>sql<ul>
+<li><strong>Cost-Based Optimizer</strong>（基于代价的优化技术） ：。。。略</li>
+<li>agg操作的性能优化：使用了JVM object</li>
+</ul>
+</li>
+<li>core<ul>
+<li><strong>kill不了的进程不要饿死其他job</strong>：SPARK-18761</li>
+<li><strong>cache增加拓扑感知功能</strong>：如果某个机器挂了，就不用在选择他缓存block了（之前似随机选择的）SPARK-15352</li>
+<li>调度增加黑名单机制：SPARK-8425</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>其他，支持多行json/cvs的解析</li>
+<li><strong>Structured streaming 正式版</strong>发布<ul>
+<li>SPARK-19067: Support for complex stateful processing and timeouts using [flat]MapGroupsWithState</li>
+<li>SPARK-19876: Support for one time triggers</li>
+</ul>
+</li>
+<li>MLlib<ul>
+<li>加入新算法LinearSVC ChiSquare Correlation</li>
+</ul>
+</li>
+<li>bug-fix<ul>
+<li><a href="http://s.apache.org/spark-2.2.1" target="_blank" rel="noopener">2.2.1</a><ul>
+<li>修复了一个null运算的结果不确定的错误</li>
+</ul>
+</li>
+<li><a href="https://s.apache.org/spark-2.2.2" target="_blank" rel="noopener">2.2.2</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="2-3-x"><a href="#2-3-x" class="headerlink" title="2.3.x"></a>2.3.x</h3><h4 id="Core-PySpark-and-Spark-SQL"><a href="#Core-PySpark-and-Spark-SQL" class="headerlink" title="Core, PySpark and Spark SQL"></a>Core, PySpark and Spark SQL</h4><ul>
+<li>新特性<ul>
+<li>Spark on Kubernetes</li>
+<li>Spark History Server V2</li>
+<li>Data source API V2 （实验）</li>
+<li>Vectorized ORC Reader</li>
+</ul>
+</li>
+<li>core<ul>
+<li>SPARK-21113：spill reader读buffer优化—read ahead</li>
+<li>SPARK-22062 17788 21907：各种oom错误</li>
+<li>SPARK-19112：ZStandard codec支持</li>
+</ul>
+</li>
+<li>sql<ul>
+<li>cost-based optimizer<ul>
+<li>Histogram 支持</li>
+</ul>
+</li>
+<li>rule-based optimizer增强</li>
+<li>codegen 64k jvm限制</li>
+<li>SPARK-23207：一个长期存在的bug</li>
+<li>SPARK-20746：更多udf支持（ ISO/ANSI 标准）</li>
+</ul>
+</li>
+</ul>
+<h4 id="Structured-Streaming"><a href="#Structured-Streaming" class="headerlink" title="Structured Streaming"></a>Structured Streaming</h4><ul>
+<li><strong>Continuous Processing（experimental）：支持毫秒级的数据处理（at-least-once）</strong></li>
+<li>Stream-Stream Joins：支持两个stream的join操作</li>
+<li>Streaming API V2（experimental）</li>
+</ul>
+<h4 id="mllib-1"><a href="#mllib-1" class="headerlink" title="mllib"></a>mllib</h4><p>这个版本ml变化挺多，看releasenote</p>
+<ul>
+<li><strong>支持 Structured Streaming</strong></li>
+<li><strong>支持读取图像数据</strong></li>
+<li>LogisticRegression的api大幅的变换了</li>
+</ul>
+<h4 id="bug-fix-1"><a href="#bug-fix-1" class="headerlink" title="bug-fix"></a>bug-fix</h4><ul>
+<li><a href="https://s.apache.org/spark-2.3.1" target="_blank" rel="noopener">2.3.1</a></li>
+<li><a href="https://spark.apache.org/releases/spark-release-2-3-2.html" target="_blank" rel="noopener">2.3.2</a></li>
+</ul>
+<p>总结：<br>spark2.x很少包含spark-core的大优化了，大部分是spark-sql</p>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+            <div class="social-item">
+              <a target="_blank" class="social-link" href="https://t.me/mltalk">
+                <span class="icon">
+                  <i class="fa fa-telegram"></i>
+                </span>
+
+                <span class="label">机器学习碎碎念</span>
+              </a>
+            </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Spark/" rel="tag"># Spark</a>
+              <a href="/tags/大数据/" rel="tag"># 大数据</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/01/10/learn-actor/" rel="prev" title="初识Actor - 从Scala库开始">
+      <i class="fa fa-chevron-left"></i> 初识Actor - 从Scala库开始
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/03/18/fp-scala-part1/" rel="next" title="Scala函数式编程-Part1">
+      Scala函数式编程-Part1 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#发布模式"><span class="nav-number">1.</span> <span class="nav-text">发布模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#各个版本特性"><span class="nav-number">2.</span> <span class="nav-text">各个版本特性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#0-5-x"><span class="nav-number">2.1.</span> <span class="nav-text">0.5.x</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0-6-x"><span class="nav-number">2.2.</span> <span class="nav-text">0.6.x</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0-7-x"><span class="nav-number">2.3.</span> <span class="nav-text">0.7.x</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0-8-x"><span class="nav-number">2.4.</span> <span class="nav-text">0.8.x</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0-9-x"><span class="nav-number">2.5.</span> <span class="nav-text">0.9.x</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-0-x"><span class="nav-number">2.6.</span> <span class="nav-text">1.0.x</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-x"><span class="nav-number">2.7.</span> <span class="nav-text">1.1.x</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-x"><span class="nav-number">2.8.</span> <span class="nav-text">1.2.x</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-x"><span class="nav-number">2.9.</span> <span class="nav-text">1.3.x</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-x"><span class="nav-number">2.10.</span> <span class="nav-text">1.4.x</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-x"><span class="nav-number">2.11.</span> <span class="nav-text">1.5.x</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-6"><span class="nav-number">2.12.</span> <span class="nav-text">1.6</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#spark-core-spark-sql"><span class="nav-number">2.12.1.</span> <span class="nav-text">spark-core/spark sql</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#spark-streaming"><span class="nav-number">2.12.2.</span> <span class="nav-text">spark-streaming</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mllib"><span class="nav-number">2.12.3.</span> <span class="nav-text">mllib</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#bug-fix"><span class="nav-number">2.12.4.</span> <span class="nav-text">bug-fix</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-0-x"><span class="nav-number">2.13.</span> <span class="nav-text">2.0.x</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#spark-core-spark-sql-1"><span class="nav-number">2.13.1.</span> <span class="nav-text">spark-core/spark-sql</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MLlib"><span class="nav-number">2.13.2.</span> <span class="nav-text">MLlib</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#spark-streaming-1"><span class="nav-number">2.13.3.</span> <span class="nav-text">spark streaming</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#sparkR"><span class="nav-number">2.13.4.</span> <span class="nav-text">sparkR</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#其他"><span class="nav-number">2.13.5.</span> <span class="nav-text">其他</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#issue"><span class="nav-number">2.13.6.</span> <span class="nav-text">issue</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Catalog和自定义Optimizer"><span class="nav-number">2.13.7.</span> <span class="nav-text">Catalog和自定义Optimizer</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-x"><span class="nav-number">2.14.</span> <span class="nav-text">2.1.x</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-x"><span class="nav-number">2.15.</span> <span class="nav-text">2.2.x</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-x"><span class="nav-number">2.16.</span> <span class="nav-text">2.3.x</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Core-PySpark-and-Spark-SQL"><span class="nav-number">2.16.1.</span> <span class="nav-text">Core, PySpark and Spark SQL</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Structured-Streaming"><span class="nav-number">2.16.2.</span> <span class="nav-text">Structured Streaming</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mllib-1"><span class="nav-number">2.16.3.</span> <span class="nav-text">mllib</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#bug-fix-1"><span class="nav-number">2.16.4.</span> <span class="nav-text">bug-fix</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">limuzhi</p>
+  <div class="site-description" itemprop="description">something about tech, android etc...</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muzhi1991" title="GitHub → https://github.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:muzhi1991@gmail.com" title="E-Mail → mailto:muzhi1991@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/muzhi1991" title="Twitter → https://twitter.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.chenyupeng.com/" title="https://www.chenyupeng.com/" rel="noopener" target="_blank">陈玉鹏的个人空间</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://macshuo.com/" title="http://macshuo.com/" rel="noopener" target="_blank">MacTalk</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">limuzhi</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'G5HLDFmPsllxIjax4F2JTLnl-gzGzoHsz',
+      appKey     : 'A5PTgbvpJwjPlcBJ3Brl8rDs',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

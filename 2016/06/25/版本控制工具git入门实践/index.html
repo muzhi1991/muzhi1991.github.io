@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="在软件开发中有一些是通用技能，无论从事什么项目，C、Java、前段、后台，都必须掌握的（甚至产品设计与UI设计都需要）：  操作系统的使用：MacOs/Linux/Win 版本协作工具：SVN/Git 文本工具：Vim/SublimeText/MarkDown IDE：Eclipse/Idea 效率工具：Alfred  这些技能应当优先熟练掌握，今天聊一聊版本控制工具Git。之前一直使用的是SVN">
+<meta name="keywords" content="Tools">
+<meta property="og:type" content="article">
+<meta property="og:title" content="版本控制工具Git入门实践">
+<meta property="og:url" content="http://limuzhi.com/2016/06/25/版本控制工具git入门实践/index.html">
+<meta property="og:site_name" content="Night Piece">
+<meta property="og:description" content="在软件开发中有一些是通用技能，无论从事什么项目，C、Java、前段、后台，都必须掌握的（甚至产品设计与UI设计都需要）：  操作系统的使用：MacOs/Linux/Win 版本协作工具：SVN/Git 文本工具：Vim/SublimeText/MarkDown IDE：Eclipse/Idea 效率工具：Alfred  这些技能应当优先熟练掌握，今天聊一聊版本控制工具Git。之前一直使用的是SVN">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://limuzhi.com/images/git_branch_all.png">
+<meta property="og:image" content="http://limuzhi.com/images/git_status_capture.png">
+<meta property="og:image" content="http://limuzhi.com/images/git_fast_forward_merge.png">
+<meta property="og:updated_time" content="2020-02-25T09:44:15.481Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="版本控制工具Git入门实践">
+<meta name="twitter:description" content="在软件开发中有一些是通用技能，无论从事什么项目，C、Java、前段、后台，都必须掌握的（甚至产品设计与UI设计都需要）：  操作系统的使用：MacOs/Linux/Win 版本协作工具：SVN/Git 文本工具：Vim/SublimeText/MarkDown IDE：Eclipse/Idea 效率工具：Alfred  这些技能应当优先熟练掌握，今天聊一聊版本控制工具Git。之前一直使用的是SVN">
+<meta name="twitter:image" content="http://limuzhi.com/images/git_branch_all.png">
+
+<link rel="canonical" href="http://limuzhi.com/2016/06/25/版本控制工具git入门实践/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>版本控制工具Git入门实践 | Night Piece</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Night Piece</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">white && black</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tools">
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-wrench"></i>利器</a>
+
+  </li>
+        <li class="menu-item menu-item-read">
+
+    <a href="/read/" rel="section"><i class="fa fa-fw fa-book"></i>阅读</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://limuzhi.com/2016/06/25/版本控制工具git入门实践/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="limuzhi">
+      <meta itemprop="description" content="something about tech, android etc...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Night Piece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          版本控制工具Git入门实践
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-06-25 09:25:19" itemprop="dateCreated datePublished" datetime="2016-06-25T09:25:19+08:00">2016-06-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-25 17:44:15" itemprop="dateModified" datetime="2020-02-25T17:44:15+08:00">2020-02-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2016/06/25/版本控制工具git入门实践/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2016/06/25/版本控制工具git入门实践/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>在软件开发中有一些是<strong>通用技能</strong>，无论从事什么项目，C、Java、前段、后台，都必须掌握的（甚至产品设计与UI设计都需要）：</p>
+<ul>
+<li>操作系统的使用：MacOs/Linux/Win</li>
+<li>版本协作工具：SVN/<strong>Git</strong></li>
+<li>文本工具：Vim/SublimeText/<strong>MarkDown</strong></li>
+<li>IDE：Eclipse/Idea</li>
+<li>效率工具：Alfred</li>
+</ul>
+<p>这些技能应当优先熟练掌握，今天聊一聊版本控制工具Git。之前一直使用的是SVN，也仅仅停留在工作中使用，甚至不会使用svn命令，只能使用SVN Tortoise，也就是拉代码，解决冲突，提交代码这三个步骤，偶尔拉一下分支（甚至都没有亲自合并过分支。。）。</p>
+<p>对于Git使用，说来已久，从一开始在Github上面copy代码（clone），到背git命令，了解git flow开发模型，都是理论大于实践，以至于最近工作的代码使用了Git后，一脸的蒙逼。本质来说没有理解Git的核心思想。</p>
+<p>老规矩，下面是学习的一些资料，这次没有找英文的原始资料，因为这方面国内很多资料，就不折腾翻译了：</p>
+<ul>
+<li><a href="https://yq.aliyun.com/articles/5843?spm=5176.100239.blogcont7441.8.GnX3p9" target="_blank" rel="noopener">走进git时代系列一、二、三</a>：基本够了</li>
+</ul>
+<ul>
+<li><a href="https://segmentfault.com/a/1190000005695097" target="_blank" rel="noopener">使用原理视角看 Git</a></li>
+</ul>
+<h2 id="概念理解"><a href="#概念理解" class="headerlink" title="概念理解"></a>概念理解</h2><h3 id="核心概念：分支开发"><a href="#核心概念：分支开发" class="headerlink" title="核心概念：分支开发"></a>核心概念：<strong>分支开发</strong></h3><p>这是Git中最最重要的一个概念，也是与SVN等其他工具最核心的不同。</p>
+<p>在Git的开发中，分支是一个轻量级的概念，因此新建分支，合并分支，删除分支在开发中十分常见，我们开发时应当遵循这样的基于分支的开发流程：</p>
+<ol>
+<li>当有一个新需求、bug需要开发时，从origin/master新建一个分支,feature01/bugfix01。</li>
+<li>切换到该分支上，开发。。修复a1，add，修复a2，add。。。</li>
+<li>开发完成后commit（一般保持一个commit记录）</li>
+<li>git fetch origin master 从origin master更新代码(从网络更新代码到FETCH_HEAD,可以更新到master)</li>
+<li>rebase到当前分支上</li>
+<li>push</li>
+</ol>
+<h3 id="理解远程分支与本地分支"><a href="#理解远程分支与本地分支" class="headerlink" title="理解远程分支与本地分支"></a>理解远程分支与本地分支</h3><ul>
+<li>本质上，他们都是分支！</li>
+</ul>
+<ul>
+<li>本地分支中的默认分支<code>master</code>也是分支，它是以<code>origin/master分支</code>初始化的一个普通分支。</li>
+</ul>
+<ul>
+<li><strong>分支本质是n个commit的list</strong>。如果本地<code>master</code>与<code>origin/master</code>同步（不在本地master上commit，修改可以，不要提交），更新之后，那么master与origin/master就是一样的。</li>
+</ul>
+<p>一个新的项目clone后有哪些分支：</p>
+<p><img src="/images/git_branch_all.png" alt="all branch"></p>
+<ul>
+<li><code>master</code> 当前的默认分支，第一次取下来后与<code>origin/master</code>指向相同，但是后续可以在上面开发</li>
+</ul>
+<ul>
+<li><p><code>origin/master</code> 远程分支，内容是<strong>最后一次从远程origin获取的所有commit</strong>的分支，无法修改数据，本地数据，但含义是</p>
+<blockquote>
+<p><code>remotes/origin/master</code>和<code>origin/master</code>的指向是相同的</p>
+<ul>
+<li><code>master</code> is a local branch</li>
+<li><code>origin/master</code> is a remote branch (which is a <em>local copy</em> of the branch named “master” on the remote named “origin”)</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+<p>哪些指针：</p>
+<ul>
+<li><code>HEAD</code></li>
+<li><code>FETCH_HEAD</code></li>
+<li><code>origin/master/HEAD</code> 指向<code>origin/master</code>的提交，与<code>HEAD</code>区分</li>
+</ul>
+<h3 id="理解本地的三个工作区"><a href="#理解本地的三个工作区" class="headerlink" title="理解本地的三个工作区"></a>理解本地的三个工作区</h3><h4 id="1-工作目录workspace"><a href="#1-工作目录workspace" class="headerlink" title="1. 工作目录workspace"></a>1. 工作目录workspace</h4><p>这个可以直接理解成<strong>普通的文件夹，文件</strong>， 这几个角度：</p>
+<ul>
+<li><p>工作区全局只有一个，没有多个备份，它不会保存完整的状态。</p>
+</li>
+<li><p>不commit就切换分支会污染工作目录！（不commit，<strong>且有冲突</strong>的情况下，Git不会让你切换的，<strong>如果没有冲突，则会合并！</strong>）</p>
+<blockquote>
+<p>error: Your local changes to the following files would be overwritten by checkout:</p>
+<p><strong>建议：切换分支前先commit</strong>，养成commit的习惯</p>
+</blockquote>
+</li>
+<li><p>从其他分支合并，或者从网络fetch后merge（pull），都是合入工作区。因此要注意在此之前add/commit操作。</p>
+<blockquote>
+<p>泛化的理解：Git的所有操作都是先针对工作区修改，因此在执行例如合并之类的操作必须要add或者commit</p>
+</blockquote>
+</li>
+</ul>
+<h4 id="2-暂存区-Stage-Index"><a href="#2-暂存区-Stage-Index" class="headerlink" title="2. 暂存区 Stage/Index"></a>2. 暂存区 Stage/Index</h4><p>暂存区是Git维护的，用户手动添加，暂存区只对当前分支有效，</p>
+<ul>
+<li>工作区全局只有一个，没有多个备份，它不会保存完整的状态。</li>
+<li>因此，在切换分支时，暂存区也会被污染！具体情况与上面第二点相同（不commit，<strong>且有冲突</strong>的情况下，Git不会让你切换的，<strong>如果没有冲突，则会合并！</strong>）。</li>
+<li>与工作区不同，在从合入分支时，它不受影响，这也是暂存区的作用。</li>
+</ul>
+<h4 id="3-本地仓库"><a href="#3-本地仓库" class="headerlink" title="3. 本地仓库"></a>3. 本地仓库</h4><p><strong>分支本质是n个commit的list</strong>。</p>
+<ul>
+<li><p>本地仓库中含有n个分支。包括一个默认的本地master（映射到origin/maser）和其他本地分支（可能没有映射，也可能映射到远程对于的分支）。</p>
+</li>
+<li><p>切换分支时，只是指针切换，仓库内容不受影响，<strong>只会更新工作目录（文件的删除添加）与暂存区（一般是清空，如果暂存区非空，且不冲突也会保留）</strong></p>
+</li>
+<li><p>合并操作，会修复被合入的分支内容（某个commit的提交内容，或者commit的list）</p>
+</li>
+</ul>
+<h3 id="工作目录中文件的三种状态"><a href="#工作目录中文件的三种状态" class="headerlink" title="工作目录中文件的三种状态"></a>工作目录中文件的三种状态</h3><ul>
+<li><p>已提交（committed）：该文件被安全地保存在了本地数据库</p>
+</li>
+<li><p>已暂存（staged）：把已修改的文件放下下次保存的清单中</p>
+</li>
+<li><p>已修改（modified）：修改了某个文件，但还没有保存，此外还有从没有add过的新文件，<strong>未追踪untracked</strong></p>
+<p>参考下图学习：</p>
+<p><img src="/images/git_status_capture.png" alt="git status"></p>
+</li>
+</ul>
+<p>几个关注点：</p>
+<ul>
+<li>红色表示在工作目录的文件，绿色表示在暂存区的文件</li>
+<li><code>Changes to be committed:</code>下的<code>new file</code>表示，暂存区与仓库对比，他们是新文件（如果有<code>modified</code>表示，暂存区与仓库对比是修改的）</li>
+<li><code>Changes not staged for commit:</code>下的<code>modified</code>表示，工作区与暂存区/仓库对比是修改的</li>
+<li><code>Untracked files:</code>下的是没有加入过暂存区的内容（在暂存区/仓库找不到对比对象）</li>
+<li>注意有两个hell3.txt，一个是工作目录的，一个是暂存区的，这说明<strong>加入暂存区后该文件被修改过。</strong></li>
+</ul>
+<h3 id="HEAD"><a href="#HEAD" class="headerlink" title="HEAD"></a>HEAD</h3><p><code>HEAD</code>是一个指针，指向的是<strong>本地仓库</strong>中<strong>当前分支</strong>的一个commit记录！该commit是当前正在工作的commit。<br>什么时机HEAD会移动：</p>
+<ul>
+<li>git checkout后指向新分支的commit（跨分支）</li>
+<li>git commit后HEAD移动指向的commit（同一分支，向前）</li>
+<li>merge，rebase，fast-forward</li>
+</ul>
+<p>注意：它指向的内容与工作目录和暂存区可能都不同，因此可以用HEAD来执行恢复操作。</p>
+<h3 id="fast-forward-merge"><a href="#fast-forward-merge" class="headerlink" title="fast-forward merge"></a>fast-forward merge</h3><p>快进模式 一个常用概念，指的是谁forward呢？是<strong>HEAD的快速向前移动</strong>。</p>
+<p>出现的情况：</p>
+<ul>
+<li><p>merge完成时，被合入分支的最后一个commit在待合入分支之中，移动HEAD到最后一个commit。如下图所示：</p>
+<p><img src="/images/git_fast_forward_merge.png" alt="fast forward"></p>
+</li>
+<li><p>rebase完成后，commit记录合入后，HEAD指针直接向前移动多个commit。</p>
+</li>
+</ul>
+<p>总之，当前分支是master，执行<code>git merge branch1</code>。master分支最好的commit是目标分支branch1的祖先commit节点时，会发生Fast-forward的merge。</p>
+<blockquote>
+<p>有时为了时每一次merge都有记录，要禁用fast-forward,需要使用<code>git merge —no-ff</code>命令合并。</p>
+</blockquote>
+<h3 id="merge-rebase-cherry-pick-区别与使用场景"><a href="#merge-rebase-cherry-pick-区别与使用场景" class="headerlink" title="merge/rebase/cherry-pick 区别与使用场景"></a>merge/rebase/cherry-pick 区别与使用场景</h3><ul>
+<li>rebase：一般只用在本地分支上，把远程分支rebase过来。</li>
+</ul>
+<ul>
+<li>merge：一般用在远程分支上，把本地分支merge到远程主干上。</li>
+<li>cherry-pick：从其他分支拿(pick)一个commit到某个分支</li>
+</ul>
+<p>顺序，先rebase orgin 再切换到主分支 merge 过去，前向合并(fast-forward merge，分支是目标分支的祖先commit节点时，会发生Fast-forward的merge)</p>
+<p>参考这篇文章理解：<a href="http://pinkyjie.com/2014/08/10/git-notes-part-3/" target="_blank" rel="noopener">http://pinkyjie.com/2014/08/10/git-notes-part-3/</a></p>
+<h3 id="reset与revert"><a href="#reset与revert" class="headerlink" title="reset与revert"></a>reset与revert</h3><p>这两个都是后悔药，区别如下</p>
+<ul>
+<li>reset：使用撤销commit的方式恢复，使用在本地分支的恢复上（推送之前）。</li>
+</ul>
+<ul>
+<li>revert：使用添加commit的方式恢复，用在远程分支的恢复上。原因参考『场景分析』</li>
+</ul>
+<h3 id="stage与stash"><a href="#stage与stash" class="headerlink" title="stage与stash"></a>stage与stash</h3><ul>
+<li>stage，是暂存区，既我们git add之后存储的地方</li>
+<li>stash，是一个独立的存储区域，可以存放保存的文件，<ul>
+<li><code>git stash</code>：存储</li>
+<li><code>git stash apply</code>： 还原</li>
+</ul>
+</li>
+</ul>
+<h2 id="场景分析"><a href="#场景分析" class="headerlink" title="场景分析"></a>场景分析</h2><h3 id="commit多次，只保留一个commit，"><a href="#commit多次，只保留一个commit，" class="headerlink" title="commit多次，只保留一个commit，"></a>commit多次，只保留一个commit，</h3><p>两种方案：</p>
+<ul>
+<li>commit修改，使用git commit —amend 提交commit，会在之前一个commit的基础上修改（记录内容），不增加新的commit节点。</li>
+<li>commit合并，使用git rebase 的交互模式来合并多个commit：参考：<a href="http://zerodie.github.io/blog/2012/01/19/git-rebase-i/" target="_blank" rel="noopener">http://zerodie.github.io/blog/2012/01/19/git-rebase-i/</a></li>
+</ul>
+<h3 id="保存某个文件，要跨分支使用它。"><a href="#保存某个文件，要跨分支使用它。" class="headerlink" title="保存某个文件，要跨分支使用它。"></a>保存某个文件，要跨分支使用它。</h3><p><code>git stash</code> 命令可以满足这个需求，相当于一个存储箱。</p>
+<h3 id="commit错分支"><a href="#commit错分支" class="headerlink" title="commit错分支"></a>commit错分支</h3><p>cherry-pick：<br>一种常见的场景就是，比如我在A分支做了几次commit以后，发现其实我并不应该在A分支上工作，应该在B分支上工作，这就需要将这些commit从A分支复制到B分支去了，这时候就需要cherry-pick命令了。</p>
+<p>参考：<a href="http://pinkyjie.com/2014/08/10/git-notes-part-3/" target="_blank" rel="noopener">http://pinkyjie.com/2014/08/10/git-notes-part-3/</a></p>
+<h3 id="各种场景恢复的使用reset"><a href="#各种场景恢复的使用reset" class="headerlink" title="各种场景恢复的使用reset"></a>各种场景恢复的使用reset</h3><p>下面三种恢复的越来越多。</p>
+<ul>
+<li><p><code>git reset —soft xx</code>： 仅仅取消commit&amp;&amp;移动HEAD指针到xx，不修改工作目录和暂存区。这个模式的效果是，自从<commit>以来的所有改变都会显示在git status的<strong>“Changes to be committed”</strong>中。使用场景：取消commit，一直到某个commit（xx），但是这些修改恢复到暂存区中。</commit></p>
+</li>
+<li><p><code>git reset xx</code>：取消commit&amp;&amp;移动HEAD指针到xx，并且恢复暂存区，但是恢复工作目录。这个模式是默认模式，这个模式的效果是，工作目录中的文件的修改都会被保留，不会丢弃，但是也<strong>不会</strong>被标记成”Changes to be committed”。使用场景：取消commit，一直到某个commit（xx），但是这些修改恢复到工作目录中。</p>
+<blockquote>
+<p>对比上一个就是少了git add 的过程</p>
+</blockquote>
+</li>
+<li><p><code>git reset —hard xx</code>： 取消commit&amp;&amp;移动HEAD指针到xx，恢复工作目录&amp;&amp;暂存区。使用场景：恢复到xx commit，<strong>丢弃从xx以来的所有修改。</strong></p>
+</li>
+</ul>
+<h3 id="已经推送到远程分支，但是向回退某个commit"><a href="#已经推送到远程分支，但是向回退某个commit" class="headerlink" title="已经推送到远程分支，但是向回退某个commit"></a>已经推送到远程分支，但是向回退某个commit</h3><p>这个使用revert命令，不要使用reset取消commit方式恢复，而是应当使用revert添加commit的方式恢复。</p>
+<p>原因如下</p>
+<ul>
+<li>当然如果你想撤销你的修改，可以通过git reset 或 git revert ，但当你的commit已经push到远端，被别人pull了下来， 再reset push 的话，别人再pull 就会出现错误，因为这个commit 节点回退到了你本地的缓存区，不在版本系统内，会很麻烦。</li>
+<li>所以这种情况下需要使用 git revert ，<strong>它是撤销某次操作，此次操作之前和之后的commit和history都会保留，并且把这次撤销作为一次最新的提交。</strong>将需要revert的版本的内容再反向修改回去，版本会递增（添加新的commit记录），不影响之前提交的内容，别人pull的时候不会出问题，这个很重要。</li>
+</ul>
+<h2 id="命令分析"><a href="#命令分析" class="headerlink" title="命令分析"></a>命令分析</h2><p>我们使用的很多命令都是省略了一下参数的，而使用了默认值，有些情况我们也要认识他们，知道含义。</p>
+<h3 id="git-push"><a href="#git-push" class="headerlink" title="git push  :"></a>git push <repository> <src>:<dst></dst></src></repository></h3><p>如我们常用:</p>
+<ul>
+<li>git push</li>
+<li>git push origin master</li>
+</ul>
+<p>origin指定了你要push到哪个remote，master其实是一个“refspec”，正常的“refspec”的形式为”+<src>:<dst>”，<strong>冒号前表示local branch的名字，冒号后表示remote repository下 branch的名字。</strong>注意，如果你省略了<dst>，git就认为你想push到remote repository下和local branch相同名字的branch。</dst></dst></src></p>
+<h3 id="git-fetch"><a href="#git-fetch" class="headerlink" title="git fetch  :"></a>git fetch <repository> <src>:<dst></dst></src></repository></h3><ul>
+<li>git fetch == <strong>git fetch origin master:master</strong> == <strong>fetch到本地master分支</strong></li>
+<li>git fetch origin master == <strong>git fetch origin master:</strong> == <strong>fetch到本地FETCH_HEAD上**</strong></li>
+</ul>
+<p>与push命令类似，但是注意：<strong>冒号前表示remote repository下 branch的名字，冒号后表示local branch的名字。</strong>上面第一个命令是第二个命令不是fetch到本地master分支，而是FETCH_HEAD上</p>
+<blockquote>
+<p> 参考：</p>
+<ul>
+<li><a href="http://stackoverflow.com/questions/11892517/git-fetch-vs-git-fetch-origin-master-have-different-effects-on-tracking-branch" target="_blank" rel="noopener">如何配置默认值&amp;&amp;git getch 与git fetch origin master 区别</a></li>
+<li><a href="http://stackoverflow.com/questions/9237348/what-does-fetch-head-in-git-mean" target="_blank" rel="noopener">什么是FETCH_HEAD</a></li>
+</ul>
+</blockquote>
+<h3 id="git-pull"><a href="#git-pull" class="headerlink" title="git pull   :"></a>git pull  <repository> <src>:<dst></dst></src></repository></h3><ul>
+<li><p><a href="https://ruby-china.org/topics/4768" target="_blank" rel="noopener">git pull ==git fetch+git merge FETCH_HEAD</a></p>
+</li>
+<li><p>git pull origin master 从网络获取origin分支的master，合入当前分支（没指定<dst>）</dst></p>
+</li>
+<li><p>git pull origin/master 本地操作，合并最后一次获取的远程master分支到当前分支（没指定<src>:<dst>）</dst></src></p>
+<blockquote>
+<p>参考：<a href="http://stackoverflow.com/questions/2883840/differences-between-git-pull-origin-master-git-pull-origin-master" target="_blank" rel="noopener">http://stackoverflow.com/questions/2883840/differences-between-git-pull-origin-master-git-pull-origin-master</a></p>
+</blockquote>
+</li>
+</ul>
+<p>重难点理解</p>
+<ul>
+<li>理解分支开发模型</li>
+<li>理解工作目录，合理使用commit</li>
+<li>暂存区，Stash 的运用场景</li>
+<li>reset 和 revert的差别</li>
+<li>merge，rebase， check-pick 的差别和运用</li>
+<li><a href="http://stackoverflow.com/questions/18137175/in-git-what-is-the-difference-between-origin-master-vs-origin-master" target="_blank" rel="noopener">理解 master origin/master origin</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+            <div class="social-item">
+              <a target="_blank" class="social-link" href="https://t.me/mltalk">
+                <span class="icon">
+                  <i class="fa fa-telegram"></i>
+                </span>
+
+                <span class="label">机器学习碎碎念</span>
+              </a>
+            </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Tools/" rel="tag"># Tools</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/06/11/Android构架系列之二-MVP&&Clean理解与实践之问题解答与总结/" rel="prev" title="Android构架系列之二--MVP&&Clean理解与实践之问题解答与总结">
+      <i class="fa fa-chevron-left"></i> Android构架系列之二--MVP&&Clean理解与实践之问题解答与总结
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2016/07/03/全沾Growth工程师学习计划/" rel="next" title="全沾Growth工程师学习计划">
+      全沾Growth工程师学习计划 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概念理解"><span class="nav-number">1.</span> <span class="nav-text">概念理解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#核心概念：分支开发"><span class="nav-number">1.1.</span> <span class="nav-text">核心概念：分支开发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#理解远程分支与本地分支"><span class="nav-number">1.2.</span> <span class="nav-text">理解远程分支与本地分支</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#理解本地的三个工作区"><span class="nav-number">1.3.</span> <span class="nav-text">理解本地的三个工作区</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-工作目录workspace"><span class="nav-number">1.3.1.</span> <span class="nav-text">1. 工作目录workspace</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-暂存区-Stage-Index"><span class="nav-number">1.3.2.</span> <span class="nav-text">2. 暂存区 Stage/Index</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-本地仓库"><span class="nav-number">1.3.3.</span> <span class="nav-text">3. 本地仓库</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#工作目录中文件的三种状态"><span class="nav-number">1.4.</span> <span class="nav-text">工作目录中文件的三种状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HEAD"><span class="nav-number">1.5.</span> <span class="nav-text">HEAD</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#fast-forward-merge"><span class="nav-number">1.6.</span> <span class="nav-text">fast-forward merge</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#merge-rebase-cherry-pick-区别与使用场景"><span class="nav-number">1.7.</span> <span class="nav-text">merge/rebase/cherry-pick 区别与使用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#reset与revert"><span class="nav-number">1.8.</span> <span class="nav-text">reset与revert</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#stage与stash"><span class="nav-number">1.9.</span> <span class="nav-text">stage与stash</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#场景分析"><span class="nav-number">2.</span> <span class="nav-text">场景分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#commit多次，只保留一个commit，"><span class="nav-number">2.1.</span> <span class="nav-text">commit多次，只保留一个commit，</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#保存某个文件，要跨分支使用它。"><span class="nav-number">2.2.</span> <span class="nav-text">保存某个文件，要跨分支使用它。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#commit错分支"><span class="nav-number">2.3.</span> <span class="nav-text">commit错分支</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#各种场景恢复的使用reset"><span class="nav-number">2.4.</span> <span class="nav-text">各种场景恢复的使用reset</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#已经推送到远程分支，但是向回退某个commit"><span class="nav-number">2.5.</span> <span class="nav-text">已经推送到远程分支，但是向回退某个commit</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#命令分析"><span class="nav-number">3.</span> <span class="nav-text">命令分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#git-push"><span class="nav-number">3.1.</span> <span class="nav-text">git push  :</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#git-fetch"><span class="nav-number">3.2.</span> <span class="nav-text">git fetch  :</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#git-pull"><span class="nav-number">3.3.</span> <span class="nav-text">git pull   :</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">limuzhi</p>
+  <div class="site-description" itemprop="description">something about tech, android etc...</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muzhi1991" title="GitHub → https://github.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:muzhi1991@gmail.com" title="E-Mail → mailto:muzhi1991@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/muzhi1991" title="Twitter → https://twitter.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.chenyupeng.com/" title="https://www.chenyupeng.com/" rel="noopener" target="_blank">陈玉鹏的个人空间</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://macshuo.com/" title="http://macshuo.com/" rel="noopener" target="_blank">MacTalk</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">limuzhi</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'G5HLDFmPsllxIjax4F2JTLnl-gzGzoHsz',
+      appKey     : 'A5PTgbvpJwjPlcBJ3Brl8rDs',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

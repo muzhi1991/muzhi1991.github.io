@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Spark相关论文如下：  Spark: Cluster Computing with Working Sets Resilient Distributed Datasets: A Fault-Tolerant Abstraction forIn-Memory Cluster Computing  Spark: Cluster Computing with Working Sets">
+<meta name="keywords" content="Spark,大数据">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spark论文阅读">
+<meta property="og:url" content="http://limuzhi.com/2018/07/14/spark-paper/index.html">
+<meta property="og:site_name" content="Night Piece">
+<meta property="og:description" content="Spark相关论文如下：  Spark: Cluster Computing with Working Sets Resilient Distributed Datasets: A Fault-Tolerant Abstraction forIn-Memory Cluster Computing  Spark: Cluster Computing with Working Sets">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fukm6k4tajj308t065q2w.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fum1echxiwj30kq0f2wf7.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fum2rswp83j30jw0e23z2.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fum2znml0rj313k0iy0un.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fy65si5590j30iq0dw3yt.jpg =337x250">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fum8w4b6ssj30km0amdg8.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fuo11rs5hnj30h80coq3g.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fuo1144pnwj30hs0g2753.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fuo1jm7xuhj30ic0c4wet.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fvdid53qrcj30ki0e0glz.jpg">
+<meta property="og:updated_time" content="2020-02-25T09:44:15.426Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spark论文阅读">
+<meta name="twitter:description" content="Spark相关论文如下：  Spark: Cluster Computing with Working Sets Resilient Distributed Datasets: A Fault-Tolerant Abstraction forIn-Memory Cluster Computing  Spark: Cluster Computing with Working Sets">
+<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fukm6k4tajj308t065q2w.jpg">
+
+<link rel="canonical" href="http://limuzhi.com/2018/07/14/spark-paper/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>Spark论文阅读 | Night Piece</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Night Piece</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">white && black</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tools">
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-wrench"></i>利器</a>
+
+  </li>
+        <li class="menu-item menu-item-read">
+
+    <a href="/read/" rel="section"><i class="fa fa-fw fa-book"></i>阅读</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://limuzhi.com/2018/07/14/spark-paper/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="limuzhi">
+      <meta itemprop="description" content="something about tech, android etc...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Night Piece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Spark论文阅读
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-07-14 18:40:20" itemprop="dateCreated datePublished" datetime="2018-07-14T18:40:20+08:00">2018-07-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-25 17:44:15" itemprop="dateModified" datetime="2020-02-25T17:44:15+08:00">2020-02-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2018/07/14/spark-paper/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2018/07/14/spark-paper/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Spark相关论文如下：</p>
+<ul>
+<li><a href="https://www.usenix.org/event/hotcloud10/tech/full_papers/Zaharia.pdf" target="_blank" rel="noopener">Spark: Cluster Computing with Working Sets</a></li>
+<li><a href="https://www.usenix.org/system/files/conference/nsdi12/nsdi12-final138.pdf" target="_blank" rel="noopener">Resilient Distributed Datasets: A Fault-Tolerant Abstraction forIn-Memory Cluster Computing</a></li>
+</ul>
+<h2 id="Spark-Cluster-Computing-with-Working-Sets"><a href="#Spark-Cluster-Computing-with-Working-Sets" class="headerlink" title="Spark: Cluster Computing with Working Sets"></a>Spark: Cluster Computing with Working Sets</h2><p>这篇文章有些内容过时了，如当时不支持shuffle，但是基本的思想可以借鉴。</p>
+<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><ol>
+<li>mr模型是用来处理acyclic data flow的，但是，有时候我们想要在一个数据集上执行多次操作（ reuse a working set of data across multiple parallel operations）：<ul>
+<li>具有迭代操作的应用</li>
+<li>交互式应用</li>
+</ul>
+</li>
+<li>spark查询39GB数据不要1s，10x的速度对比hadoop</li>
+<li>数据并行计算框架的基本能力，可以自动处理下面这些复杂度：<ul>
+<li>scalability</li>
+<li>locality-aware scheduling</li>
+<li>fault tolerance</li>
+<li>load balancing</li>
+</ul>
+</li>
+<li>spark的提供了并行计算框架的基本能力（学习如何实现）、</li>
+<li>spark提供了抽象概念的RDD<ul>
+<li>只读的</li>
+<li>跨机器的（scalability）</li>
+<li>自动rebuild（fault tolerance），通过血统（lineage）</li>
+<li>可以手动cache</li>
+</ul>
+</li>
+<li>RDD<strong>不是</strong>通用的一个分布式共享内存的抽象，他为了实现可靠性和可扩展，牺牲了通用的表达能力（就是我们不能把rdd看成分布式缓存）</li>
+<li>使用scala实现</li>
+</ol>
+<h3 id="编程模型"><a href="#编程模型" class="headerlink" title="编程模型"></a>编程模型</h3><p>程序组成：</p>
+<ul>
+<li>我们只写driver程序，控制整个app</li>
+<li>两个并发编程的抽象：<ul>
+<li>数据集：resilient distributed datasets </li>
+<li>数据集上的并行操作：parallel operations on these datasets — 一个发送给数据集的function</li>
+</ul>
+</li>
+<li>此外，还有两个共享变量</li>
+</ul>
+<ol>
+<li>数据集RDD<ul>
+<li>特性：只读&amp;&amp;自动重建（fault tolerance）</li>
+<li>如何构造RDD，RDD是一个scala的对象<ul>
+<li>从parallelizing：数组</li>
+<li>从文件：hdfs</li>
+<li>从已有RDD转化：flatmap map filter ，注意：spark内部只要实现flatmap即可，<strong>map filter可以用flatmap实现</strong></li>
+<li>通过更改现有RDD的持久性<ul>
+<li>cache：如果数据集太大，或者丢失，自动重算</li>
+<li>save</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>未来可能支持其他方式的缓存，如多副本缓存。</li>
+</ul>
+</li>
+<li>数据集上的<strong>并行操作</strong><ul>
+<li>支持的操作<ul>
+<li>reduce：在driver产出<strong>一个</strong>结果</li>
+<li>collect：在driver收集<strong>所有</strong>的数据</li>
+<li>foreach：执行分布式的操作，会产生副作用</li>
+</ul>
+</li>
+<li>不支持多个reduce，并发，比如执行按某个key的group时，只能聚合到driver一个节点。<strong>未来需要支持shuffle</strong>来支持这种操作。</li>
+</ul>
+</li>
+<li>共享变量<ul>
+<li>为什么需要：上面的map,filter,reduce都是传递/copy一个函数闭包到某个节点上执行，<strong>只能处理本节点自己创建的变量</strong>，我们可能需要一些共享的信息。</li>
+<li>Broadcast variables：只读的，传递一个大的查找表，且确保每个节点只专递一次。</li>
+<li>Accumulators：提供『加』语意（包括zero），任何节点可操作，<strong>只有driver可读</strong>。</li>
+</ul>
+</li>
+</ol>
+<h3 id="编程例子"><a href="#编程例子" class="headerlink" title="编程例子"></a>编程例子</h3><ul>
+<li>文本搜索过滤：cache</li>
+<li>LR：accumulator</li>
+<li>ALS：broadcast</li>
+</ul>
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><h4 id="RDD"><a href="#RDD" class="headerlink" title="RDD"></a>RDD</h4><ol>
+<li>spark是建立在mesos之上的，mesos是一个『集群操作系统』，在上面协议跑各种分布式的框架，hadoop、mpi等，当然可以实现spark<ul>
+<li>可以用mesos的api启动task</li>
+<li>共享机器资源</li>
+</ul>
+</li>
+<li>实现spark的核心是实现『RDD』</li>
+<li>数据集在spark中表示成<strong>一串scala的object</strong>：他们表示了<strong> the lineage of each RDD</strong>，且每个对象包括<ul>
+<li>一个指向他parent的指针</li>
+<li>parent如何转换为这个RDD<br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1fukm6k4tajj308t065q2w.jpg" alt></li>
+</ul>
+</li>
+<li>所有RDD都实现了的<strong>一组相同的接口</strong>：<ul>
+<li>getPartitions：获取所有分区ID的List</li>
+<li>getIterator(partition)：获得一个分区恩迭代器</li>
+<li>getPreferredLocations(partition)：用于数据的本地调度</li>
+</ul>
+</li>
+<li>当我们执行『并行操作』时，会<ul>
+<li>创建<strong>一个task</strong>来处理数据集的<strong>每个分区</strong>。</li>
+<li>发送这个task到每个worker节点：会尽量发送到<strong>preferred locations</strong>。使用『delay sheduling算法』来获得本地调度。</li>
+<li>在worker上调用getIterator读取数据</li>
+</ul>
+</li>
+<li>不同类型的RDD，只是实现上面的接口不同<ul>
+<li>HdfsTTextFile<ul>
+<li>getPartitions：分区是block的id</li>
+<li>getPreferredLocations：就是block的位置</li>
+<li>getIterator：一个stream流</li>
+</ul>
+</li>
+<li>MappedDataset<ul>
+<li>Partitions、PreferredLocations：同上</li>
+<li>Iterator：就是应用mapper func到上面的steam</li>
+</ul>
+</li>
+<li>CachedDataset<ul>
+<li>getIterator：查找本地内存有没有transformed partition的副本。</li>
+<li>PreferredLocations：一开始就是parent的PreferredLocations。在cached之后会更新为内存存储的node</li>
+<li>如果存储fail，会重新读取parent的数据，再cache到其他node</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>发送task到worker上，就是发送closure（以及闭包bound内的变量），<ul>
+<li>发送的内容具体而言包括：<ul>
+<li>定义数据集的闭包：RDD？</li>
+<li>操作相关的闭包：如reduce</li>
+</ul>
+</li>
+<li>使用java序列化scala/java的object来发送<ul>
+<li>理论上比较简单直接发送对象就行</li>
+<li>实际上，scala的闭包实现有bug，会把闭包内没有引用obj打包进来，他们通过分析字节码把没有用的变量设为null</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h4 id="共享变量"><a href="#共享变量" class="headerlink" title="共享变量"></a>共享变量</h4><ol>
+<li>broadcast and accumulators 各自都使用了『<strong>自定义的序列化格式</strong>』</li>
+<li>broadcast：以具有值v的广播变量b为例<ul>
+<li>v存储在一个『共享文件系统』中（初始版本用的是HDFS，正在开发高效的<strong>流式</strong>广播系统）</li>
+<li>b的序列化方式就是一个<strong>文件路径</strong>，指向v</li>
+<li>当worker查询时，会读取共享文件的路径下的数据，并把<strong>数据缓存到本地内存</strong>。</li>
+</ul>
+</li>
+<li>Accumulators<ul>
+<li>先在driver上序列化了Accumulator的数据结构，他含有：<ul>
+<li>唯一的ID</li>
+<li>类型定义的初始『zero』值</li>
+</ul>
+</li>
+<li>在<strong>每个worker</strong>节点上为<strong>每个运行task的线程</strong>复制一个<strong>ThreadLocal</strong>的Accumulator变量，也是初始为zero</li>
+<li>task运行结束后，发送Accumulator到driver，进行合并<ul>
+<li>对某个Accumulator的操作的更新，每个partition只会<strong>执行一次</strong>。防止重新执行的task多次计算相同的值。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h4 id="继承Scala解释器实现交互查询"><a href="#继承Scala解释器实现交互查询" class="headerlink" title="继承Scala解释器实现交互查询"></a>继承Scala解释器实现交互查询</h4><ol>
+<li>scala交互解释器实现原理：<ul>
+<li>用户输入的一行都编译成一个class，这个类包含一个单例object，如<code>var x = 5</code>会编译成<code>class Line1</code></li>
+<li><code>println(x)</code>会翻译成 <code>println(Line1.getInstance().x)</code></li>
+</ul>
+</li>
+<li>spark对他的修改<ul>
+<li>每一个class定义都输出到一个共享文件系统中，目的是在其他机器上的节点可以使用（通过java classloader加载）</li>
+<li>We changed the generated code so that the singleton object for each line references the singleton objects for previous lines directly, rather than going through the static getInstance methods. This allows clo-sures to capture the current state of the singletons they reference whenever they are serialized to be sent to a worker. If we had not done this, then updates to the singleton objects (e.g., a line setting x = 7 in the ex-ample above) would not propagate to the workers</li>
+</ul>
+</li>
+</ol>
+<h2 id="Resilient-Distributed-Datasets-A-Fault-Tolerant-Abstraction-forIn-Memory-Cluster-Computing"><a href="#Resilient-Distributed-Datasets-A-Fault-Tolerant-Abstraction-forIn-Memory-Cluster-Computing" class="headerlink" title="Resilient Distributed Datasets: A Fault-Tolerant Abstraction forIn-Memory Cluster Computing"></a>Resilient Distributed Datasets: A Fault-Tolerant Abstraction forIn-Memory Cluster Computing</h2><h3 id="简介-1"><a href="#简介-1" class="headerlink" title="简介"></a>简介</h3><ul>
+<li>为了错误容忍，RDD提供了一种『受限的共享内存』：他是基于粗粒度的transformation，而不是细粒度的对共享状态的update。<ul>
+<li>对比DSM：distributed shared memory（如key-value stores）是操控数据表中的可变状态（是一个任意地址位置的值）。他要错误容忍，必须<strong>副本</strong>+<strong>log update</strong>。对于数据密集型应用这是不可接收的：需要大量额外空间和传输带宽。</li>
+<li>对比RDD：logging the transformations used to build a dataset (itslineage) rather than the actual data<br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1fum1echxiwj30kq0f2wf7.jpg" alt></li>
+</ul>
+</li>
+<li>rdd的特征<ul>
+<li>错误容忍（最重要的，也是最大的挑战）</li>
+<li>并行的数据结构</li>
+<li>可以缓存<strong>用户指定</strong>的中间数据</li>
+<li>可以控制数据分区（partition），优化数据存放位置。（相比于前一篇论文的新内容）</li>
+<li>提供了丰富的操作</li>
+</ul>
+</li>
+<li>性能（对比hadoop）<ul>
+<li>iterative应用：20x，如LR算法</li>
+<li>交互式数据分析：40x（1tb数据5-7s）</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>错误容忍的两种方式</p>
+<ul>
+<li>数据密集型—基于转换方式—spark</li>
+<li>计算密集型—副本方式—数据库，kv存储</li>
+</ul>
+</blockquote>
+<h3 id="rdd概览"><a href="#rdd概览" class="headerlink" title="rdd概览"></a>rdd概览</h3><ul>
+<li>创建RDD：<ul>
+<li>data in stable storage </li>
+<li>other RDDs</li>
+</ul>
+</li>
+<li>transformations：map, filter, and join</li>
+<li>RDD具有lineage：information about how it was derived from other datasets (its lineage) to compute its partitions from data in stable storage.</li>
+<li>用户可以控制的RDD的两个重要属性：<ul>
+<li>persistence ：是否持久化cache，以便重复使用rdd</li>
+<li>partitioning：如何根据key分布数据（hash-partitioned，可以自己设置partitioner）</li>
+</ul>
+</li>
+<li>编程接口：<ul>
+<li>transformations：他是lazy的</li>
+<li>actions</li>
+<li>persist方法，可以选择persistence strategies（前一篇论文中提到会加上）</li>
+</ul>
+</li>
+<li><p>demo</p>
+<ul>
+<li>自动pipeline，连续的map filter 会自动合并为一个task</li>
+</ul>
+</li>
+<li><p>RDD模型的优点（对比DSM）</p>
+<ul>
+<li>只能通过Transformation创建（批量 bulk write）新的RDD<ul>
+<li>更高效容错，<ul>
+<li>不需要checkpoint（在依赖很长是也用checkpoint，但是可以异步后台运行）</li>
+<li>只需要恢复、重算丢失部分数据，而不是全量恢复</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>数据的不可变性<ul>
+<li>可以优化长尾任务，迁移慢节点，DSM中由于副本可能不一致，导致很难迁移</li>
+</ul>
+</li>
+<li>由于批量操作，所以可以按照位置调度任务，提速</li>
+<li>对于scan操作，内存不够时也能优雅降级，用stream读磁盘</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>The main difference between RDDs and DSM is that RDDs can only be created (“written”) through coarse-grained transformations, while DSM allows reads and writes to each memory location. </p>
+</blockquote>
+<ul>
+<li>RDD模型的缺点（DSM适合）<ul>
+<li>不适合非批量任务，如web应用更新表，</li>
+<li>不是和异步任务的细粒度update，爬虫抓取数据入库</li>
+</ul>
+</li>
+</ul>
+<h3 id="spark编程接口"><a href="#spark编程接口" class="headerlink" title="spark编程接口"></a>spark编程接口</h3><ul>
+<li>spark是scala开发，API类似DryadLINQ<ul>
+<li>快：静态类型</li>
+<li>便捷：支持交互式</li>
+</ul>
+</li>
+<li>spark架构，用户写driver，连接n个worker<ul>
+<li>driver上的RDD跟踪整个lineage</li>
+<li>worker是<strong>常驻进程</strong>，可以在内存中存储RDD的各个分区<br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1fum2rswp83j30jw0e23z2.jpg" alt></li>
+</ul>
+</li>
+<li>用户通过rdd操作的参数（如map的参数）传递闭包，这个闭包就是个java的object，可以序列化，然后传输到其他node上，再加载运行。（注意也会序列化闭包依赖的变量，一个注意点：变量一斤发送，再修改变量，发送的闭包里的值不会变化）</li>
+<li>RDD是有类型的如RDD[Int]，但是我们一般不用在意，scala会自动类型推断。</li>
+<li>虽然原理很简单，但是scala的闭包有些问题需要修改（使用反射修改的），如果用交互模式，也需要一些修改，但是不需要修改scala编译器。（之前的论文也提到过）</li>
+</ul>
+<h4 id="RDD的操作（operation）"><a href="#RDD的操作（operation）" class="headerlink" title="RDD的操作（operation）"></a>RDD的操作（operation）</h4><p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1fum2znml0rj313k0iy0un.jpg" alt><br>注意点：</p>
+<ul>
+<li>transformations是lazy，action才是真正运算</li>
+<li>一些操作如join, 只在key-value pairs的RDD上有用</li>
+<li>其他的命中竟然与函数式编程的一直，可以发现：这里的flatmap就是hadoop的map函数。</li>
+<li>除此之外，还有<ul>
+<li>persist操作</li>
+<li>用户可以获得RDD的<strong>partition order</strong>，他用<code>Partitioner</code>类表示。用来表示数据如何分区。<strong><code>groupByKey</code> <code>reduceByKey</code> sort`会生成一个hash/range分区的RDD</strong>。</li>
+</ul>
+</li>
+</ul>
+<h4 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h4><ul>
+<li>例子1：LR算法<ul>
+<li>cache的应用</li>
+</ul>
+</li>
+<li><p>例子1：<strong>PageRank（重点）</strong></p>
+<ul>
+<li>理解算法，同时看一下RDD的图谱。<br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1fy65si5590j30iq0dw3yt.jpg =337x250" alt></li>
+<li>几个优化要点（<strong>对于多次迭代的应用通用</strong>）<ul>
+<li>缓存ranks，而不要缓存links。原因：links重新生成的成本小，且数据集很大，没必要缓存</li>
+<li>ranks的缓存，persist使用<code>RELIABLE</code>的flag。因此迭代运算成本高，一旦丢失重算非常耗时，所以<strong>可靠缓（内部可能缓存了多副本）存</strong>每一步生成ranks，而且ranks占用空间很小。（当然旧的ranks可以手动抛弃）</li>
+<li>使用url作为partitioner的可以来join的优化：由于多次迭代，每一步都要join，都shuffle太慢。可以手动设置分区，只在第一次运行时按照url分配好位置，以后的join都是本地运行，只shuffle一次，<code>links = spark.textFile(...).map(...).partitionBy(myPartFunc).persist()</code></li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>注意：一些其他系统如<code>Pregel</code>，会对这种多次迭代时保持数据分区的一致，这是他们的一个重要优化功能。spark这里交给用户自己选择。</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="RDD的实现"><a href="#RDD的实现" class="headerlink" title="RDD的实现"></a>RDD的实现</h3><p>论文中说RDD是 a simple graph-based representation （基于图的表示）</p>
+<h4 id="设计一：如何表示RDD"><a href="#设计一：如何表示RDD" class="headerlink" title="设计一：如何表示RDD"></a>设计一：如何表示RDD</h4><p>RDD的表示通过暴露5个信息（5个接口方法）来实现<br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1fum8w4b6ssj30km0amdg8.jpg" alt><br> a set of partitions, which are atomic pieces of the dataset;<br> a set of dependencies on parent RDDs; a function for computing the dataset based on its par-ents; and metadata about its partitioning scheme and data placement. </p>
+<ul>
+<li>一组partitions：partition是数据集的最小组成结构 — <code>partitions()</code></li>
+<li>一组dependencies：记录所有父RDD — <code>dependencies()</code></li>
+<li>一个函数：用来从父亲计算出他自己—<code>iterator(p,parentIters)</code></li>
+<li>数据分区方式的meta信息 — <code>partitioner()</code></li>
+<li>数据分布的信息 — <code>preferredLocations(p)</code></li>
+</ul>
+<h4 id="设计二：如何表示RDD的关系"><a href="#设计二：如何表示RDD的关系" class="headerlink" title="设计二：如何表示RDD的关系"></a>设计二：如何表示RDD的关系</h4><p>把RDD间的关系定义为下面两类</p>
+<ul>
+<li>narrow dependencies： <strong>each partition of the parent RDD is used by at most one partition of the child RDD</strong></li>
+<li>wide dependencies： multi-ple child partitions may depend on it</li>
+</ul>
+<p>例子：</p>
+<ul>
+<li>map就是窄依赖</li>
+<li>join（除了parent都是hash partitioned的情况）就是宽依赖</li>
+</ul>
+<p>两种关系的特点</p>
+<ul>
+<li>narrow — pipeline执行，易于恢复，只要重算失败的父节点</li>
+<li>wide — shuffle，恢复需要重算所有父节点</li>
+</ul>
+<h4 id="RDD实现demo"><a href="#RDD实现demo" class="headerlink" title="RDD实现demo"></a>RDD实现demo</h4><ul>
+<li>hdfs files:读取hdfs文件生成的RDD<ul>
+<li>paritions：每个文件block是一个partition（包括offset存储在Partition对象中）</li>
+<li>preferredLocations：就是文件存储的节点</li>
+<li>iterator：读取block</li>
+</ul>
+</li>
+<li>map：map操作转换生成的RDD（MappedRDD）<ul>
+<li>paritions：与parent相同</li>
+<li>preferredLocations：与parent相同</li>
+<li>iterator：使用func处理parent的记录</li>
+</ul>
+</li>
+<li>union<ul>
+<li>paritions：所有parent的partitions的合并</li>
+</ul>
+</li>
+<li>sample：与map相同，RDD为每个partition存储一个随机数生成器的seed</li>
+<li>join：<ul>
+<li>有以下三种情况<ul>
+<li>两个窄依赖</li>
+<li>一个窄依赖，一个宽依赖</li>
+<li>两个宽依赖</li>
+</ul>
+</li>
+<li>他的输出必定有一个partitioner（继承parent的partitioner，或者是默认hash-partitioner）<br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1fuo11rs5hnj30h80coq3g.jpg" alt></li>
+</ul>
+</li>
+</ul>
+<h3 id="其他实现"><a href="#其他实现" class="headerlink" title="其他实现"></a>其他实现</h3><p>Each Spark program runs as a separate Mesos application, with its own driver (master) and workers, and resource sharing between these applications is handled by Mesos.</p>
+<h4 id="job-调度"><a href="#job-调度" class="headerlink" title="job 调度"></a>job 调度</h4><ul>
+<li>当运行action时，scheduler检测RDD的lineage，生成一个stage的DAG图<ul>
+<li>每个stage内部是尽量多的窄依赖的操作，可以pipeline执行—-<strong>合并形成一个task？</strong></li>
+<li>stage的边界是宽依赖，执行shuffle操作</li>
+<li>任何已经计算完成的分区（如cached过的）可以短路parent RDD的计算、<br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1fuo1144pnwj30hs0g2753.jpg" alt></li>
+</ul>
+</li>
+<li>scheduler基于数据本地性，调用task（delay schedule算法）<ul>
+<li>如果数据在某个node的内存中，直接发送给该node运行</li>
+<li>否则，如果改partition有preferred的位置，直接发送给他。</li>
+</ul>
+</li>
+<li><strong>对于宽依赖，会在存有父partition的node上暂存shuffle的中间记录</strong>，就想MR会暂存map的output一样</li>
+<li>如果task失败，会<strong>寻找stage</strong>（因为合并吗？）的parent。（结合宽依赖都会暂存记录，所以应该能找到）如果找不到结果则需要重算上一个stage。</li>
+</ul>
+<p>未解决问题：</p>
+<ul>
+<li>当前还不支持scheduler的失败恢复，但是这个实现起来比较简单，只要保持他的RDD lineage图就行</li>
+<li>当前所有的action都是由driver发出的，只在需要在driver程序中检测partition是否存在并操作schedule。以后可能需要在map中（worker）有查找lookup操作???? 在每个task里面执行lookup？这就需要每个task都能通知shedule?</li>
+</ul>
+<h4 id="整合解释器"><a href="#整合解释器" class="headerlink" title="整合解释器"></a>整合解释器</h4><p>略，基本与上一篇的解释一致，问题还是Modified code generation的意义</p>
+<p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1fuo1jm7xuhj30ic0c4wet.jpg" alt></p>
+<h4 id="checkpoint机制"><a href="#checkpoint机制" class="headerlink" title="checkpoint机制"></a>checkpoint机制</h4><p>RDD lineage虽然可以用来恢复失败任务，但是，如果在<strong>RDD链条很长</strong>的情况下，恢复重算非常费时间。<strong>尤其是存在宽依赖的场景</strong>，下游的一个task失败，导致上游大量重算。如之前的RankPage的例子。<br>这里，我们需要用户通过<strong>手动</strong>添加RDD的persist的<code>REPLICATE</code> flag来告知系统<strong>用多副本方式缓存RDD</strong>，防止中间结果丢失。</p>
+<p>未解决问题：</p>
+<ul>
+<li><strong>自动</strong>选择合适的RDD来多副本备份（理论上是可以做到的）</li>
+</ul>
+<p>中文参考文章</p>
+<p><a href="http://itindex.net/detail/51871-spark-rdd-%E6%A8%A1%E5%9E%8B" target="_blank" rel="noopener">http://itindex.net/detail/51871-spark-rdd-%E6%A8%A1%E5%9E%8B</a></p>
+<p>I</p>
+<p>lazy问题：<br>read rdd时是lazy？<br>cache是lazy？</p>
+<p>cache问题：<br>shuffle的rdd，宽依赖是否会自动cache？（有人说是的）。cache在哪里（论文中说在父节点？类似MR？）<br>每一个RDD可以设置persistence priority?什么<br>LRU策略具体是什么</p>
+<p>操作问题：<br>论文中说以后会提供一个在map里面的lookup操作？是什么鬼？<br>论文中说会有自动的checkpoint（persist(REPLICATE)还）</p>
+<p>架构问题<br>调度起schedule具体是个什么东西</p>
+<h2 id="shuffle论文：Managing-Data-Transfers-in-Computer-Clusters-with-Orchestra"><a href="#shuffle论文：Managing-Data-Transfers-in-Computer-Clusters-with-Orchestra" class="headerlink" title="shuffle论文：Managing Data Transfers in Computer Clusters with Orchestra"></a>shuffle论文：Managing Data Transfers in Computer Clusters with Orchestra</h2><p>分为两个部分 broadcast和shuffle。看了shuffle部分</p>
+<h3 id="shuffle"><a href="#shuffle" class="headerlink" title="shuffle"></a>shuffle</h3><p>基本结论如下</p>
+<ul>
+<li>shuffler的优化准则（从receiver角度看）：an optimal shuffle schedule keeps at least one link fully utilized throughout the transfer（在receiver和sender间是单条路由的情况下，这是充要条件，多路的情况下是必要条件），这告诉我们<ul>
+<li>理论上receiver只要一个一个的读取sender的数据（如果每一个能保持跑满带宽），就可以或者最优解。因此一个简单的方案就是每个receiver随机读一个sender，读完就换下一个。</li>
+<li>上面这个方案有个<strong>风险就是存在多个receiver只读一个sender</strong>，导致跑不满带宽，因此建议使用一个reveiver读取多个sender。</li>
+</ul>
+</li>
+<li>receiver端读取sender时，应该同时读取多个sender的数据（hadoop中使用了5，spark0.5中默认的fetcher是1个，有个优化的类是3个），参见下图的横轴和竖轴，竖轴是完成时间（竖的线段是抖动范围）</li>
+<li>每个receiver读取单个sender时，随着receiver数目的增多，性能变差，参见下图中不同颜色的线</li>
+</ul>
+<p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1fvdid53qrcj30ki0e0glz.jpg" alt></p>
+<p>优化方案（没有实践）</p>
+<ul>
+<li>加权带宽方案，对于数据倾斜的sender，receiver分配带宽时，增加他的权重（按照数据量的比例分配）</li>
+<li>带宽权重的分配方法是<a href="https://www.cnblogs.com/549294286/p/3935408.html" target="_blank" rel="noopener">带权重的max-min fairness算法</a></li>
+<li>问题是：<ul>
+<li>这个只是解决了receiver端的带宽分配，没有考虑sender的总带宽（这里假设他很大）</li>
+<li>也没有考虑receiver慢节点的问题，这个无解，他必定会拖累整个shuffle</li>
+<li>在数据分布均匀的时候和fair调度效果一样</li>
+<li>按照数据量分配带宽实现起来也很坑，一个是需要数据量的信息，一个是tcp的带宽控制</li>
+</ul>
+</li>
+<li>总之，这个方法很少有人用</li>
+</ul>
+<p><a href="http://www.mosharaf.com/wp-content/uploads/orchestra-sigcomm11.pdf" target="_blank" rel="noopener">http://www.mosharaf.com/wp-content/uploads/orchestra-sigcomm11.pdf</a></p>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+            <div class="social-item">
+              <a target="_blank" class="social-link" href="https://t.me/mltalk">
+                <span class="icon">
+                  <i class="fa fa-telegram"></i>
+                </span>
+
+                <span class="label">机器学习碎碎念</span>
+              </a>
+            </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Spark/" rel="tag"># Spark</a>
+              <a href="/tags/大数据/" rel="tag"># 大数据</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/06/22/db-engine-basic-innodb-leveldb/" rel="prev" title="数据库引擎InnoDB vs LevelDB">
+      <i class="fa fa-chevron-left"></i> 数据库引擎InnoDB vs LevelDB
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/07/15/Linear-algebra-feeling/" rel="next" title="线性代数的直觉">
+      线性代数的直觉 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Spark-Cluster-Computing-with-Working-Sets"><span class="nav-number">1.</span> <span class="nav-text">Spark: Cluster Computing with Working Sets</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#简介"><span class="nav-number">1.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编程模型"><span class="nav-number">1.2.</span> <span class="nav-text">编程模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编程例子"><span class="nav-number">1.3.</span> <span class="nav-text">编程例子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现"><span class="nav-number">1.4.</span> <span class="nav-text">实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#RDD"><span class="nav-number">1.4.1.</span> <span class="nav-text">RDD</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#共享变量"><span class="nav-number">1.4.2.</span> <span class="nav-text">共享变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#继承Scala解释器实现交互查询"><span class="nav-number">1.4.3.</span> <span class="nav-text">继承Scala解释器实现交互查询</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Resilient-Distributed-Datasets-A-Fault-Tolerant-Abstraction-forIn-Memory-Cluster-Computing"><span class="nav-number">2.</span> <span class="nav-text">Resilient Distributed Datasets: A Fault-Tolerant Abstraction forIn-Memory Cluster Computing</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#简介-1"><span class="nav-number">2.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#rdd概览"><span class="nav-number">2.2.</span> <span class="nav-text">rdd概览</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#spark编程接口"><span class="nav-number">2.3.</span> <span class="nav-text">spark编程接口</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#RDD的操作（operation）"><span class="nav-number">2.3.1.</span> <span class="nav-text">RDD的操作（operation）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#例子"><span class="nav-number">2.3.2.</span> <span class="nav-text">例子</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RDD的实现"><span class="nav-number">2.4.</span> <span class="nav-text">RDD的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#设计一：如何表示RDD"><span class="nav-number">2.4.1.</span> <span class="nav-text">设计一：如何表示RDD</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#设计二：如何表示RDD的关系"><span class="nav-number">2.4.2.</span> <span class="nav-text">设计二：如何表示RDD的关系</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RDD实现demo"><span class="nav-number">2.4.3.</span> <span class="nav-text">RDD实现demo</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他实现"><span class="nav-number">2.5.</span> <span class="nav-text">其他实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#job-调度"><span class="nav-number">2.5.1.</span> <span class="nav-text">job 调度</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#整合解释器"><span class="nav-number">2.5.2.</span> <span class="nav-text">整合解释器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#checkpoint机制"><span class="nav-number">2.5.3.</span> <span class="nav-text">checkpoint机制</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#shuffle论文：Managing-Data-Transfers-in-Computer-Clusters-with-Orchestra"><span class="nav-number">3.</span> <span class="nav-text">shuffle论文：Managing Data Transfers in Computer Clusters with Orchestra</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#shuffle"><span class="nav-number">3.1.</span> <span class="nav-text">shuffle</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">limuzhi</p>
+  <div class="site-description" itemprop="description">something about tech, android etc...</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muzhi1991" title="GitHub → https://github.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:muzhi1991@gmail.com" title="E-Mail → mailto:muzhi1991@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/muzhi1991" title="Twitter → https://twitter.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.chenyupeng.com/" title="https://www.chenyupeng.com/" rel="noopener" target="_blank">陈玉鹏的个人空间</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://macshuo.com/" title="http://macshuo.com/" rel="noopener" target="_blank">MacTalk</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">limuzhi</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'G5HLDFmPsllxIjax4F2JTLnl-gzGzoHsz',
+      appKey     : 'A5PTgbvpJwjPlcBJ3Brl8rDs',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

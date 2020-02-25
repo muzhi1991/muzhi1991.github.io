@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="在我们常见的数据结构中，图是一种有点冷门，时常被忽视的数据表达方式。大部分场景下，我们的数据关系足够简单，例如，一对一，一对多，这种情况下，表结构（关系数据库）或者文档结构（文档数据库）足以刻画数据之前的关系，对于稍复杂的关联/嵌套数据，通过join和文档嵌套的方式也可以轻松构建，此时在抽象层面，我们可以把数据的结构看作是一个树结构（数仓中也称为星型模型和雪花模型 ）。那什么时候会用到图呢？答案是">
+<meta name="keywords" content="Spark,算法,图分析">
+<meta property="og:type" content="article">
+<meta property="og:title" content="图分析综述与Spark下的社区发现">
+<meta property="og:url" content="http://limuzhi.com/2019/07/24/graph-algorithm-community-detection/index.html">
+<meta property="og:site_name" content="Night Piece">
+<meta property="og:description" content="在我们常见的数据结构中，图是一种有点冷门，时常被忽视的数据表达方式。大部分场景下，我们的数据关系足够简单，例如，一对一，一对多，这种情况下，表结构（关系数据库）或者文档结构（文档数据库）足以刻画数据之前的关系，对于稍复杂的关联/嵌套数据，通过join和文档嵌套的方式也可以轻松构建，此时在抽象层面，我们可以把数据的结构看作是一个树结构（数仓中也称为星型模型和雪花模型 ）。那什么时候会用到图呢？答案是">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g4c1u856hmj30kd05xwen.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g4bi1kdhlcj30qx0ef3zj.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g4c29tmoigj308c06ljrp.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g4c2a2qtltj308c07bdfx.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g4i2vrrtfig305u05u77d.gif">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g4i537x787j308c0z0t92.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g4j0guwsnxj30dh0agaa9.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g4j1nqmadfj313q0jhjt6.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g4j2bium7yj313v0a30tw.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g4jbb8rxsij30dy09zmx7.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g4jb86cxhrj30aa084gly.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g4jbroe2y9j30id0543yi.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g4jc5tmxdbj30fg0c5t8z.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g4jc6grc05j30qz07qgm5.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g5bxf8dihpj30fi0beab0.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g5c6g6p97xj31b00u0gsz.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g5c6in36jjj31bv0u0jth.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g5c6rfj4gtj31c40u042j.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g5c6spe2zhj31c40u0jtg.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g5c6udr28oj31c40u042x.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g5c6vjgvtdj31ch0u0wim.jpg">
+<meta property="og:updated_time" content="2020-02-25T09:44:15.442Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="图分析综述与Spark下的社区发现">
+<meta name="twitter:description" content="在我们常见的数据结构中，图是一种有点冷门，时常被忽视的数据表达方式。大部分场景下，我们的数据关系足够简单，例如，一对一，一对多，这种情况下，表结构（关系数据库）或者文档结构（文档数据库）足以刻画数据之前的关系，对于稍复杂的关联/嵌套数据，通过join和文档嵌套的方式也可以轻松构建，此时在抽象层面，我们可以把数据的结构看作是一个树结构（数仓中也称为星型模型和雪花模型 ）。那什么时候会用到图呢？答案是">
+<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1g4c1u856hmj30kd05xwen.jpg">
+
+<link rel="canonical" href="http://limuzhi.com/2019/07/24/graph-algorithm-community-detection/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>图分析综述与Spark下的社区发现 | Night Piece</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Night Piece</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">white && black</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tools">
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-wrench"></i>利器</a>
+
+  </li>
+        <li class="menu-item menu-item-read">
+
+    <a href="/read/" rel="section"><i class="fa fa-fw fa-book"></i>阅读</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://limuzhi.com/2019/07/24/graph-algorithm-community-detection/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="limuzhi">
+      <meta itemprop="description" content="something about tech, android etc...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Night Piece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          图分析综述与Spark下的社区发现
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-07-24 15:30:00" itemprop="dateCreated datePublished" datetime="2019-07-24T15:30:00+08:00">2019-07-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-25 17:44:15" itemprop="dateModified" datetime="2020-02-25T17:44:15+08:00">2020-02-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2019/07/24/graph-algorithm-community-detection/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2019/07/24/graph-algorithm-community-detection/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>在我们常见的数据结构中，图是一种有点冷门，时常被忽视的数据表达方式。大部分场景下，我们的数据关系足够简单，例如，一对一，一对多，这种情况下，表结构（关系数据库）或者文档结构（文档数据库）足以刻画数据之前的关系，对于稍复杂的关联/嵌套数据，通过join和文档嵌套的方式也可以轻松构建，此时在抽象层面，我们可以把数据的结构看作是一个树结构（数仓中也称为星型模型和雪花模型 ）。那什么时候会用到图呢？答案是在数据中存在大量<strong>多对多</strong>的模式（Pattern）时，我们可以应用图数据结构（图数据库）来刻画和解决现实世界的问题。典型的图分析场景有：</p>
+<ul>
+<li>网络关系的表达与相关优化：社交网络，通讯网络，交通网络</li>
+<li>推荐算法：网页排序，相似用户推荐</li>
+<li>关联分析与数据洞察：关键节点分析</li>
+<li>无监督/半监督学习：社区聚类与挖掘，样本标注</li>
+<li>数据可视化：可视化数据的关系</li>
+</ul>
+<p>下面我们从图的基础概念出发，分别介绍在单机与分布式环境下的<strong>图的存储方法</strong>，<strong>图分析的常见算法</strong>。此外，还会重点分析一些图算法的<strong>分布式实现</strong>以及<strong>社区挖掘的应用</strong>。</p>
+<blockquote>
+<p>这里主要介绍的内容来自于</p>
+<ul>
+<li>场景图算法以及单机实现来自于流行的图数据库neo4j</li>
+<li>分布式的实现参考Spark GraphX</li>
+<li>图的可视化工具使用Gephi</li>
+</ul>
+</blockquote>
+<h3 id="图基本概念与算法"><a href="#图基本概念与算法" class="headerlink" title="图基本概念与算法"></a>图基本概念与算法</h3><p>图在数据结构中多少都有一些接触，下面我们自行回忆一下图的基本概念：</p>
+<ul>
+<li>图的定义：$\mathrm{G}=(\mathrm{V}, \mathrm{E})$，其中$\mathrm{V}$是顶点(Vertex)的非空有限集合，$ \mathrm{E}$是连接<em>V</em>中两个不同<em>顶点</em>（<em>顶点</em>对）的边的<em>有限集合</em></li>
+<li>边与权重、邻接点</li>
+<li>有向图 vs 无向图</li>
+<li>稀疏图 vs 稠密图</li>
+<li>完全图</li>
+<li>入度 vs 出度</li>
+<li>连通图 vs 非连通图、图的连通分量</li>
+<li>生成树、生成森林</li>
+</ul>
+<h4 id="图的表示方法"><a href="#图的表示方法" class="headerlink" title="图的表示方法"></a>图的表示方法</h4><p>图的基本表示方法有</p>
+<ul>
+<li><p>邻接矩阵：使用一个N<em>N的矩阵表示图（N是顶点数），对应的值表示表，适合表示<em>*稠密图</em></em></p>
+</li>
+<li><p>邻接表 ：数组与链表相结合的存储方法，数组中为图中的顶点，所关联的链表是与该顶点连接的边，适合表示<strong>稀疏图</strong></p>
+<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g4c1u856hmj30kd05xwen.jpg" alt></p>
+</li>
+<li><p>十字链表法：是邻接表的改进方法，对于有向图，便于快速计算入度与出度。</p>
+<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g4bi1kdhlcj30qx0ef3zj.jpg" alt></p>
+</li>
+</ul>
+<p>在neo4j数据库中使用了类似<strong>邻接表</strong>的表示方法，每一个node节点具有（下图）：</p>
+<ul>
+<li>一条指向Relationships<strong>双向链表</strong>的指针</li>
+<li>一条指向Property值的的key-value链表。</li>
+</ul>
+<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g4c29tmoigj308c06ljrp.jpg" alt></p>
+<p>每个Relation中有（下图）：</p>
+<ul>
+<li>边start节点的pre和next指针以及</li>
+<li>边end节点的pre和next指针</li>
+<li>start与end的id，通过此id可以快速定位node。</li>
+</ul>
+<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g4c2a2qtltj308c07bdfx.jpg" alt></p>
+<p>我们可以看出通过这个数据结构，方便的实现如下功能：通过图顶点Vertex A遍历他的所有边，找到与他关联的节点的值属性值。</p>
+<h4 id="图算法综述"><a href="#图算法综述" class="headerlink" title="图算法综述"></a>图算法综述</h4><p>这里我们把常见的图相关的算法分为3类，分别为</p>
+<ul>
+<li>遍历/寻路算法：遍历图的节点与边，求最短路径等</li>
+<li>中心点算法：衡量图的<strong>节点的位置重要性</strong>的算法</li>
+<li>聚类/社区发现算法：对图进行<strong>分割</strong>、聚类的算法</li>
+</ul>
+<p>下面分别介绍一下这些算法算法与应用场景</p>
+<h5 id="遍历寻路"><a href="#遍历寻路" class="headerlink" title="遍历寻路"></a>遍历寻路</h5><p>遍历算法是最常见的图算法，</p>
+<ul>
+<li>BFS：广度优先搜索<ul>
+<li>简介：优先遍历所有邻居节点，然后再遍历下一层的邻居。</li>
+<li>应用：查找邻居，其他算法的基础，如发现最短路径等。对比DFS该算法的优点是避免了递归过程。</li>
+</ul>
+</li>
+<li>DFS：深度优先搜索<ul>
+<li>简介：优先遍历某个邻居节点，并以此不断的深度探索，到达终端节点后再回溯向上遍历其他节点。</li>
+<li>应用：用于遍历均衡的图(避免递归太深)，以及用在寻找终端结果的算法中，如选择树中叶子胜利还是失败。他也是其他算法的基础。</li>
+</ul>
+</li>
+</ul>
+<p>最短路径算法也是十分普遍的算法</p>
+<ul>
+<li><p>单源最短路径：求某个点到其他所有点的最短距离</p>
+<ul>
+<li><p>简介：典型算法Dijkstra，求图中一点到任何点的距离，当然也可以求两点间的最短距离，算法是贪心思想，将节点看为，全部顶点的集合是$V$，已选集合$U$，$V-U$为未选集合，每次挑选节点加入集合$U$，使得<strong>到达出发顶点$v_0$的距离</strong>最小，如此迭代。参考<a href="[https://zh.wikipedia.org/wiki/%E6%88%B4%E5%85%8B%E6%96%AF%E7%89%B9%E6%8B%89%E7%AE%97%E6%B3%95](https://zh.wikipedia.org/wiki/戴克斯特拉算法">wiki</a>)。</p>
+<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g4i2vrrtfig305u05u77d.gif" alt></p>
+</li>
+<li><p>应用：图中两点间的路由算法，如导航，电话网络等</p>
+</li>
+</ul>
+</li>
+<li><p>多源最短路径：图中任意两点间的最短距离</p>
+<ul>
+<li>简介：求图中任意两点的距离，堆典型的就是Floyd-Warshall算法，该算法的核心思想是：对于任意节点$v_0$,$v_1$,如果两个节点的路径最短，必然其最短路径上的其他任意一点$v’$，有$v_0-v’$、$v’-v_1$距离都是最短的。具体算法参考<a href="https://zh.wikipedia.org/wiki/Floyd-Warshall算法" target="_blank" rel="noopener">wiki</a></li>
+<li>应用：评估两组节点间的联通情况。</li>
+</ul>
+</li>
+<li><p>A*搜索：求两点间的最短距离，某些情况下不能保证最优解</p>
+<ul>
+<li>简介：启发式寻路算法，相比于<a href="https://zh.wikipedia.org/wiki/Dijkstra算法" target="_blank" rel="noopener">Dijkstra算法</a>，通过引入评估函数$h(n)$来来计算节点n的综合距离$f(n)=g(n)+h(n)$，其中$g(n)$是节点n到源点的实际距离。由此可知，当$h(n)$为0时，即为Dijkstra。且h(n)影响算法的精度和效率，如果保证$h(n)$评估值不大于真实值时，一定<strong>有最优解</strong>，单此时效率较低。h(n)经常使用欧几里得距离、曼哈顿距离等。具体了解可以参考一个<a href="https://www.cnblogs.com/zhoug2020/p/3468167.html" target="_blank" rel="noopener">例子</a>和<a href="https://zh.wikipedia.org/wiki/A*搜尋演算法" target="_blank" rel="noopener">wiki](https://zh.wikipedia.org/wiki/A*%E6%90%9C%E5%B0%8B%E6%BC%94%E7%AE%97%E6%B3%95</a>)</li>
+<li>应用：游戏中求A到B点的距离，加速了Dijkstra的求解</li>
+</ul>
+</li>
+</ul>
+<p>其他</p>
+<ul>
+<li>最小生成树：求连通图中的极小<em>连通子图</em><ul>
+<li>简介：Prime算法，与Dijkstra有相似之处，也是贪心思想，将节点看为，全部顶点的集合是$V$，已选集合$U$，$V-U$为未选集合。核心区别是，在加入已选集合$U$时，是<strong>使得到已选集合$U$中任意一个顶点的边最小</strong></li>
+<li>应用：网络设计，如成本最低的路由网络，运输链路等</li>
+</ul>
+</li>
+</ul>
+<h5 id="中心点"><a href="#中心点" class="headerlink" title="中心点"></a>中心点</h5><p>这是一类衡量评估某个节点在图中重要性的算法，例如某个点是否是图的中心，是否具有枢纽作用等</p>
+<ul>
+<li>PageRank：通过节点的PR值传播来评估节点的重要性<ul>
+<li>简介：流行的网页排序方法，通过传播自身PR值给邻居节点，来扩散引用的重要性。最终多次迭代收敛到一个稳定的PR值，具有高PR值的节点，往往是图中的重要节点。在图中也对应着中心节点</li>
+<li>应用：网页排序，朋友推荐，生物学中哪些物种的灭绝对其他具有重要影响的评估等，机器学习中提取影响力特征</li>
+</ul>
+</li>
+<li>度中心性 <strong>Degree Centrality</strong><ul>
+<li>简介：以节点的度的数量衡量节点重要性</li>
+<li>应用：病毒传播的风险评估，社区中的人气值</li>
+</ul>
+</li>
+<li>中介中心性 <strong>Betweenness Centrality</strong><ul>
+<li>简介：测量某个节点的最短路径通过数量。即其他两个节点的最短路径通过改节点的次数。该节点一般是”桥梁”节点，也是核心控制节点</li>
+<li>应用：瓶颈分析，核心单点分析。社区中信息如何流动的分析</li>
+</ul>
+</li>
+<li>接近中心性 <strong>Closeness Centrality</strong><ul>
+<li>简介：某节点到其他点距离之和具有最小值，即为中心节点</li>
+<li>应用：选择公共服务的最优位置，如加油站。社区中传播消息的最佳人选等</li>
+</ul>
+</li>
+</ul>
+<h5 id="聚类与社区发现"><a href="#聚类与社区发现" class="headerlink" title="聚类与社区发现"></a>聚类与社区发现</h5><p> 可以将这些算法理解为无监督的聚类算法（clustering algorithms）或者分区算法(partitioning algorithms) </p>
+<ul>
+<li><p>LPA：标签传播</p>
+<ul>
+<li>简介：通过邻居节点的标签中的大多数值（majorities），来推断自己的标签。是一种快速的社区分类算法，适用于大型社区的挖掘。下文会详细介绍。</li>
+<li>可以用于社区的分类，和半监督学习。如社区中共识的传播</li>
+</ul>
+</li>
+<li><p>寻找强连通图</p>
+<ul>
+<li>简介：识别出图中<strong>强连通子</strong>图，使得社区内的节点两两相互连接。</li>
+<li>应用：识别高密社区，并向亲近此社区的其他用户提供推荐</li>
+</ul>
+</li>
+<li><p>连通图寻找(弱连通)</p>
+<ul>
+<li>简介：识别出图中的连通子图，使得社区内的节点可以被连通。直观上，图被分割为n个不同的子图。在算法实现层面，可以使用传递消息给邻居节点，消息包含自身见过的最大vextextId，并保留看过的最大值，如此迭代直到图中没有新的消息传递即可。</li>
+<li>应用：识别图中断开的地方</li>
+</ul>
+</li>
+<li><p>Louvain Modularity</p>
+<ul>
+<li>简介：通过Modularity来衡量图的聚类质量，并可以生成多层次的社区，具体间下文</li>
+<li>应用：社交网络等复杂网络的分析，电话联系网络的分析哪些人之间联系密切。欺诈分析等</li>
+</ul>
+</li>
+<li><p><a href="https://zh.wikipedia.org/zh-cn/集聚系数" target="_blank" rel="noopener">集聚系数</a>：局部集聚系数、整体集聚系数</p>
+<ul>
+<li><p>介绍：<strong>描述一个图中的顶点之间结集成<a href="https://zh.wikipedia.org/wiki/團_(圖論" target="_blank" rel="noopener">团</a>)（clique）的程度的系数</strong>。两种系数的含义与计算方法如下</p>
+<ul>
+<li><p>局部集聚系数：<strong>某个顶点</strong>，他相邻的顶点组成的子图中，clique(闭合三角)的数量占总体两两相连的数量的比值。所以，如果邻接节点两两相连，局部集聚系数为1，如果邻接节点没有任何联系，集聚系数为0。可以表示为：$C(i)=\frac{\lambda_{G}\left(v_{i}\right)}{\tau_{G}\left(v_{i}\right)+\lambda_{G}\left(v_{i}\right)}$，其中，分子为顶点$v_i$包含的闭合三角数目，分母为闭合与开放三角数目之和(也等k(k-1)/2)</p>
+<p> <img src="https://tva1.sinaimg.cn/large/006tNc79gy1g4i537x787j308c0z0t92.jpg" width="100px"></p>
+</li>
+<li><p>整体集聚系数：可以把<strong>整个图</strong>，看做有”闭合三角”和”开放三角”组成的，$G_{\triangle}$表示闭合三角个数，$G_{\wedge}$表示开放三角个数，整体集聚系数可以表示为$C_{t o t a l}(G)=\frac{3 \times G_{\Delta}}{3 \times G_{\Delta}+G_{\wedge}}$。另外，分母值的含义是对图中每个顶点分别对它的邻居两两相连的边的和，$C_{t o t a l}(G)=\frac{3 \times G_{\triangle}}{\sum_{i=1}^{n}\left(\begin{array}{c}{k_{i}} \\ {2}\end{array}\right)}$，其中$k_i$是每个顶点边的数目。如果用局部集聚系数表示：$C_{\text {total}}(G)=\frac{\sum_{i=1}^{n} \lambda_{G}\left(v_{i}\right)}{\sum_{i=1}^{n}\left(\tau_{G}\left(v_{i}\right)+\lambda_{G}\left(v_{i}\right)\right)}$，因为3个$G_{\triangle}$ 正好关联了3个顶点的闭合三角数目。</p>
+</li>
+</ul>
+</li>
+<li><p>应用：整体集聚系数可以给出一个图中整体的集聚程度的评估，而局部集聚系数则可以测量图中每一个结点附近的集聚程度。</p>
+</li>
+</ul>
+</li>
+<li><p>三角计数与平均集聚系数(小世界网络)</p>
+<ul>
+<li>简介：三角计数，表示图中闭合三角的个数。平均集聚系数就是上面<strong>所有顶点的局部集聚系数的平均值</strong>。$\overline{C}=\frac{1}{n} \sum_{i=1}^{n} C(i)=\frac{1}{n} \sum_{i=1}^{n} \frac{\lambda_{G}\left(v_{i}\right)}{\tau_{G}\left(v_{i}\right)+\lambda_{G}\left(v_{i}\right)}$。我们可以<strong>对比一下整体集聚系数的公式</strong>，他们都是衡量一个图在整体上的集聚程度，但是有一些细微的差别。平均聚集系数为1，表示图中都是clique，要求所有节点两两相连，为0表示图没有clique，值约接近1约有抱团的趋势。</li>
+<li>应用：真实世界的网络中一定是部分聚集的，也就是说<strong>真实世界的图平均集聚系数会大于随机生成的图</strong>。我们把这种真实世界的图叫”<strong><a href="https://zh.wikipedia.org/wiki/小世界網路" target="_blank" rel="noopener">小世界网络</a></strong>“。在这种网络中<strong>大部分的节点彼此并不相连，但绝大部分节点之间经过少数几步就可到达</strong>。这种网络是一种介于随机和规则之间的图，一般具有<strong>较大的平均集聚系数（远大于随机图，小于1），和较小的平均最短路径长度（logN成正比）</strong>。（最规则的就是完全图，平均最短路径长度=1，平均集聚系数=1）</li>
+</ul>
+</li>
+</ul>
+<p><a href="https://neo4j.com/blog/graph-algorithms-neo4j-15-different-graph-algorithms-and-what-they-do/" target="_blank" rel="noopener">https://neo4j.com/blog/graph-algorithms-neo4j-15-different-graph-algorithms-and-what-they-do/</a></p>
+<h3 id="分布式图分析"><a href="#分布式图分析" class="headerlink" title="分布式图分析"></a>分布式图分析</h3><p>在数据量超过单机容量时，我们会考虑使用分布式图来做数据分析。在分布式场景下，图的表示方法与算法有些许差异，例如，数据如何分布，算法如何并行与同步，此外，还需保证计算的效率，在合理的时间内结果的收敛。下面我们分布从<strong>存储</strong>与<strong>计算</strong>角度了解这个问题。</p>
+<h4 id="分布式图的存储"><a href="#分布式图的存储" class="headerlink" title="分布式图的存储"></a>分布式图的存储</h4><h5 id="图存储的基本方法"><a href="#图存储的基本方法" class="headerlink" title="图存储的基本方法"></a>图存储的基本方法</h5><p>大型图的存储总体上有边分割和点分割两种存储方式</p>
+<ul>
+<li>点分割：<strong>条边只存储一次</strong>，都只会出现在一台机器上。邻居多的顶点的数据会被复制到多台机器上，<ul>
+<li>优点：可以大幅减少内数据网通信量。</li>
+<li>缺点：<ul>
+<li>某些增加了存储开销，如边的邻居特别多，则在很多节点上都存储相同的顶点信息</li>
+<li>每个节点看到的<strong>只有部分邻居节点</strong>，无法完成这个单点的完整计算，会引发<strong>数据同步</strong>问题。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>边分割：每个顶点的数据都存储一次，节点拥有所有邻居节点的引用信息，但有的边会被打断分到两台机器上，邻居的具体数据存储在其他节点<ul>
+<li>优点：<ul>
+<li>可以独立完成该一节点的程序运算</li>
+<li>节省顶点的存储空间</li>
+</ul>
+</li>
+<li>缺点：<ul>
+<li>对图进行基于边的计算时，对于一条两个顶点被分到不同机器上的边来说，要跨机器通信传输数据，内网通信流量大。</li>
+<li>如果出现某些顶点边很多的情况，会导致数据不均衡</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>一个例子如下，下图是对3条边的图进行分布，a是使用边分割的方式，节点ABCD的节点数据值存储了一份，但是边的数据有6份(还包含节点的引用，虚节点)，但是每台机器有节点的完整的边信息。b是使用了点分割，可以看到123条边都只存储了一次，单顶点数据却冗余存储</p>
+<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g4j0guwsnxj30dh0agaa9.jpg" alt></p>
+<p>当前主流系统实现均为点分割方式。考虑到<strong>不均衡节点在大图中是常见现象</strong>，以及磁盘成本的下降，使用冗余的节点存储减少网络通信。</p>
+<h5 id="Spark中的图存储"><a href="#Spark中的图存储" class="headerlink" title="Spark中的图存储"></a>Spark中的图存储</h5><p>spark中图存储的基本方法使用了<strong>点分割</strong>的方式：每台机器存储Edge数据，同时对Vertex构建<strong>查找路由</strong>。Graph由EdgeRDD与VertexRDD组成，其中EdgeRDD存储了边，包含了src/dst/边的attr ；VertexRDD则含有顶点数据，有vid和属性attr，此外，VertexRDD还需要能通过顶点定位到所在的边，既即<strong>路由功能</strong>。下面简要介绍一下EdgeRDD与VertexRDD的数据结构：</p>
+<ul>
+<li><p>EdgeRDD：</p>
+<ul>
+<li>由EdgePartition构成，每个分区内存储了一部分边的数据，边的分布方式由<a href="https://github.com/apache/spark/blob/master/graphx/src/main/scala/org/apache/spark/graphx/PartitionStrategy.scala" target="_blank" rel="noopener">PartitionStrategy</a>决定，基本分为三种EdgePartition2D（使用类似领接矩阵的方式分布边到不同的机器上，保证副本数量不超过<code>2 * sqrt(numParts)</code>）；EdgePartition1D（使用srcid作为分布）；RandomVertexCut（使用srcid+destid的hash作为分布）</li>
+<li>分区内边按照srcId从小到大排序，便于重新组织和使用array结构快速访问</li>
+<li>按排序后的顺序转换<strong>外部</strong>全局的id转化为<strong>内部</strong>的localid（0.1.2….数组下标），src和dst都转换—-这两者表示方式可以来回转换了</li>
+<li>构建索引，<strong>目的是用srcid可以快速找到他的所有边</strong>：相同src保留第一个index,index中记录的是相同srcId中第一个出现的srcId与其下标。<strong>相当于可以用index快速在上面localSrcIds/localDstIds查找了,再向下找就是它的边</strong></li>
+<li>边相关的数据data，也是用本地id存储的，单独存在一个数组里</li>
+</ul>
+<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g4j1nqmadfj313q0jhjt6.jpg" alt></p>
+</li>
+<li><p>VertexRDD</p>
+<ul>
+<li><p>由vertexPartitions构成，他的数据是从EdgeRDD构建而来，vertexPartitions存储了顶点的路由表和顶点的属性值，生成过程如下</p>
+</li>
+<li><p>对Edge的partiton进行map操作—&gt;RoutingTableMessage(VertexId, Int) 第二个Int包含了<strong>关键信息</strong>：（边分区ID—pid，isSrcId/isDstId）：作用是以后用这些信息就能找到VertexId的边的信息，达到<strong>路由</strong>的目的！！</p>
+</li>
+<li><p>对VertexId进行shuffle操作（数目与edge分区相同），那么相同的点就到了一个分区</p>
+</li>
+<li><p>对每个点分区构建路由表：可以用点的(VertexId, Int)信息快速查找到这个顶点相关的边在哪个EdgePartiton（通过pid），见下图的RoutingTablePartition</p>
+</li>
+<li><p>成ShippableVertexPartition：构建存储点属性，合并相同重复点的属性attr对象，补全缺失的attr对象</p>
+<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g4j2bium7yj313v0a30tw.jpg" alt></p>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="分布式图计算模型"><a href="#分布式图计算模型" class="headerlink" title="分布式图计算模型"></a>分布式图计算模型</h4><p>图计算的基本思想是BSP模型，即Bulk Synchronous Parallell(分布式批同步)，他的基本思想是将图的计算<strong>分解成一系列串行的superstep(超步)</strong>:</p>
+<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g4jbb8rxsij30dy09zmx7.jpg" alt></p>
+<p>每一个超步内部强调计算与通讯分离，具体而言包含三个阶段：</p>
+<ul>
+<li>并行计算(local computation)：在本地进行计算，无外部的数据访问</li>
+<li>全局通信(非本地数据通信)：方式数据给其他节点</li>
+<li>栅栏同步(等待通信行为结束)：同步阶段，等待所有节点都接收到数据</li>
+</ul>
+<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g4jb86cxhrj30aa084gly.jpg" alt></p>
+<blockquote>
+<p>我们发现上述模型也有类似与shuffle的过程，但是对比MR，BSP模型具有下列不同：</p>
+<ul>
+<li>MR是一个数据流模型，任务shuffle产出的数据发送给了其他新的任务(reduce任务)，并且伴随着数据落盘等操作，而BSP中任务是没有变。</li>
+<li>MR需要多个job，即多轮启动任务才能完成上述算法的多个超步计算，而BSP中是一个job</li>
+<li>除此之外，由于BSP对消息的路由是固定，往往可以做很多优化</li>
+</ul>
+</blockquote>
+<h5 id="BSP模型的传统实现"><a href="#BSP模型的传统实现" class="headerlink" title="BSP模型的传统实现"></a>BSP模型的传统实现</h5><p>BSP的有两种常见的计算框架：</p>
+<ul>
+<li><p>Pregel框架：该实现中<strong>以”顶点”为中心</strong>，对顶点应用函数进行计算并且顶点的值可以修改。而边没有任何计算与修改。</p>
+<ul>
+<li><p>在每个superstep中，每个顶点具有active和inactive两个状态。收到消息后就会变为active状态，并执行用户定义的同一个函数。这个函数可以对其他邻接边发出msg，修改自身的值，或者判断满足某些条件后把顶点人工halt为inactive</p>
+<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g4jbroe2y9j30id0543yi.jpg" alt></p>
+</li>
+<li><p>当系统中没有消息再active节点时，所有节点都是inactive状态，算法迭代终止</p>
+</li>
+<li><p>主要缺点：如果遇到某个节点有众多的边，会导致数据不均衡，某个节点运行时间过长。<strong>降低了算法的并发性</strong>。ps：非常类似于边分割存储的问题！</p>
+</li>
+</ul>
+</li>
+<li><p>GraphLab框架：该算法<strong>以点分割为基础</strong>，一个顶点的多个边被存储到不同的机器上，解决数据不均衡问题。此时我们需要汇总顶点相关边的计算。因此，一台机器作为<code>master</code>顶点，其余机器作为<code>mirror</code>。一台机器内部相当于有一个”本地图”，使用多个线程分摊进程中所有顶点的操作。每个顶点的操作包括<code>gather-&gt;apply-&gt;scatter</code></p>
+<ul>
+<li><p>gather：顶点从本地收集相连的边的数据，对顶点、边都是只读的</p>
+</li>
+<li><p>apply：<code>mirror</code>将<code>gather</code>阶段计算的结果发送给<code>master</code>顶点，<code>master</code>进行汇总并结合上一步的顶点数据，按照业务需求进行进一步的计算，然后更新<code>master</code>的顶点数据，并同步给<code>mirror</code>。<code>Apply</code>阶段中，工作顶点可修改，边不可修改。</p>
+</li>
+<li><p>scatter：顶点更新完成之后，更新边上的数据，并通知对其有依赖的邻结顶点更新状态。在<code>scatter</code>过程中，工作顶点只读，边上数据可写。(对比Pregel，注意这里边的数据可以修改)</p>
+</li>
+<li><p>存储结构如下：</p>
+<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g4jc5tmxdbj30fg0c5t8z.jpg" alt></p>
+</li>
+<li><p>计算过程如下：</p>
+<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g4jc6grc05j30qz07qgm5.jpg" alt></p>
+</li>
+</ul>
+</li>
+</ul>
+<p>下面是分别使用Pregel框架和GraphLab框架实现pagerank的伪代码：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Pregel框架实现pagerank，被图的顶点调用</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">PageRank</span></span>(v: <span class="type">Id</span>, msgs: <span class="type">List</span>[<span class="type">Double</span>]) &#123;</span><br><span class="line">	<span class="comment">// 计算消息和</span></span><br><span class="line">	<span class="keyword">var</span> msgSum = <span class="number">0</span></span><br><span class="line">	<span class="keyword">for</span> (m &lt;- msgs) &#123; msgSum = msgSum + m &#125;</span><br><span class="line">	<span class="comment">// 更新 PageRank (PR)</span></span><br><span class="line">	<span class="type">A</span>(v).<span class="type">PR</span> = <span class="number">0.15</span> + <span class="number">0.85</span> * msgSum</span><br><span class="line">	<span class="comment">// 广播新的PR消息</span></span><br><span class="line">	<span class="keyword">for</span> (j &lt;- <span class="type">OutNbrs</span>(v)) &#123;</span><br><span class="line">		msg = <span class="type">A</span>(v).<span class="type">PR</span> / <span class="type">A</span>(v).<span class="type">NumLinks</span></span><br><span class="line">		send_msg(to=j, msg)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 检查终止</span></span><br><span class="line">	<span class="keyword">if</span> (converged(<span class="type">A</span>(v).<span class="type">PR</span>)) voteToHalt(v)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// GraphLab框架实现pagerank</span></span><br><span class="line"><span class="comment">// gather汇总，被图的边调用</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">Gather</span></span>(a: <span class="type">Double</span>, b: <span class="type">Double</span>) = a + b</span><br><span class="line"><span class="comment">// apply更新顶点，图的顶点调用(msg是数据交换了)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">Apply</span></span>(v, msgSum) &#123;</span><br><span class="line">	<span class="type">A</span>(v).<span class="type">PR</span> = <span class="number">0.15</span> + <span class="number">0.85</span> * msgSum</span><br><span class="line">	<span class="keyword">if</span> (converged(<span class="type">A</span>(v).<span class="type">PR</span>)) voteToHalt(v)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// scatter更新边</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">Scatter</span></span>(v, j) = <span class="type">A</span>(v).<span class="type">PR</span> / <span class="type">A</span>(v).<span class="type">NumLinks</span></span><br></pre></td></tr></table></figure>
+<h5 id="Spark-Graphx中BSP模型的实现"><a href="#Spark-Graphx中BSP模型的实现" class="headerlink" title="Spark Graphx中BSP模型的实现"></a>Spark Graphx中BSP模型的实现</h5><p> <code>GraphX</code>也是基于<code>BSP</code>模式。<code>GraphX</code>的核心API是aggregateMessages，此外基于次API还封装了一个<a href="https://github.com/apache/spark/blob/master/graphx/src/main/scala/org/apache/spark/graphx/Pregel.scala" target="_blank" rel="noopener">类似<code>Pregel</code>的操作</a>，它结合了的<code>Pregel</code>和<code>GraphLab</code>框架的特点。我们可以<strong>把Spark中的<code>Pregel</code>理解为多轮的<code>aggregateMessages + joinVertices</code>的组合（即一个superstep）。</strong>首先我们看一下aggregateMessages API：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">// api定义</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Graph</span>[<span class="type">VD</span>, <span class="type">ED</span>] </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">aggregateMessages</span></span>[<span class="type">Msg</span>: <span class="type">ClassTag</span>](</span><br><span class="line">      sendMsg: <span class="type">EdgeContext</span>[<span class="type">VD</span>, <span class="type">ED</span>, <span class="type">Msg</span>] =&gt; <span class="type">Unit</span>,</span><br><span class="line">      mergeMsg: (<span class="type">Msg</span>, <span class="type">Msg</span>) =&gt; <span class="type">Msg</span>,</span><br><span class="line">      tripletFields: <span class="type">TripletFields</span> = <span class="type">TripletFields</span>.<span class="type">All</span>)</span><br><span class="line">    : <span class="type">VertexRDD</span>[<span class="type">Msg</span>]</span><br><span class="line"> </span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">joinVertices</span></span>[<span class="type">U</span>](table: <span class="type">RDD</span>[(<span class="type">VertexId</span>, <span class="type">U</span>)])(mapFunc: (<span class="type">VertexId</span>, <span class="type">VD</span>, <span class="type">U</span>) =&gt; <span class="type">VD</span>): <span class="type">Graph</span>[<span class="type">VD</span>, <span class="type">ED</span>]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>aggregateMessages计算过程：先遍历边，再遍历顶点（只遍历send后的顶点），最终形成（vid,msg）的RDD，<code>VertexRDD[Msg]</code></p>
+<ul>
+<li>sendMsg：类比map，遍历图的边（triplet），调用你提供的sendMsg，在里面你可以通过EdgeContext发送Msg给Src还是Dst</li>
+<li>mergeMsg：类比Reduce，<strong>每个Send目标节点</strong>都会调用此函数，合并Send过来的Msg</li>
+<li>tripletFields：EdgeContext的访问权限控制，为内部提供优化，比如在上面的函数中只用src点的属性，TripletFields.Src</li>
+<li>返回的是VertexRDD[Msg]，是一个顶点的RDD，里面是send的消息，<strong>没有Msg的顶点就不会返回</strong></li>
+<li>Vertices that did not receive a message are not included in the returned VertexRDD</li>
+</ul>
+<p>joinVertices操作则是把原来的graph与收到的msg关联起来，并定义了顶点的更新函数mapFunc`</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 关联消息的操作,vprog是顶点更新</span></span><br><span class="line">g = g.joinVertices(messages)(vprog)</span><br></pre></td></tr></table></figure>
+<p>具体实现参考Graphx的<a href="https://github.com/apache/spark/blob/master/graphx/src/main/scala/org/apache/spark/graphx/Pregel.scala" target="_blank" rel="noopener"><code>Pregel</code>源码</a>。</p>
+<blockquote>
+<p>对比：Graphx中的<code>Pregel</code>与原始的Pregel框架和GraphLab有什么异同？</p>
+<ul>
+<li>我们可以发现，这里的Pregel借鉴了GraphLab的思想，还是以点分割为为基础，第一步先遍历边，依据边sendmsg，最终joinVectices，这里相当于gather与apply的过程了。</li>
+<li>但是，这里并没有对边的修改，可以认为是Pregel模型</li>
+</ul>
+</blockquote>
+<h4 id="部分图算法的分布式实现举例"><a href="#部分图算法的分布式实现举例" class="headerlink" title="部分图算法的分布式实现举例"></a>部分图算法的分布式实现举例</h4><p>我们使用前面介绍的Graphx的<code>Pregel</code>方法来实现图算法，这里举两个源码中的例子，分别是PageRank和LPA，可以发现使用该方法，对于这两种迭代算法的实现都十分简短</p>
+<p>一个Graphx版本的PageRank实现如下：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> pagerankGraph: <span class="type">Graph</span>[<span class="type">Double</span>, <span class="type">Double</span>] = graph</span><br><span class="line">  <span class="comment">// Associate the degree with each vertex</span></span><br><span class="line">  .outerJoinVertices(graph.outDegrees) &#123;</span><br><span class="line">    (vid, vdata, deg) =&gt; deg.getOrElse(<span class="number">0</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// Set the weight on the edges based on the degree</span></span><br><span class="line">  .mapTriplets(e =&gt; <span class="number">1.0</span> / e.srcAttr)</span><br><span class="line">  <span class="comment">// Set the vertex attributes to the initial pagerank values</span></span><br><span class="line">  .mapVertices((id, attr) =&gt; <span class="number">1.0</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">vertexProgram</span></span>(id: <span class="type">VertexId</span>, attr: <span class="type">Double</span>, msgSum: <span class="type">Double</span>): <span class="type">Double</span> =</span><br><span class="line">   resetProb + (<span class="number">1.0</span> - resetProb) * msgSum</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sendMessage</span></span>(id: <span class="type">VertexId</span>, edge: <span class="type">EdgeTriplet</span>[<span class="type">Double</span>, <span class="type">Double</span>]): <span class="type">Iterator</span>[(<span class="type">VertexId</span>, <span class="type">Double</span>)] =</span><br><span class="line">    <span class="type">Iterator</span>((edge.dstId, edge.srcAttr * edge.attr))</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">messageCombiner</span></span>(a: <span class="type">Double</span>, b: <span class="type">Double</span>): <span class="type">Double</span> = a + b</span><br><span class="line"><span class="keyword">val</span> initialMessage = <span class="number">0.0</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Execute Pregel for a fixed number of iterations.</span></span><br><span class="line"><span class="type">Pregel</span>(pagerankGraph, initialMessage, numIter)(</span><br><span class="line">  vertexProgram, sendMessage, messageCombiner)</span><br><span class="line">&#125;&#125;&#125;</span><br></pre></td></tr></table></figure>
+<p>一个Graphx版本的LPA实现如下（<a href="https://github.com/apache/spark/blob/master/graphx/src/main/scala/org/apache/spark/graphx/lib/LabelPropagation.scala" target="_blank" rel="noopener">源码文件</a>）：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">    <span class="keyword">val</span> lpaGraph = graph.mapVertices &#123; <span class="keyword">case</span> (vid, _) =&gt; vid &#125;</span><br><span class="line"><span class="comment">// 发送自己的标签给邻居，使用顶点id作为标签</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">sendMessage</span></span>(e: <span class="type">EdgeTriplet</span>[<span class="type">VertexId</span>, <span class="type">ED</span>]): <span class="type">Iterator</span>[(<span class="type">VertexId</span>, <span class="type">Map</span>[<span class="type">VertexId</span>, <span class="type">Long</span>])] = &#123;</span><br><span class="line">      <span class="type">Iterator</span>((e.srcId, <span class="type">Map</span>(e.dstAttr -&gt; <span class="number">1</span>L)), (e.dstId, <span class="type">Map</span>(e.srcAttr -&gt; <span class="number">1</span>L)))</span><br><span class="line">    &#125;</span><br><span class="line"><span class="comment">// 统计邻居节点标签的数量</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">mergeMessage</span></span>(count1: <span class="type">Map</span>[<span class="type">VertexId</span>, <span class="type">Long</span>], count2: <span class="type">Map</span>[<span class="type">VertexId</span>, <span class="type">Long</span>])</span><br><span class="line">      : <span class="type">Map</span>[<span class="type">VertexId</span>, <span class="type">Long</span>] = &#123;</span><br><span class="line">      <span class="keyword">val</span> map = mutable.<span class="type">Map</span>[<span class="type">VertexId</span>, <span class="type">Long</span>]()</span><br><span class="line">      (count1.keySet ++ count2.keySet).foreach &#123; i =&gt;</span><br><span class="line">        <span class="keyword">val</span> count1Val = count1.getOrElse(i, <span class="number">0</span>L)</span><br><span class="line">        <span class="keyword">val</span> count2Val = count2.getOrElse(i, <span class="number">0</span>L)</span><br><span class="line">        map.put(i, count1Val + count2Val)</span><br><span class="line">      &#125;</span><br><span class="line">      map</span><br><span class="line">    &#125;</span><br><span class="line"><span class="comment">// 使用数量最多的邻居标签作为顶点的属性值</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">vertexProgram</span></span>(vid: <span class="type">VertexId</span>, attr: <span class="type">Long</span>, message: <span class="type">Map</span>[<span class="type">VertexId</span>, <span class="type">Long</span>]): <span class="type">VertexId</span> = &#123;</span><br><span class="line">      <span class="keyword">if</span> (message.isEmpty) attr <span class="keyword">else</span> message.maxBy(_._2)._1</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">val</span> initialMessage = <span class="type">Map</span>[<span class="type">VertexId</span>, <span class="type">Long</span>]()</span><br><span class="line"><span class="comment">// 迭代计算</span></span><br><span class="line">    <span class="type">Pregel</span>(lpaGraph, initialMessage, maxIterations = maxSteps)(</span><br><span class="line">      vprog = vertexProgram,</span><br><span class="line">      sendMsg = sendMessage,</span><br><span class="line">      mergeMsg = mergeMessage)</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="社区发现算法"><a href="#社区发现算法" class="headerlink" title="社区发现算法"></a>社区发现算法</h3><h4 id="社区发现是什么"><a href="#社区发现是什么" class="headerlink" title="社区发现是什么"></a>社区发现是什么</h4><p>首先，我们需要解释在图场景下社区的概念。社区是在图中具有如下特征的<strong>子图</strong>：</p>
+<ul>
+<li>社区内部，顶点相对接近/密集</li>
+<li>不同社区之间，顶点相对疏远/稀疏</li>
+</ul>
+<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g5bxf8dihpj30fi0beab0.jpg" alt></p>
+<p> 从上述定义可以看出：社区是一个比较含糊的概念，只给出了一个定性的刻画。</p>
+<blockquote>
+<p>我们可以把社区发现算法对比与无监督学习中的聚类算法，典型的如 K-means系列算法，他们也是把相邻的节点进行聚合分类，不同的只有k-means中通过特征的『距离』作为衡量的标准。图的社区发现中通过边以及边的权重作为依据。</p>
+</blockquote>
+<h4 id="社区发现算法系列"><a href="#社区发现算法系列" class="headerlink" title="社区发现算法系列"></a>社区发现算法系列</h4><h5 id="算法分类"><a href="#算法分类" class="headerlink" title="算法分类"></a>算法分类</h5><p>社区发现中，我们希望把一个图分割成N个互不相交的社区（N往往未知），一般有两种思路：<strong>第一种是cut</strong>，也就是划分，把无关联的边去掉，进而取到核心的社区。<strong>第二种是gather</strong>，也就是聚合，将关联性比较大的顶点聚集起来，关联性较小的顶点剔除出去。</p>
+<p>其中cut算法的典型代表是：k-core decomposition。基本思想是对图中的所有顶点进行判定，若度小于K，则将该点和所有关联的边从图中删除，然后再进行下一轮迭代，直到图中所有的顶的度都大于K。</p>
+<p>LOOP</p>
+<p>​        （1）找到小于K的点 </p>
+<p>​        （2）删除步骤1找到的点和边 </p>
+<p>​        （3）继续进行步骤1，若找不到符合条件的点则结束 </p>
+<p>END</p>
+<p>gather算法的典型代表是：Label Propagation Algorithm标签传播算法，每个顶点在开始的时候都设立自己的标签，然后向所有的邻居进行广播。每个顶点在接收到广播的时候呢，将收到的最多的标签作为自己的标签，进行下一轮的迭代。</p>
+<p>初始化：（1）顶点标签</p>
+<p>LOOP</p>
+<pre><code>     （2）发送自己的标签 
+
+     （3）接收标签 
+
+     （4）将最大标签作为自己的标签 
+</code></pre><p>​         （5）继续进行方法2，直到达到最大迭代次数。 </p>
+<p>END</p>
+<h5 id="效果评估-Modularity"><a href="#效果评估-Modularity" class="headerlink" title="效果评估-Modularity"></a>效果评估-Modularity</h5><p>不同算法的效果如何衡量，即社区质量评估是社区发现中的一个重要问题，一般我们使用一个数值标量来做为评估标准：Modularity。定义如下：网络中连接社区结构内部顶点的边所占的比例与另外一个随机网络中连接社区结构内部顶点的边所占比例的期望值相见得到的差值。</p>
+<p>Modularity的定义历史可以参考<a href="https://blog.csdn.net/marywbrown/article/details/62059231" target="_blank" rel="noopener">这篇文章</a>。重点理解：</p>
+<ul>
+<li>从不同角度看modularity公式，1. 顶点角度（2006论文）2.社区角度（2004论文）</li>
+<li>两者的等价关系$Q=\frac{1}{2 m} \sum_{v w}\left[A_{v w}-\frac{k_{v} k_{w}}{2 m}\right] \delta\left(c_{v}, c_{w}\right)=\sum_{i=1}^{c}\left(e_{i i}-a_{i}^{2}\right)$</li>
+</ul>
+<h5 id="常见算法"><a href="#常见算法" class="headerlink" title="常见算法"></a>常见算法</h5><p>除了我们之前提到的k-core decomposition与LPA外，有一系列基于他们衍生算法，主要解决算法中存在的问题。这里我们讨论一下LPA的衍生算法。在LPA算法中，只能将顶点划分一个社区内，这样会导致一个经常出现的<strong>顶点的分类结果震荡问题</strong>。最常见的改进是SLPA算法（Speaker Listener Label Label Propagation Algorithm），SLPA 中引入了 Listener 和 Speaker 两个比较形象的概念，你可以这么来理解：在刷新节点标签的过程中，任意选取一个节点作为 listener，则其所有邻居节点就是它的 speaker 了，speaker 通常不止一个，一大群 speaker 在七嘴八舌时，listener 到底该听谁的呢？这时我们就需要制定一个规则。在 LPA 中，我们以出现次数最多的标签来做决断，其实这就是一种规则。只不过在 SLPA 框架里，规则的选取比较多罢了（可以由用户指定）。当然，与 LPA 相比，SLPA 最大的特点在于：它会记录每一个节点在刷新迭代过程中的历史标签序列（例如迭代 T 次，则每个节点将保存一个长度为 T 的序列，如上图所示），当迭代停止后，对每一个节点历史标签序列中各（互异）标签出现的频率做统计，按照某一给定的阀值过滤掉那些出现频率小的标签，剩下的即为该节点的标签（通常有多个）。过程如下：</p>
+<p>初始化：（1）顶点标签</p>
+<p>LOOP</p>
+<p>​        （2）根据<strong>规则</strong>发送标签 </p>
+<p>​        （3）接收标签，将标签以一定的<strong>规则</strong>追加到自己的标签中</p>
+<p>​        （4）继续进行方法2，直到达到最大迭代次数。 </p>
+<p>END</p>
+<p>​        （5）对结果进行解析，自行决定单顶点社区的个数。</p>
+<p>此外，还有一些衍生算法致力于解决LPA中的<strong>大社区问题</strong>，即分类中会出现某些社区具有特别巨量的节点。我们往往通过引入<strong>传播距离</strong>作为控制，改进算法的结果，常见的算法有HANP，DCLP等，可以参考<a href="https://blog.csdn.net/itplus/article/details/9286905" target="_blank" rel="noopener">这篇文章</a>。</p>
+<p>另一大类的社区算法还会在算法运行过程中<strong>使用Modularity作为优化目标</strong>来进一步指导节点的分类，这就是我们最后会详细说明的Fast unfolding Louvain算法，该算法除了分类效果最好外，还可以生成多分辨率图，巧妙的避免了『巨型社区』的问题。</p>
+<p>总结常见的社区发现算法如下：</p>
+<ul>
+<li>Cut算法<ul>
+<li>k-core decomposition</li>
+</ul>
+</li>
+<li>Gather算法<ul>
+<li>LPA以及衍生优化<ul>
+<li>SLPA - Speaker Listener Label Label Propagation Algorithm -重叠社区 解决震荡</li>
+<li>HANP：传播距离解决巨型社区问题</li>
+<li>DCLP</li>
+<li>AM-DCLP</li>
+<li>SDCLP</li>
+</ul>
+</li>
+<li>使用Modularity作为目标<ul>
+<li>Fast unfolding Louvain算法</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="社区发现算法实现-Louvain实现"><a href="#社区发现算法实现-Louvain实现" class="headerlink" title="社区发现算法实现-Louvain实现"></a>社区发现算法实现-Louvain实现</h4><p>当前效果比较好的社区发现算法是Fast unfolding Louvain算法。该算法对于大数据量的图（亿节点+）具有快速的聚类效果，此外，通过多分辨率图的方式解决『大社区』问题。可以阅读论文：<a href="https://arxiv.org/abs/0803.0476" target="_blank" rel="noopener">fast unfolding of communities in large networks</a>，这篇论文十分紧凑推荐阅读。</p>
+<ul>
+<li><p>基本思想：贪心算法，优化图的总体modularity值</p>
+</li>
+<li><p>算法过程：两step构成一个pass，每个pass都会形成一个社区，迭代n次pass，形成n个分层的社区（论文中叫不同</p>
+<p>分辨率的社区）</p>
+<ul>
+<li>step1，给每个点分配社区id，遍历所有顶点，计算他的邻接节点，查看是否『<strong>移动当前社区到邻居社区</strong>对整体modularity值』的影响，这里<strong>涉及一个重要公式</strong>，来快速技术modularity变化量（delta），重复到整个图模度收敛为止（modularity变化为0），注意：这个过程可能对某些顶点重复考察</li>
+<li>step2，合并上面的每一个社区为一个新顶点。合并过程中，对于原图内部的N条边，在新节点处加入N条self-loop边</li>
+<li>loop上述步骤</li>
+</ul>
+</li>
+<li><p>优点</p>
+<ul>
+<li>快，使得瓶颈在存储而不是计算，论文中点击能跑上亿个节点。<a href="https://en.wikipedia.org/wiki/Louvain_Modularity" target="_blank" rel="noopener">维基百科</a>中时间复杂度O(nlogn)</li>
+<li>结果分层结构，解决其他modularity算法对小社区识别度的问题（偏向于识别大社区）</li>
+</ul>
+</li>
+<li><p>缺点</p>
+<ul>
+<li>可解释性：各层的含义还是得自己摸索，尤其是中间层</li>
+</ul>
+</li>
+</ul>
+<h5 id="DGA库介绍与源码"><a href="#DGA库介绍与源码" class="headerlink" title="DGA库介绍与源码"></a>DGA库介绍与源码</h5><p>背景：实际开发中并没有重头开发算法库，而是在第一版本中使用了第三方的库，这个库在github上使用的人非常少，风险很高<br>文档：<a href="http://sotera.github.io/distributed-graph-analytics/" target="_blank" rel="noopener">http://sotera.github.io/distributed-graph-analytics/</a><br>介绍：这个库主要是在Hadoop环境(Giraph)和Spark环境(GraphX)下实现了一些图的算法。这些框架都使用了BSP模型（同步栅栏模型）.</p>
+<p>DGA实现了如下5种算法：</p>
+<ul>
+<li>High Betweenness Set Extraction</li>
+<li>Weakly Connected Components</li>
+<li>Page Rank</li>
+<li>Leaf Compression</li>
+<li>Louvain Modularity（beta版本，大量的bug）</li>
+</ul>
+<h5 id="Louvain-Modularity算法源码分析与导读"><a href="#Louvain-Modularity算法源码分析与导读" class="headerlink" title="Louvain Modularity算法源码分析与导读"></a>Louvain Modularity算法源码分析与导读</h5><p>文档资料</p>
+<ul>
+<li><a href="http://sotera.github.io/distributed-graph-analytics/louvain/" target="_blank" rel="noopener">Louvain算法文档介绍</a>：比较简单没什么内容（看一下<code>minimum.progress</code> <code>progress.tries</code>参数的设置），主要看看源码<code>com.soteradefense.dga.graphx</code></li>
+<li><a href="http://sotera.github.io/distributed-graph-analytics/louvain/example/graphx/" target="_blank" rel="noopener">Louvain算法运行方法</a></li>
+</ul>
+<p>代码流程分析</p>
+<ul>
+<li>从上面运行方法入口DGARunner类：<ul>
+<li>主要构造了数据集自定义的<code>EdgeInputFormat</code>格式，src dst weight</li>
+<li><code>initialGraph=EdgeInputFormat.getGraphFromStringEdgeList</code> 其实就是生成了一个边的图</li>
+<li><code>runner = new HDFSLouvainRunner(minProgress, progressCounter, outputPath)</code> Louvain算法的入口类</li>
+<li><code>runner.run(sparkContext, initialGraph)</code> 传入图开始运行</li>
+</ul>
+</li>
+<li>HDFSLouvainRunner是真正开始运行的地方，其实他的主要方法是他父类<code>AbstractLouvainRunner</code>的<code>run</code><ul>
+<li>构造<strong>算法核心的类</strong>：<code>LouvainCore</code></li>
+<li><code>var louvainGraph = louvainCore.createLouvainGraph(graph)</code> 构造图</li>
+<li>循环，一个pass如下：<ul>
+<li><code>louvainCore.louvain(sc, louvainGraph, minimumCompressionProgress, progressCounter)</code></li>
+<li><code>louvainGraph = louvainCore.compressGraph(louvainGraph)</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>louvain迭代过程</strong>分析：</p>
+<p><code>louvainCore.louvain(sc, louvainGraph, minimumCompressionProgress, progressCounter)</code>，输入louvainGraph</p>
+<ol>
+<li>计算totalGraphWeight，（这里是图的边的权重*2，或者叫度的权重）</li>
+<li>使用aggregateMessages，将每个vertex的附近的邻居的社区id和communitySigmaTot 拿到<ul>
+<li>sendCommunityData：迭代边，发送（community，communitySigmaTot）到两侧</li>
+<li>mergeCommunityMessages：合并成map（community-&gt;communitySigmaTot）:合并效率问题</li>
+</ul>
+</li>
+<li>do-while迭代：注意<strong>终止条件</strong>：stop—含义表示update&lt;minProgress的进展太小(合并节点太少)<ul>
+<li>even条件：为了防止死锁（什么情况下？一个顶点一会分给A社区，一会B社区，来回循环？）—每次迭代只修改图中一半的顶点： only allow changes from low to high communties on even cyces and high to low on odd cycles</li>
+<li>louvainVertJoin：<strong>核心函数</strong>，遍历顶点，对之前的map中的每个邻居进行deltaQ计算，选择最大的，<strong>把当前节点划入该社区</strong>，调用了<code>q</code>函数进行计算。</li>
+<li>communityUpdate:重新计算新社区的total weigh（CommunitySigmatTot）使用nodeWeight （因为上面重新分配了社区）</li>
+<li>分配CommunitySigmatTot新值给所有节点</li>
+<li>最终更新louvainGraph</li>
+<li>使用aggregateMessages计算（同上面2）</li>
+<li>计算终止条件：update数目（更新的/change的节点数目）</li>
+</ul>
+</li>
+<li>计算最终的actualQ（modularity）返回：算法就是先用公式算每个社区的modularity，然后整体求和</li>
+</ol>
+<blockquote>
+<p> 可能优化点：aggregateMessages不用map，而是直接算deltaQ并取最大值</p>
+</blockquote>
+<p><strong>deltaQ的计算</strong>问题</p>
+<p>我们发现算法实现时的deltaQ计算与原始论文不同。由于我们只需要比较deltaQ值的相对大小，因此上述两个公式是等价的。证明可以参考<a href="http://www.cnblogs.com/allanspark/p/4197980.html" target="_blank" rel="noopener">这篇文章</a>。<br>重点理解：我们只需要计算相对大小即可（就可以比较找出最大变换),因此在unfold fast论文中deltaQ计算公式：</p>
+<script type="math/tex; mode=display">\Delta Q=\left[\frac{\sum_{i n}+k_{i, i n}}{2 m}-\left(\frac{\sum_{t o t}+k_{i}}{2 m}\right)^{2}\right]-\left[\frac{\sum_{i n}}{2 m}-\left(\frac{\sum_{t o t}}{2 m}\right)^{2}-\left(\frac{k_{i}}{2 m}\right)^{2}\right]</script><p>为了简化计算，可以转变为相对值：</p>
+<script type="math/tex; mode=display">\Delta Q^{\prime}=k_{i, i n}-\frac{\sum_{t o t} \times k_{i}}{m}</script><blockquote>
+<p>DGA实现中的deltaQ问题的理解:</p>
+<p>论文中理解deltaQ的关键点是：首先<strong>假设某个节点在图中在一个独立的社区中</strong>，然后有deltaQ的公式：</p>
+<script type="math/tex; mode=display">\Delta Q=\left[\frac{\sum_{i n}+k_{i, i n}}{2 m}-\left(\frac{\sum_{t o t}+k_{i}}{2 m}\right)^{2}\right]-\left[\frac{\sum_{i n}}{2 m}-\left(\frac{\sum_{t o t}}{2 m}\right)^{2}-\left(\frac{k_{i}}{2 m}\right)^{2}\right]</script><p>这个公式中的，最后一项就是基于前面的假设，即这个节点是个独立的社区，所以他自身的modularity是$\left(\frac{k_{i}}{2 m}\right)^{2}$。</p>
+<p>但是，注意但是！如果节点不在一个独立的社区中，怎么办？论文的方案很简单：把这个过程分为两步，第一步把节点从原来的社区移走，第二步再把节点加入新社区。<strong>这里的第一步就是上面的公式的负数</strong>。如果算法实现没错的化，就是只移动节点到有增加deltQ的社区，那么移出一定是个负数，因此，最后完整的我们需要看看这个第一步的deltaQ的负数和第二步deltaQ的正数之和是不是&gt;0。</p>
+<p>但是，但是。。<strong>实际实现算法的时候没有这么干！！</strong><br>上面我们说为了简化计算，deltaQ可以转变为相对值：</p>
+<script type="math/tex; mode=display">\Delta Q^{\prime}=k_{i, i n}-\frac{\sum_{t o t} \times k_{i}}{m}</script><p>在DGA库中，我们遍历每个节点，我们尝试<strong>把当前节点加入到他邻居的社区</strong>（注意表述的顺序，谁加入到谁）。因此，<strong>如果这个节点他不是一个单独的社区，他必然要先脱离自己原来的社区</strong>，对每个节点而言这是一个固定的值（一个节点比如划分到某个社区了！）。因此我们在寻找『最大deltaQ的相邻节点社区』的过程中，只需要比较相对值，可以忽略这个固定的值。。。。<br>但是，正如上一段所述，如何保证这个两步之和大于0呢？这就需要在扫描相邻社区时，『特殊』处理，如果发现相邻社区与节点自己的社区相同时，不跳过！！（我们可能<strong>误</strong>认为加入相同社区deltaQ=0）照常计算deltaQ，但是$\sum_{t o t} $中需要减去该节点自身的值，然后算出deltaQ。把这个deltaQ和其他deltaQ一起参与到最终的『最大deltaQ的相邻节点社区』选举中。如果加入其他社区没有收益，就会导致这个『特殊』的deltaQ脱颖而出。（隐含我们不需要对deltaQ&gt;0进行判断，但是lib中还是判断了）</p>
+</blockquote>
+<p><strong>多层图的Modularity/图压缩算法</strong>理解</p>
+<p>论文在阶段二中有个重要的点：<strong>如何压缩图，具体而言每个社区是一个新顶点，如何处理原来的社区内关系？</strong></p>
+<ul>
+<li>论文中的方法是：对社区内部的部边（不与社区外相连的边）最为<strong>self-loop边</strong>（就是新顶点自己连到自己的边，在邻接矩阵的表示中就是对角线！）。这么处理有个非常大的好处，<strong>对于压缩后的图，前面的modularity，deltaQ的计算公式与结果不会改变</strong>。</li>
+<li>在DGA库中的实现方法是，使用新节点的internalWeight值（含义与上面Louvain类似），后续计算modularity和deltaQ的时候需要考虑这个值</li>
+</ul>
+<blockquote>
+<p>理解：图的压缩不影响Modularity的值<br>我们在compressGraph图之后，此时同一个社区的多个节点会合并成一个1个节点，并根据社区内连接到数量N相应的增加N个self-loop连接（在DGA中使用internalWeight表示）。<br>注意：压缩后的图的Modularity与压缩前的Modularity相等！！！，使用的公式相同：</p>
+<script type="math/tex; mode=display">Q=\frac{1}{2 m} \sum_{v w}\left[A_{v w}-\frac{k_{v} k_{w}}{2 m}\right] \delta\left(c_{v}, c_{w}\right)=\sum_{i=1}^{c}\left(e_{i i}-a_{i}^{2}\right)</script><p>再次理解这个公式: </p>
+<ul>
+<li>$\sum_{v w}A_{v w} \delta\left(c_{v}, c_{w}\right)$ 图中<strong>相同社区内有连接的节点</strong>间的边weight值和</li>
+<li>$\sum_{v w}{k_{v} k_{w}} \delta\left(c_{v}, c_{w}\right)$ 这个是<strong>一个社区内所有的节点的度的两两乘积</strong>（不管有没有边相连，只要属于一个社区就行）</li>
+</ul>
+</blockquote>
+<h5 id="DGA库优化与Bug分析"><a href="#DGA库优化与Bug分析" class="headerlink" title="DGA库优化与Bug分析"></a>DGA库优化与Bug分析</h5><p>在使用此库时，发现了大量的问题（并且test case无法通过），最终使得Louvain算法的实现完全错误，导致大量情况下提前结束迭代，此时算法并未收敛。除了错误外，还有大量的性能问题，总结三类问题如下：</p>
+<ul>
+<li>对Spark的误用，导致算法实现错误，提前收敛</li>
+<li>对Louvain算法论文理解的偏差，导致部分边缘节点分类错误</li>
+<li>代码性能性能问题，导致关键部分运行极慢</li>
+</ul>
+<p>Spark误用时导致的Bug:</p>
+<ol>
+<li>rdd内map函数重复计算多次。原因：没有cache（或者unpersist）的rdd会有这种现象</li>
+<li><p>unpersist过早的问题：如果在正在触发计算之前unpersist会导致cache的效果没有（lazy），如下</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> rdd=sc.read(xxx).cache</span><br><span class="line"><span class="keyword">val</span> rdd2=rdd.map(x=&gt;x+<span class="number">1</span>)</span><br><span class="line"><span class="keyword">val</span> rdd3=rdd.map(x=&gt;x+<span class="number">1</span>)</span><br><span class="line">rdd.unpersist() <span class="comment">// 无效代码</span></span><br><span class="line">rdd2.count rdd3.count</span><br><span class="line"><span class="comment">// 应当在这里！！</span></span><br><span class="line">rdd.unpersist()</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>rdd是不可变数据集！！，一般情况下RDD[CustomObj]对象都是case class定义的，但是，代码中奇葩的使用了class定义(即<code>LouvainData</code>类)，并定义了内部的var变量，在map，join等中直接修改变量。导致结果玄学，没有意义。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> rdd:<span class="type">RDD</span>[<span class="type">CustomObj</span>]=sc.read(xxx)</span><br><span class="line"><span class="keyword">val</span> rdd2=rdd.map(d=&gt;d.flag=<span class="number">1</span>) <span class="comment">// 不可以直接修改，而是应该返回新对象！！！</span></span><br><span class="line">rdd2.filter(d.flag==<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>innerJoin</code>误用，在计算最终的actualQ值时原始代码中使用了GraphX API的<code>innerJoin</code>函数，该函数只会返回两个RDD中都存在的join key。丢弃左侧RDD中存在，但是右侧RDD不存在的Key，因此最终计算的整个图的modularity值缺失了大量的图的值（具体到算法中丢弃了那些没有在本层迭代中发生modularity变化的社区），正确算法应该使用<code>leftJoin</code></p>
+</li>
+</ol>
+<p>deltaQ计算公式错误:</p>
+<p>算法实现中<code>q</code>函数的计算公式是<code>deltaQ = k_i_in - (k_i * sigma_tot / M)</code>，但是，这的<code>M</code>的含义是<code>edge_weight*2</code>，原始公式中对应的是edge_weight之和，这里的<code>M</code>应该替换为<code>M/2</code></p>
+<p>Scala代码性能问题:</p>
+<p>性能问题主要发生在GraphX中最重要的API：<code>aggregateMessages</code>中。在原始算法中代码如下：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">sendCommunityData</span></span>(e: <span class="type">EdgeContext</span>[<span class="type">LouvainData</span>, <span class="type">Long</span>, <span class="type">Map</span>[(<span class="type">Long</span>, <span class="type">Long</span>), <span class="type">Long</span>]]) = &#123;</span><br><span class="line">    <span class="keyword">val</span> m1 = (<span class="type">Map</span>((e.srcAttr.community, e.srcAttr.communitySigmaTot) -&gt; e.attr))</span><br><span class="line">    <span class="keyword">val</span> m2 = (<span class="type">Map</span>((e.dstAttr.community, e.dstAttr.communitySigmaTot) -&gt; e.attr))</span><br><span class="line">    e.sendToSrc(m2)</span><br><span class="line">    e.sendToDst(m1)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * Merge neighborhood community data into a single message for each vertex</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">mergeCommunityMessages</span></span>(m1: <span class="type">Map</span>[(<span class="type">Long</span>, <span class="type">Long</span>), <span class="type">Long</span>], m2: <span class="type">Map</span>[(<span class="type">Long</span>, <span class="type">Long</span>), <span class="type">Long</span>]) = &#123;</span><br><span class="line">    <span class="keyword">val</span> newMap = scala.collection.mutable.<span class="type">HashMap</span>[(<span class="type">Long</span>, <span class="type">Long</span>), <span class="type">Long</span>]()</span><br><span class="line">    m1.foreach(&#123; <span class="keyword">case</span> (k, v) =&gt;</span><br><span class="line">      <span class="keyword">if</span> (newMap.contains(k)) newMap(k) = newMap(k) + v</span><br><span class="line">      <span class="keyword">else</span> newMap(k) = v</span><br><span class="line">    &#125;)</span><br><span class="line">    m2.foreach(&#123; <span class="keyword">case</span> (k, v) =&gt;</span><br><span class="line">      <span class="keyword">if</span> (newMap.contains(k)) newMap(k) = newMap(k) + v</span><br><span class="line">      <span class="keyword">else</span> newMap(k) = v</span><br><span class="line">    &#125;)</span><br><span class="line">    newMap.toMap</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 调用</span></span><br><span class="line">communityRDD = louvainGraph.aggregateMessages(sendCommunityData, mergeCommunityMessages)</span><br></pre></td></tr></table></figure>
+<p>核心问题发生在<code>mergeCommunityMessages</code>函数的<code>newMap.toMap</code>中，在scala的实现中，这里会新创建大量的对象，导致GC严重，拖慢了整个算法。改进方法如下：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">  */</span><br><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">mergeCommunityMessages</span></span>(m1: <span class="type">Map</span>[(<span class="type">Long</span>, <span class="type">Long</span>), <span class="type">Long</span>], m2: <span class="type">Map</span>[(<span class="type">Long</span>, <span class="type">Long</span>), <span class="type">Long</span>]) = &#123;</span><br><span class="line">  <span class="keyword">val</span> merged = (m2 foldLeft m1) (</span><br><span class="line">    (acc, v) =&gt; acc + (v._1 -&gt; (v._2 + acc.getOrElse(v._1, <span class="number">0</span>L)))</span><br><span class="line">  )</span><br><span class="line">  merged</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>由于该函数被大量调用，此优化带来性能5x以上的提升。</p>
+<h5 id="Louvain算法应用思考"><a href="#Louvain算法应用思考" class="headerlink" title="Louvain算法应用思考"></a>Louvain算法应用思考</h5><ul>
+<li>非对等节点构建图，容易导致被某些大节点吸附，典型的就是大的query下面集合了一堆uid，解决方案就是合理分配连线的weigh</li>
+<li>该算法只是一个聚类算法，只能提供结构特性，<ul>
+<li>异常结构。如高密度节点，但是有可能只是正常的特征，如热门搜索词</li>
+<li>使用标签数据—典型的用作弊率来标识异常社区</li>
+<li>使用异常检测—如使用多元高斯分布</li>
+</ul>
+</li>
+<li>在构建多层图时，整体图的Modularity应当会收敛到一个值（从0—1）</li>
+</ul>
+<h3 id="尾巴：使用Gephi可视化图分析"><a href="#尾巴：使用Gephi可视化图分析" class="headerlink" title="尾巴：使用Gephi可视化图分析"></a>尾巴：使用Gephi可视化图分析</h3><p>图可视化方法是我们在开发测试和效果验证的重要手段，调研了如下，对于巨型图（百万节点）的可视化问题（也叫多分辨率显示）没有太好的现成工具。下面是一些少量顶点的图可视化工具，其中最最常见的，也是在图的论文中广泛使用来展示实验效果的工具就是gephi。</p>
+<ul>
+<li><p><a href="https://gephi.org/" target="_blank" rel="noopener">gephi</a>：最常用工具，跨平台</p>
+<ul>
+<li>优点：图形操作界面，用的人多很多教程，自带很多算法，基本很多图算法论文都用他来画图</li>
+<li>缺点：数据量支持少，10000以内节点可视化</li>
+</ul>
+</li>
+<li><p><a href="https://graph-tool.skewed.de/" target="_blank" rel="noopener">graph-tool</a>：一个py的库</p>
+<ul>
+<li>优点：c++实现，高效，据说几十万没问题，可以当库用</li>
+<li>缺点：没用过，待测试</li>
+</ul>
+</li>
+<li><p><a href="https://github.com/graphistry/pygraphistry" target="_blank" rel="noopener">pygraphistry</a></p>
+<ul>
+<li>优点：云平台gpu渲染，用d3显示，几百万节点没问题，可以在notebook里面直接用（py库）</li>
+<li>缺点：在线工具，要联网</li>
+</ul>
+</li>
+<li>其他有论文将multi resolution的方案来显示大规模图（使用分层的tree架构展现图，类似googleearch？），但是没找到现成的软件</li>
+</ul>
+<p>使用Gephi来运行louvain算法的简单可视化教程如下：</p>
+<ol>
+<li>导入数据，数据格式，为tsv，即tab分隔的边</li>
+</ol>
+<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g5c6g6p97xj31b00u0gsz.jpg" alt></p>
+<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g5c6in36jjj31bv0u0jth.jpg" alt></p>
+<ol>
+<li>点击右侧，模块化的运行按钮启动运行算法</li>
+</ol>
+<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g5c6rfj4gtj31c40u042j.jpg" alt></p>
+<ol>
+<li>此时在数据页面出现新的一列，表示分类结果</li>
+</ol>
+<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g5c6spe2zhj31c40u0jtg.jpg" alt></p>
+<ol>
+<li>在图中展示结果，给节点上色</li>
+</ol>
+<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g5c6udr28oj31c40u042x.jpg" alt></p>
+<ol>
+<li>挑选一直算法尝试调整图的布局分布</li>
+</ol>
+<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1g5c6vjgvtdj31ch0u0wim.jpg" alt></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>参考文档：</p>
+<ul>
+<li><a href="https://www.cnblogs.com/bonelee/p/6211290.html" target="_blank" rel="noopener">Neo4j图数据库简介和底层原理</a></li>
+<li><a href="https://github.com/shijinkui/spark_study/blob/master/spark_graphx_analyze.markdown" target="_blank" rel="noopener">https://github.com/shijinkui/spark_study/blob/master/spark_graphx_analyze.markdown</a></li>
+<li><a href="https://blog.csdn.net/itplus/article/details/9286905" target="_blank" rel="noopener">https://blog.csdn.net/itplus/article/details/9286905</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+            <div class="social-item">
+              <a target="_blank" class="social-link" href="https://t.me/mltalk">
+                <span class="icon">
+                  <i class="fa fa-telegram"></i>
+                </span>
+
+                <span class="label">机器学习碎碎念</span>
+              </a>
+            </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Spark/" rel="tag"># Spark</a>
+              <a href="/tags/算法/" rel="tag"># 算法</a>
+              <a href="/tags/图分析/" rel="tag"># 图分析</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/03/24/ml-notes-about-andrewng/" rel="prev" title="机器学习学习笔记-AndrewNg公开课">
+      <i class="fa fa-chevron-left"></i> 机器学习学习笔记-AndrewNg公开课
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#图基本概念与算法"><span class="nav-number">1.</span> <span class="nav-text">图基本概念与算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#图的表示方法"><span class="nav-number">1.1.</span> <span class="nav-text">图的表示方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#图算法综述"><span class="nav-number">1.2.</span> <span class="nav-text">图算法综述</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#遍历寻路"><span class="nav-number">1.2.1.</span> <span class="nav-text">遍历寻路</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#中心点"><span class="nav-number">1.2.2.</span> <span class="nav-text">中心点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#聚类与社区发现"><span class="nav-number">1.2.3.</span> <span class="nav-text">聚类与社区发现</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分布式图分析"><span class="nav-number">2.</span> <span class="nav-text">分布式图分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#分布式图的存储"><span class="nav-number">2.1.</span> <span class="nav-text">分布式图的存储</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#图存储的基本方法"><span class="nav-number">2.1.1.</span> <span class="nav-text">图存储的基本方法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Spark中的图存储"><span class="nav-number">2.1.2.</span> <span class="nav-text">Spark中的图存储</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分布式图计算模型"><span class="nav-number">2.2.</span> <span class="nav-text">分布式图计算模型</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#BSP模型的传统实现"><span class="nav-number">2.2.1.</span> <span class="nav-text">BSP模型的传统实现</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Spark-Graphx中BSP模型的实现"><span class="nav-number">2.2.2.</span> <span class="nav-text">Spark Graphx中BSP模型的实现</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#部分图算法的分布式实现举例"><span class="nav-number">2.3.</span> <span class="nav-text">部分图算法的分布式实现举例</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#社区发现算法"><span class="nav-number">3.</span> <span class="nav-text">社区发现算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#社区发现是什么"><span class="nav-number">3.1.</span> <span class="nav-text">社区发现是什么</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#社区发现算法系列"><span class="nav-number">3.2.</span> <span class="nav-text">社区发现算法系列</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#算法分类"><span class="nav-number">3.2.1.</span> <span class="nav-text">算法分类</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#效果评估-Modularity"><span class="nav-number">3.2.2.</span> <span class="nav-text">效果评估-Modularity</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#常见算法"><span class="nav-number">3.2.3.</span> <span class="nav-text">常见算法</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#社区发现算法实现-Louvain实现"><span class="nav-number">3.3.</span> <span class="nav-text">社区发现算法实现-Louvain实现</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#DGA库介绍与源码"><span class="nav-number">3.3.1.</span> <span class="nav-text">DGA库介绍与源码</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Louvain-Modularity算法源码分析与导读"><span class="nav-number">3.3.2.</span> <span class="nav-text">Louvain Modularity算法源码分析与导读</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#DGA库优化与Bug分析"><span class="nav-number">3.3.3.</span> <span class="nav-text">DGA库优化与Bug分析</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Louvain算法应用思考"><span class="nav-number">3.3.4.</span> <span class="nav-text">Louvain算法应用思考</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#尾巴：使用Gephi可视化图分析"><span class="nav-number">4.</span> <span class="nav-text">尾巴：使用Gephi可视化图分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">limuzhi</p>
+  <div class="site-description" itemprop="description">something about tech, android etc...</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muzhi1991" title="GitHub → https://github.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:muzhi1991@gmail.com" title="E-Mail → mailto:muzhi1991@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/muzhi1991" title="Twitter → https://twitter.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.chenyupeng.com/" title="https://www.chenyupeng.com/" rel="noopener" target="_blank">陈玉鹏的个人空间</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://macshuo.com/" title="http://macshuo.com/" rel="noopener" target="_blank">MacTalk</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">limuzhi</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'G5HLDFmPsllxIjax4F2JTLnl-gzGzoHsz',
+      appKey     : 'A5PTgbvpJwjPlcBJ3Brl8rDs',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

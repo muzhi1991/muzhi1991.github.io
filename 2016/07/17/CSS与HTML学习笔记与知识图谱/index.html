@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="概述 css 与html的职责 html负责内容 css负责布局和修饰（背景等）      所以不推荐用html布局（如表格布局）和设置颜色背景等">
+<meta name="keywords" content="html,css,web开发">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CSS与HTML学习笔记与知识图谱">
+<meta property="og:url" content="http://limuzhi.com/2016/07/17/CSS与HTML学习笔记与知识图谱/index.html">
+<meta property="og:site_name" content="Night Piece">
+<meta property="og:description" content="概述 css 与html的职责 html负责内容 css负责布局和修饰（背景等）      所以不推荐用html布局（如表格布局）和设置颜色背景等">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://www.w3school.com.cn/i/ct_css_boxmodel_example.gif">
+<meta property="og:updated_time" content="2020-02-25T09:44:15.420Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CSS与HTML学习笔记与知识图谱">
+<meta name="twitter:description" content="概述 css 与html的职责 html负责内容 css负责布局和修饰（背景等）      所以不推荐用html布局（如表格布局）和设置颜色背景等">
+<meta name="twitter:image" content="http://www.w3school.com.cn/i/ct_css_boxmodel_example.gif">
+
+<link rel="canonical" href="http://limuzhi.com/2016/07/17/CSS与HTML学习笔记与知识图谱/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>CSS与HTML学习笔记与知识图谱 | Night Piece</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Night Piece</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">white && black</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tools">
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-wrench"></i>利器</a>
+
+  </li>
+        <li class="menu-item menu-item-read">
+
+    <a href="/read/" rel="section"><i class="fa fa-fw fa-book"></i>阅读</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://limuzhi.com/2016/07/17/CSS与HTML学习笔记与知识图谱/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="limuzhi">
+      <meta itemprop="description" content="something about tech, android etc...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Night Piece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          CSS与HTML学习笔记与知识图谱
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-07-17 14:14:44" itemprop="dateCreated datePublished" datetime="2016-07-17T14:14:44+08:00">2016-07-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-25 17:44:15" itemprop="dateModified" datetime="2020-02-25T17:44:15+08:00">2020-02-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/全栈/" itemprop="url" rel="index"><span itemprop="name">全栈</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2016/07/17/CSS与HTML学习笔记与知识图谱/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2016/07/17/CSS与HTML学习笔记与知识图谱/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><ul>
+<li>css 与html的职责<ul>
+<li>html负责内容</li>
+<li>css负责<strong>布局</strong>和修饰（背景等）</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p> 所以不推荐用html布局（如表格布局）和设置颜色背景等</p>
+</blockquote>
+<ul>
+<li>学习内容<ul>
+<li>w3cschool教程</li>
+<li><a href="http://zh.learnlayout.com/toc.html" target="_blank" rel="noopener">css</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="知识图谱"><a href="#知识图谱" class="headerlink" title="知识图谱"></a>知识图谱</h2><p><a href="/files/HTML与CSS知识图谱.mindnode">下载mindnode图谱</a></p>
+<h2 id="浏览器常识"><a href="#浏览器常识" class="headerlink" title="浏览器常识"></a>浏览器常识</h2><ul>
+<li><p>URL 编码</p>
+<ul>
+<li>scheme://host.domain:port/path/filename  www是host，默认主机名</li>
+<li>URL 只能使用 ASCII 字符集来通过因特网进行发送。</li>
+<li>由于 URL 常常会包含 ASCII 集合之外的字符，URL 必须转换为有效的 ASCII 格式。</li>
+<li>URL 编码使用 “%” 其后跟随两位的十六进制数来替换非 ASCII 字符。</li>
+<li>URL 不能包含空格。URL 编码通常使用 + 来替换空格。</li>
+</ul>
+</li>
+<li><p>cookies的主要作用：server用来传送数据，保持状态的，不是client用的。</p>
+</li>
+<li><p>登录问题</p>
+<ul>
+<li><p>登录：认证方式<br>可以对比一下三种认证方式的区别，这也是很基础的事情了 </p>
+<ol>
+<li><p>basic auth<br>没有安全性可言，完全依赖 https，并且每次请求都需要传递密码，是最不安全的 </p>
+</li>
+<li><p>session<br>一般需要 basic auth 或其它 auth 方式先进行身份认证后才能建立，和 basic auth 一样没有什么安全性可言，需要 https 保障，只不过避免了每次传递密码（忽略服务器端状态这点特性）<br><strong>服务端更具sessionId缓存信息</strong></p>
+</li>
+<li><p>oauth （jwt的原理？）<br>部分是为了解决 basic auth 的安全问题而设计的，但是要复杂很多，即使没有https也能保证基本的安全，数据包被监听后不能防止信息泄露，但可以防止信息伪造，包括重放攻击。<strong>用于无状态的restful API设计？原来session的缓存放在客户端本地！</strong></p>
+</li>
+<li><p>jwt<br><a href="http://www.jianshu.com/p/576dbf44b2ae" target="_blank" rel="noopener">http://www.jianshu.com/p/576dbf44b2ae</a></p>
+</li>
+</ol>
+<p><a href="http://www.cnblogs.com/xiekeli/p/5607107.html" target="_blank" rel="noopener">http://www.cnblogs.com/xiekeli/p/5607107.html</a></p>
+<p>待研究<a href="http://blog.rainy.im/2015/06/10/react-jwt-pretty-good-practice/" target="_blank" rel="noopener">http://blog.rainy.im/2015/06/10/react-jwt-pretty-good-practice/</a></p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="HTML"><a href="#HTML" class="headerlink" title="HTML"></a>HTML</h2><ul>
+<li>参考思维导图学习</li>
+</ul>
+<ul>
+<li><a href="http://www.w3school.com.cn/html/html_head.asp" target="_blank" rel="noopener">html头部meta的作用</a><ul>
+<li>设置中午，支持编码 <code>&lt;meta charset=&quot;UTF-8&quot;&gt;</code></li>
+<li>一些描述<ul>
+<li><code>&lt;meta name=&quot;keywords&quot; content=&quot;HTML, CSS, XML&quot; /&gt;</code></li>
+<li><code>&lt;meta name=&quot;description&quot; content=&quot;Free Web tutorials on HTML, CSS, XML&quot; /&gt;</code></li>
+</ul>
+</li>
+<li>style，内置css</li>
+<li>link引入css <code>&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;./style.css&quot; /&gt;</code></li>
+<li>js 引入 <code>&lt;script src=&quot;//code.jquery.com/jquery-1.11.3.min.js&quot;&gt;&lt;/script&gt;</code></li>
+</ul>
+</li>
+<li>HTML 实体<br>&amp;entity_name;或者&amp;#entity_number;</li>
+</ul>
+<h3 id="HTML5"><a href="#HTML5" class="headerlink" title="HTML5:"></a>HTML5:</h3><ul>
+<li>video autdio location</li>
+<li>drag</li>
+<li>canvas svg</li>
+<li>localstorage/sessionstorage vs cookies</li>
+<li>app cache</li>
+<li>work thread</li>
+<li><a href="http://stackoverflow.com/questions/5195452/websockets-vs-server-sent-events-eventsource" target="_blank" rel="noopener">server send event vs websocket</a></li>
+<li><p>一些表单form的属性，帮助写表单</p>
+<p>​</p>
+</li>
+</ul>
+<h2 id="CSS"><a href="#CSS" class="headerlink" title="CSS"></a>CSS</h2><p>参考这个<a href="http://zh.learnlayout.com/toc.html" target="_blank" rel="noopener">css</a></p>
+<ul>
+<li>CSS 对大小写不敏感,但是class 和 id 名称对大小写是敏感的</li>
+<li>根据 CSS，子元素从父元素继承属性（body里面的元素自动使用body的样式）。但可能有兼容问题。此外，背景属性都不能继承。</li>
+<li>引入css的三种方式和优先级</li>
+<li><p>CSS选择器</p>
+<ul>
+<li>区分几种情况：空格，逗号，连着写<ul>
+<li><code>div #id</code> <code>p .div</code> <code>.classone .classtwo</code></li>
+<li><code>div#id</code>  <code>p.div</code>  <code>.classone.classtwo</code></li>
+<li><code>#id div</code> <code>.div p</code></li>
+<li><code>div,#id</code> <code>p,.div</code></li>
+<li><code>#id,div</code> <code>.div,p</code></li>
+</ul>
+</li>
+<li><p>一个标签有多个class <code>&lt;p class=&quot;important warning&quot;&gt;hello&lt;/p&gt;</code></p>
+</li>
+<li><p>上下文选择器（派生选择器）：依据元素在其位置的上下文关系来定义样式,<strong>层次间隔可以是无限的</strong>。必须用<code>空格</code>分割，例子： </p>
+<ul>
+<li><code>li strong{}</code> //li中的strong标签</li>
+</ul>
+</li>
+<li>id选择器<ul>
+<li><code>#myid{}</code> </li>
+<li><code>#sidebar p {}</code> //上下文选择器+id选择器</li>
+<li><code>div#sidebar{}</code> //<strong>div且id为xx的</strong>,区分<code>div #sidebar{}</code> div内部有#sidebar的</li>
+</ul>
+</li>
+<li>类选择器，类名的第一个字符不能使用数字<ul>
+<li><code>.className</code></li>
+<li><code>.fancy td{}</code> //上下文选择器+类选择器</li>
+<li><code>td.fancy{}</code>//<strong>td且是facncy类</strong>,区分<code>td .fancy{}</code></li>
+</ul>
+</li>
+<li>属性选择器：用于选择那些没有id也没有class的标签<ul>
+<li><code>[title]{}</code> 有title的元素</li>
+<li><code>[title=hello]{}</code>有title值仅等于hello的元素</li>
+<li><code>[title~=hello]{}</code>有title值等于hello的元素，可以有空格分割如<code>&lt;div title=&quot;hello world&quot;&gt;&lt;div&gt;</code></li>
+<li><code>[title|=hello]{}</code>有title值等于hello的元素，可以有-分割如<code>&lt;div title=&quot;hello-world&quot;&gt;&lt;div&gt;</code></li>
+<li>与其他选择器结合</li>
+</ul>
+</li>
+<li>类选择器还是 ID 选择器？<ul>
+<li>只能在文档中使用一次</li>
+<li>不能使用 ID 词列表,既一个元素不能有多个id</li>
+<li>ID 能包含更多含义，指定业务含义</li>
+</ul>
+</li>
+<li><strong>伪类</strong><ul>
+<li><code>selector : pseudo-class {property: value}</code></li>
+<li><code>selector.class : pseudo-class {property: value}</code></li>
+<li><code>a:visited {color: #00FF00}</code></li>
+<li><code>p:first-child {font-weight: bold;}</code> <strong>选择p作为第一个child时的那个p，不是选择p的第一个child</strong></li>
+<li><code>p &gt; i:first-child {font-weight:bold;}</code>选择作为p的第一个直接子元素的i。<strong>从做到右来理解表达式!</strong></li>
+<li>:lang 伪类使你有能力为不同的语言定义特殊的规则</li>
+</ul>
+</li>
+<li>伪元素<ul>
+<li><code>selector:pseudo-element {property:value;}</code></li>
+<li><code>selector.class:pseudo-element {property:value;}</code></li>
+<li>与伪类区分，它园中的是冒号后面的</li>
+<li>p:first-line{color:#ff0000;} 选择p的第一行文字</li>
+<li>:first-letter</li>
+<li>h1:before{content:url(logo.gif);} 在h1前插入内容，类似的:after</li>
+</ul>
+</li>
+<li>子元素选择器：不是选择任意的后代元素，而是只选择某个元素的子元素。<ul>
+<li><code>h1 &gt; strong</code></li>
+</ul>
+</li>
+<li><p>相邻兄弟选择器：可选择紧接在另一元素<strong>后的元素</strong>，且二者有相同父元素。</p>
+<ul>
+<li><code>h1 + p {margin-top:50px;}</code>：选择紧接在 h1 元素后出现的段落p。</li>
+</ul>
+<p>​</p>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>CSS样式 一些惯例用法</p>
+<ul>
+<li><p>设置body的字体与字号,em单位的使用</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">body &#123;font-size:100%;&#125;</span><br><span class="line">h1 &#123;font-size:3.75em;&#125;</span><br><span class="line">h2 &#123;font-size:2.5em;&#125;</span><br><span class="line">p &#123;font-size:0.875em;&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>链接相关的选择器</p>
+<ul>
+<li>a:link - 普通的、未被访问的链接</li>
+<li>a:visited - 用户已访问的链接</li>
+<li>a:hover - 鼠标指针位于链接的上方</li>
+<li>a:active - 链接被点击的时刻</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>CSS框模型：padding,margin，content是什么</p>
+<ul>
+<li>元素组成:内容，内边距（padding），边框(border)，外边距(padding)</li>
+<li>与android不同的是<strong>padding和边框不算在内容区域width/height中</strong>(IE5,6是这样的）</li>
+<li>背景应用在在边框内（content+padding），下面红色虚线<br><img src="http://www.w3school.com.cn/i/ct_css_boxmodel_example.gif" alt></li>
+<li>外边距可以是负值，而且在很多情况下都要使用负值的外边距。</li>
+<li>由于 border-style 的默认值是 none，如果希望边框出现，就必须声明一个边框样式。</li>
+<li>一个奇怪的性质：外边距合并，仅仅在垂直方向</li>
+</ul>
+</li>
+<li><p><a href="http://www.w3school.com.cn/css/css_positioning.asp" target="_blank" rel="noopener">CSS布局与定位</a></p>
+<ul>
+<li>一切皆为框：块框(display:block，如p)，行内框(display:inline，如span)，无名框，行框（如，文本的一行）<ul>
+<li>一行形成的水平框称为行框（Line Box），行框的高度总是足以容纳它包含的所有行内框，设置行高可以增加这个框的高度。<ul>
+<li>行内框会导致一些css属性失效，如高度</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>三种定位方式：<ul>
+<li>普通流（默认）：position:static，不会重叠</li>
+<li>绝对定位：原来的占位不保留，改变结构。定位后可能重叠。<ul>
+<li>position:absolute 相对于<strong>最近的已定位祖先元素</strong>（不是static的父亲，一直到body）</li>
+<li>position:fix 相对于整个视窗，效果：滚动页面定位不动。</li>
+</ul>
+</li>
+<li>相对定位：position:relative就是static加上偏移值，原来的占位还保留，不改变结构。偏移之后可能重叠</li>
+<li>浮动：最常用的手段，左右浮动，文字框重叠，文字不会重叠，文字环绕<ul>
+<li>float</li>
+<li>clear</li>
+<li>一个demo <a href="http://www.w3school.com.cn/tiy/t.asp?f=csse_float6" target="_blank" rel="noopener">http://www.w3school.com.cn/tiy/t.asp?f=csse_float6</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>CSS3新特性</p>
+<ul>
+<li>flex布局：<a href="http://www.ruanyifeng.com/blog/2015/07/flex-grammar.html" target="_blank" rel="noopener">http://www.ruanyifeng.com/blog/2015/07/flex-grammar.html</a><ul>
+<li>Flex布局以后，子元素的<code>float</code>、<code>clear</code>和<code>vertical-align</code>属性将失效。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>坑：</p>
+<ul>
+<li>css中忘了加分号，导致属性不起作用</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+            <div class="social-item">
+              <a target="_blank" class="social-link" href="https://t.me/mltalk">
+                <span class="icon">
+                  <i class="fa fa-telegram"></i>
+                </span>
+
+                <span class="label">机器学习碎碎念</span>
+              </a>
+            </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/html/" rel="tag"># html</a>
+              <a href="/tags/css/" rel="tag"># css</a>
+              <a href="/tags/web开发/" rel="tag"># web开发</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/07/03/全沾Growth工程师学习计划/" rel="prev" title="全沾Growth工程师学习计划">
+      <i class="fa fa-chevron-left"></i> 全沾Growth工程师学习计划
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2016/07/17/JavaScript语言学习笔记与知识图谱/" rel="next" title="JavaScript语言学习笔记与知识图谱">
+      JavaScript语言学习笔记与知识图谱 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#知识图谱"><span class="nav-number">2.</span> <span class="nav-text">知识图谱</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#浏览器常识"><span class="nav-number">3.</span> <span class="nav-text">浏览器常识</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HTML"><span class="nav-number">4.</span> <span class="nav-text">HTML</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HTML5"><span class="nav-number">4.1.</span> <span class="nav-text">HTML5:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CSS"><span class="nav-number">5.</span> <span class="nav-text">CSS</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">limuzhi</p>
+  <div class="site-description" itemprop="description">something about tech, android etc...</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muzhi1991" title="GitHub → https://github.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:muzhi1991@gmail.com" title="E-Mail → mailto:muzhi1991@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/muzhi1991" title="Twitter → https://twitter.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.chenyupeng.com/" title="https://www.chenyupeng.com/" rel="noopener" target="_blank">陈玉鹏的个人空间</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://macshuo.com/" title="http://macshuo.com/" rel="noopener" target="_blank">MacTalk</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">limuzhi</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'G5HLDFmPsllxIjax4F2JTLnl-gzGzoHsz',
+      appKey     : 'A5PTgbvpJwjPlcBJ3Brl8rDs',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

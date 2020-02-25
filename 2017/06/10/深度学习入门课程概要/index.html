@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="人工智能的未来世界令人神往。当我看到媒体上各种神乎其神的报道，作为一名咸鱼程序员时不时有这样的冲动：What the fuck it is？与此同时，与『人工智能』这个热点伴随出现的是『深度学习』、『机器学习』这些不明觉厉的玩意。甚至在圈内交流（chuiniubi）的时候言必谈XX学习。为了可以跟上时代的脚步，储备知识能力（可以一起chui），今年我又一次开始入门机器学习/深度学习之旅。本文是我最">
+<meta name="keywords" content="机器学习,深度学习">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深度学习入门概要">
+<meta property="og:url" content="http://limuzhi.com/2017/06/10/深度学习入门课程概要/index.html">
+<meta property="og:site_name" content="Night Piece">
+<meta property="og:description" content="人工智能的未来世界令人神往。当我看到媒体上各种神乎其神的报道，作为一名咸鱼程序员时不时有这样的冲动：What the fuck it is？与此同时，与『人工智能』这个热点伴随出现的是『深度学习』、『机器学习』这些不明觉厉的玩意。甚至在圈内交流（chuiniubi）的时候言必谈XX学习。为了可以跟上时代的脚步，储备知识能力（可以一起chui），今年我又一次开始入门机器学习/深度学习之旅。本文是我最">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-02-25T09:44:15.462Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深度学习入门概要">
+<meta name="twitter:description" content="人工智能的未来世界令人神往。当我看到媒体上各种神乎其神的报道，作为一名咸鱼程序员时不时有这样的冲动：What the fuck it is？与此同时，与『人工智能』这个热点伴随出现的是『深度学习』、『机器学习』这些不明觉厉的玩意。甚至在圈内交流（chuiniubi）的时候言必谈XX学习。为了可以跟上时代的脚步，储备知识能力（可以一起chui），今年我又一次开始入门机器学习/深度学习之旅。本文是我最">
+
+<link rel="canonical" href="http://limuzhi.com/2017/06/10/深度学习入门课程概要/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>深度学习入门概要 | Night Piece</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Night Piece</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">white && black</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tools">
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-wrench"></i>利器</a>
+
+  </li>
+        <li class="menu-item menu-item-read">
+
+    <a href="/read/" rel="section"><i class="fa fa-fw fa-book"></i>阅读</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://limuzhi.com/2017/06/10/深度学习入门课程概要/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="limuzhi">
+      <meta itemprop="description" content="something about tech, android etc...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Night Piece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          深度学习入门概要
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-06-10 15:42:20" itemprop="dateCreated datePublished" datetime="2017-06-10T15:42:20+08:00">2017-06-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-25 17:44:15" itemprop="dateModified" datetime="2020-02-25T17:44:15+08:00">2020-02-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2017/06/10/深度学习入门课程概要/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2017/06/10/深度学习入门课程概要/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>人工智能的未来世界令人神往。当我看到媒体上各种神乎其神的报道，作为一名咸鱼程序员时不时有这样的冲动：What the fuck it is？与此同时，与『人工智能』这个热点伴随出现的是『<a href="https://zh.wikipedia.org/wiki/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0" target="_blank" rel="noopener">深度学习</a>』、『<a href="https://zh.wikipedia.org/wiki/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0" target="_blank" rel="noopener">机器学习</a>』这些不明觉厉的玩意。甚至在圈内交流（chuiniubi）的时候言必谈XX学习。为了可以跟上时代的脚步，储备知识能力（可以一起chui），今年我<strong>又一次</strong>开始入门<del>机器学习</del>/深度学习之旅。本文是我最近学习内容的概括。</p>
+<h2 id="前传"><a href="#前传" class="headerlink" title="前传"></a>前传</h2><p>这是或许是我第N次试图入门机器学习。大约三年前，当我试图打开这扇大门时，发现找到一份能看懂的资料十分困难。于是，我潜心搜索入门资料，当时最火的入门资料是Andrew Ng的视频：<a href="https://www.coursera.org/learn/machine-learning" target="_blank" rel="noopener">斯坦福机器学习课程</a>。 这门课现在依旧是很多人的入门首选，可是当课程讲到反向传播推导各种微积分的时候，我没能坚持下来。我更习惯从书本学习入门知识，便开始寻找一本最基础的入门的书籍。皇天不负有心人，终于在国外一个热门的<a href="http://machinelearningmastery.com/best-machine-learning-resources-for-getting-started/" target="_blank" rel="noopener">机器学习入门帖子</a>中发现了一本好书《集体智慧编程》(Programming Collective Intelligence)，如获至宝。全书使用Python作为开发语言，讲解了机器学习的基本概念，没有数学公式，侧重实践与代码。可惜的是，这本书也因为一些自身原因半途而废了。</p>
+<blockquote>
+<p>PS：那个帖子的作者是Jason Brownlee，一个国外出名的机器学习传道者。他的这篇帖子的2017年的相关更新<a href="http://machinelearningmastery.com/machine-learning-books/" target="_blank" rel="noopener">Machine Learning Books </a>，在国内有很多媒体<a href="https://www.leiphone.com/news/201701/rxHljWvlNxOzPKI5.html" target="_blank" rel="noopener">转载翻译</a>，总结了一下比较流行的机器学习相关书籍。</p>
+</blockquote>
+<p>似乎我的机器学习之旅就此结束了。然而近年来人工智能大火，更重要的是工作上又与这些东西产生了诸多交集，我想是时候也有必要再次开始新的学习了。正当我准备重新拿起那本落灰的《集体智慧编程》之时，在Twitter上候偶然发现阮一峰老师推荐了一门Udacity在线收费课程《<a href="https://cn.udacity.com/course/deep-learning-nanodegree-foundation--nd101/" target="_blank" rel="noopener">深度学习</a>》。心想借此机会，体验一下这种新式的教育模式，同时也给自己一点压力把这事搞定。于是，在2017新年前报名了这门课程。（PS：当时连深度学习是什么都不知道😂，以为是机器学习的时髦名字）</p>
+<p>经过4个月的学习，基本了解了什么是深度学习，它的基本原理，具有哪些能力与应用以及最新的一些成果。同时，完成了几个实践项目。虽然这些都很初级😂，但是，总的而言让我入门了这领域，并且知道下一步如何走，也算是对技术去魅的过程。</p>
+<h2 id="概要"><a href="#概要" class="headerlink" title="概要"></a>概要</h2><p>我从深度学习在计算机科学中的地位，深度学习的具体内容与知识，以及深度学习入门之后如何深入的角度来谈一下问的认识。</p>
+<h3 id="在哪里？"><a href="#在哪里？" class="headerlink" title="在哪里？"></a>在哪里？</h3><p>深度学习是什么，他与机器学习，人工智能是什么关系？这是首要需要解决的问题。最基本的答案是：人工智能&gt;机器学习&gt;深度学习，后者是前者的<strong>子集</strong>。</p>
+<ul>
+<li>人工智能：分为强人工智能与弱人工智能。『智能』本身就很难定义，我们可以这样简单地认为：当前所有的所谓智能算法<strong>都是弱人工智能</strong>。因为，强人工智能的实现包括且不限于推理、自我意识等等这些暂时无法解决的问题。实现弱人工智能的方法有很多，机器学习是其中之一。<ul>
+<li>符号逻辑（<strong>规则引擎</strong>、专家系统和知识图谱）</li>
+<li><strong>进化算法</strong></li>
+<li><strong>贝叶斯统计</strong></li>
+<li>机器学习</li>
+</ul>
+</li>
+<li>机器学习：机器学习是现在人工智能的主要研究方向。机器学习从学习样本的特点来分类可以分为监督学习（有标注），无监督学习（无标注），半监督（部分标注），强化学习（没有样本）。在<a href="https://zh.wikipedia.org/wiki/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0#.E7.AE.97.E6.B3.95" target="_blank" rel="noopener">实现算法</a>上有：<ul>
+<li>决策树</li>
+<li><a href="https://zh.wikipedia.org/wiki/%E6%94%AF%E6%8C%81%E5%90%91%E9%87%8F%E6%9C%BA" target="_blank" rel="noopener">支持向量机</a></li>
+<li><a href="https://zh.wikipedia.org/wiki/%E8%81%9A%E7%B1%BB" target="_blank" rel="noopener">聚类</a></li>
+<li>人工神经网络：如第一个人工神经网络-感知器（<a href="http://www.cnblogs.com/subconscious/p/5058741.html" target="_blank" rel="noopener">感知器与神经网络</a>）</li>
+<li><a href="https://zh.wikipedia.org/wiki/%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB%E9%93%BE" target="_blank" rel="noopener">马尔可夫链</a></li>
+<li>等等</li>
+</ul>
+</li>
+<li>神经网络：机器学习算法的一种。</li>
+<li>深度学习：对机器学习中神经网络算法的优化与发展。近年来计算性能（GPU）的快速提升，互联网大量数据的产生，使得深度学习成为可能。同时，使用深度学习算法在诸多任务中均取得了耀眼的成绩（图像识别，自然语言处理），使它成为最火热的研究方向。</li>
+</ul>
+<p>因此，<strong>学习深度学习，必须先了解机器学习中的人工神经网络</strong>（神经元，感知器等）。我们通过这一步步引出近些年快速发展的深度学习，这是课程学习的主要内容。</p>
+<blockquote>
+<p>参考文章：<a href="https://deeplearning4j.org/cn/ai-machinelearning-deeplearning" target="_blank" rel="noopener">人工智能、机器学习与深度学习</a></p>
+</blockquote>
+<h3 id="学习内容"><a href="#学习内容" class="headerlink" title="学习内容"></a>学习内容</h3><p>深度学习入门主要分为下面几个部分</p>
+<h4 id="开发环境与工具"><a href="#开发环境与工具" class="headerlink" title="开发环境与工具"></a>开发环境与工具</h4><ul>
+<li>Conda：Python环境管理工具</li>
+<li>Jupyter Notebook：python开发笔记本，记录数据科学过程</li>
+<li>Python3：基本语言，课程基本使用Python3实现代码</li>
+<li>开发使用的python库<ul>
+<li>基础库<ul>
+<li>numpy</li>
+<li>scipy</li>
+</ul>
+</li>
+<li>机器学习库<ul>
+<li><strong>TensorFlow</strong> 重点</li>
+<li>sklearn</li>
+</ul>
+</li>
+<li>其他备用库<ul>
+<li>keras</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="神经网络-深度神经网络DNN"><a href="#神经网络-深度神经网络DNN" class="headerlink" title="神经网络/深度神经网络DNN"></a>神经网络/深度神经网络DNN</h4><ul>
+<li>初次接触：了解深度学习的应用与常见的github项目举例</li>
+<li>机器学习的基本模型<ul>
+<li>回归模型—线性回归&amp;&amp;逻辑回归</li>
+<li>感知器：</li>
+<li>神经网络入门：梯度下降&amp;&amp;BP</li>
+<li>project：手动编写神经网络</li>
+</ul>
+</li>
+<li>模型评估与验证</li>
+<li>神经网络进阶<ul>
+<li>神经网络简单应用：初级情感分析</li>
+<li>神经网络相关的开发库<ul>
+<li>TFLearn</li>
+<li>TensorFlow<ul>
+<li>原理：MiniFlow</li>
+<li>入门与API应用</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>使用AWS/FloydHub在云端训练神经网络</li>
+</ul>
+</li>
+<li>深度神经网络<ul>
+<li>简介</li>
+<li>在TensorFlow中实现</li>
+<li>正则化</li>
+</ul>
+</li>
+</ul>
+<h4 id="卷积神经网络CNN"><a href="#卷积神经网络CNN" class="headerlink" title="卷积神经网络CNN"></a>卷积神经网络CNN</h4><ul>
+<li>CNN简介与原理<ul>
+<li>卷积<ul>
+<li>filter</li>
+<li>featuremap</li>
+</ul>
+</li>
+<li>weight sharing</li>
+<li>设置卷积参数</li>
+</ul>
+</li>
+<li>CNN可视化</li>
+<li>1*1 卷积 &amp;&amp; inception</li>
+<li>pool池化技术</li>
+<li>在TensorFlow中实现</li>
+<li>project： <a href="https://www.cs.toronto.edu/~kriz/cifar.html" target="_blank" rel="noopener">CIFAR-10 数据集</a> 图像分类</li>
+</ul>
+<h4 id="循环神经网络RNN"><a href="#循环神经网络RNN" class="headerlink" title="循环神经网络RNN"></a>循环神经网络RNN</h4><ul>
+<li>RNN入门&amp;&amp;LSTM</li>
+<li>Character-Wise RNN 讲解</li>
+<li>Embeding&amp;&amp; Word2Vec：Skip-gram</li>
+<li>神经网络的Debug：TensorBoard</li>
+<li>高级情感分析：使用RNN进行情绪预测（N to 1的RNN）</li>
+<li>project：使用RNN生成剧本（）</li>
+<li>seq2seq：翻译模型（N to N的RNN）</li>
+<li>project：法语与英语的翻译</li>
+</ul>
+<h4 id="对抗生成网络GAN"><a href="#对抗生成网络GAN" class="headerlink" title="对抗生成网络GAN"></a>对抗生成网络GAN</h4><ul>
+<li>生成对抗网络简介：使用MNIST数据模拟生成手写数字<ul>
+<li>应用&amp;&amp;思想（博弈论）</li>
+<li>入门<ul>
+<li>Generator</li>
+<li>Discriminator</li>
+</ul>
+</li>
+<li>构建网络（无卷积&amp;&amp;单层网络）</li>
+<li>训练</li>
+<li>改进：批归一化</li>
+</ul>
+</li>
+<li>深度卷积GAN：使用SVHN数据起生成门牌号<ul>
+<li>DCGAN架构介绍（在简单GAN中加入多层与卷积/反卷积）</li>
+<li>批归一化</li>
+<li>构建与训练</li>
+<li>应用：如何在半监督学习中应用</li>
+</ul>
+</li>
+<li>project：使用GAN生成人脸</li>
+</ul>
+<h4 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h4><ul>
+<li>迁移学习（第三章12课）：使用现成模型</li>
+<li>强化学习（第三章16课）：Q-learning算法，实现游戏agent</li>
+<li>自动编码器（第三章最后一课，第四章应用了该思想）<ul>
+<li>简单自动编码器</li>
+<li>卷积自动编码器<ul>
+<li>解决生成图像网格化问题</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>如何设置合理的HyperParameter</li>
+<li>半监督学习（新）</li>
+<li>siraj课程<ul>
+<li>神经网络</li>
+<li>情感分析</li>
+<li>数学</li>
+<li>数据准备</li>
+<li>图像分类</li>
+<li>股票预测</li>
+<li>艺术风格迁移学习</li>
+<li>音乐生成</li>
+<li>文本生成</li>
+<li>语言翻译</li>
+<li>聊天机器人</li>
+<li>强化学习</li>
+<li>图像生成</li>
+<li>视频生成</li>
+<li>在小样本上学习</li>
+</ul>
+</li>
+</ul>
+<h3 id="去哪儿？"><a href="#去哪儿？" class="headerlink" title="去哪儿？"></a>去哪儿？</h3><p>在知识宽度上，虽然深度学习在大部分任务中表现十分出色，但是<strong>机器学习中的其他算法</strong>依旧有很广泛的应用（如SVM等），可以学习这些内容：</p>
+<ul>
+<li>《集体智慧编程》：比较老，一些传统的机器学习方法</li>
+<li>《统计学习基础：数据挖掘、推理与预测》：比较学术理论一些</li>
+</ul>
+<p>在知识深度上，系统学习一下TextBook了解数学原理。了解最佳的应用实践。深度学习的在快速发展，各个子领域都有很多新的进展，专注某些领域，follow最新论文是必要的。</p>
+<ul>
+<li><a href="https://zhuanlan.zhihu.com/p/21930884" target="_blank" rel="noopener">CS231n:Convolutional Neural Networks for Visual Recognition</a>：视觉方向深入的好教程</li>
+<li><a href="http://www.deeplearningbook.org/" target="_blank" rel="noopener">Deep Learning Book</a>&amp;&amp;<a href="https://github.com/HFTrader/DeepLearningBook" target="_blank" rel="noopener">PDF版本</a>：MIT的DeepLearning教程</li>
+</ul>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>后续会按照本文的概要，详细介绍一下深度学习的各个方面。主要基于<a href="https://cn.udacity.com/course/deep-learning-nanodegree-foundation--nd101/" target="_blank" rel="noopener">Udacity的深度学习课程</a>，记录我学习中遇到的一些问题。深度学习是一门十分大的学问，入门不易，想要深入更需要大量时间与实践，本人只是接触几个月，说是完全入门都不敢，写作的目的一窥深度学习的神秘面纱，同时把疑惑与问题总结一下，与大家共勉。我对深度学习的认识还浮于表面，比较粗浅，行文中难免有错误，望不吝指出。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+            <div class="social-item">
+              <a target="_blank" class="social-link" href="https://t.me/mltalk">
+                <span class="icon">
+                  <i class="fa fa-telegram"></i>
+                </span>
+
+                <span class="label">机器学习碎碎念</span>
+              </a>
+            </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/机器学习/" rel="tag"># 机器学习</a>
+              <a href="/tags/深度学习/" rel="tag"># 深度学习</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/04/09/流式超越批量-Streaming 102翻译/" rel="prev" title="流式超越批量：Streaming 102翻译">
+      <i class="fa fa-chevron-left"></i> 流式超越批量：Streaming 102翻译
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/06/18/深度学习系列1-数据科学开发环境与工具/" rel="next" title="深度学习系列（一）——数据科学开发环境与工具">
+      深度学习系列（一）——数据科学开发环境与工具 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前传"><span class="nav-number">1.</span> <span class="nav-text">前传</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#概要"><span class="nav-number">2.</span> <span class="nav-text">概要</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#在哪里？"><span class="nav-number">2.1.</span> <span class="nav-text">在哪里？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#学习内容"><span class="nav-number">2.2.</span> <span class="nav-text">学习内容</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#开发环境与工具"><span class="nav-number">2.2.1.</span> <span class="nav-text">开发环境与工具</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#神经网络-深度神经网络DNN"><span class="nav-number">2.2.2.</span> <span class="nav-text">神经网络/深度神经网络DNN</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#卷积神经网络CNN"><span class="nav-number">2.2.3.</span> <span class="nav-text">卷积神经网络CNN</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#循环神经网络RNN"><span class="nav-number">2.2.4.</span> <span class="nav-text">循环神经网络RNN</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#对抗生成网络GAN"><span class="nav-number">2.2.5.</span> <span class="nav-text">对抗生成网络GAN</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#其他"><span class="nav-number">2.2.6.</span> <span class="nav-text">其他</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#去哪儿？"><span class="nav-number">2.3.</span> <span class="nav-text">去哪儿？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-number">3.</span> <span class="nav-text">小结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">limuzhi</p>
+  <div class="site-description" itemprop="description">something about tech, android etc...</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muzhi1991" title="GitHub → https://github.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:muzhi1991@gmail.com" title="E-Mail → mailto:muzhi1991@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/muzhi1991" title="Twitter → https://twitter.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.chenyupeng.com/" title="https://www.chenyupeng.com/" rel="noopener" target="_blank">陈玉鹏的个人空间</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://macshuo.com/" title="http://macshuo.com/" rel="noopener" target="_blank">MacTalk</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">limuzhi</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'G5HLDFmPsllxIjax4F2JTLnl-gzGzoHsz',
+      appKey     : 'A5PTgbvpJwjPlcBJ3Brl8rDs',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

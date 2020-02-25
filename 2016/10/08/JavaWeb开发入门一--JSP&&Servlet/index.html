@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="这一节主要介绍最基本的JavaWeb开发技术，流行的JavaWeb开发框架的底层都是Servlet与与JSP，因此了解他们是接下来学习的基础。参考资料如下：  极客学院的第一个章节，十分基本 一个台湾的资料，比较偏向实践  WEB开发基础">
+<meta name="keywords" content="JavaWeb,后端">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JavaWeb开发入门一--JSP&amp;&amp;Servlet">
+<meta property="og:url" content="http://limuzhi.com/2016/10/08/JavaWeb开发入门一--JSP&&Servlet/index.html">
+<meta property="og:site_name" content="Night Piece">
+<meta property="og:description" content="这一节主要介绍最基本的JavaWeb开发技术，流行的JavaWeb开发框架的底层都是Servlet与与JSP，因此了解他们是接下来学习的基础。参考资料如下：  极客学院的第一个章节，十分基本 一个台湾的资料，比较偏向实践  WEB开发基础">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/57427cf8gw1faejvlq3jtj20a80b474u.jpg">
+<meta property="og:image" content="http://hi.csdn.net/attachment/201008/26/0_1282804027HHcv.gif">
+<meta property="og:updated_time" content="2020-02-25T09:44:15.448Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JavaWeb开发入门一--JSP&amp;&amp;Servlet">
+<meta name="twitter:description" content="这一节主要介绍最基本的JavaWeb开发技术，流行的JavaWeb开发框架的底层都是Servlet与与JSP，因此了解他们是接下来学习的基础。参考资料如下：  极客学院的第一个章节，十分基本 一个台湾的资料，比较偏向实践  WEB开发基础">
+<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/57427cf8gw1faejvlq3jtj20a80b474u.jpg">
+
+<link rel="canonical" href="http://limuzhi.com/2016/10/08/JavaWeb开发入门一--JSP&&Servlet/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>JavaWeb开发入门一--JSP&&Servlet | Night Piece</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Night Piece</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">white && black</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tools">
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-wrench"></i>利器</a>
+
+  </li>
+        <li class="menu-item menu-item-read">
+
+    <a href="/read/" rel="section"><i class="fa fa-fw fa-book"></i>阅读</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://limuzhi.com/2016/10/08/JavaWeb开发入门一--JSP&&Servlet/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="limuzhi">
+      <meta itemprop="description" content="something about tech, android etc...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Night Piece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          JavaWeb开发入门一--JSP&&Servlet
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-10-08 12:17:00" itemprop="dateCreated datePublished" datetime="2016-10-08T12:17:00+08:00">2016-10-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-25 17:44:15" itemprop="dateModified" datetime="2020-02-25T17:44:15+08:00">2020-02-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2016/10/08/JavaWeb开发入门一--JSP&&Servlet/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2016/10/08/JavaWeb开发入门一--JSP&&Servlet/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>这一节主要介绍最基本的JavaWeb开发技术，流行的JavaWeb开发框架的底层都是Servlet与与JSP，因此了解他们是接下来学习的基础。参考资料如下：</p>
+<ul>
+<li><a href="http://wiki.jikexueyuan.com/project/java-web/00-02.html" target="_blank" rel="noopener">极客学院的第一个章节，十分基本</a></li>
+<li><a href="http://openhome.cc/Gossip/ServletJSP/index.html" target="_blank" rel="noopener">一个台湾的资料，比较偏向实践</a></li>
+</ul>
+<h2 id="WEB开发基础"><a href="#WEB开发基础" class="headerlink" title="WEB开发基础"></a>WEB开发基础</h2><h3 id="Servlet与JSP的功能与职责"><a href="#Servlet与JSP的功能与职责" class="headerlink" title="Servlet与JSP的功能与职责"></a>Servlet与JSP的功能与职责</h3><p>在JavaWeb的开发中，我们往往使用Servlet与JSP来实现应用服务器，他们是SpringMVC等其他Web技术的底层基础技术。其中Servlet是核心，<strong>JSP文件最终也会编译成Servlet</strong>。我们可以在JSP中写Java逻辑代码，调用数据库，绑定数据。但是实际项目开发时，应当职责清晰。<strong>Servlet偏向于实现Controller逻辑（Model层），而JSP仅仅用于展示页面数据的View层</strong>。由于JSP功能强大，过于复杂，往往导致代码逻辑混乱，在很多项目中要么只使用JSP的部分功能（如只有EL表达式展示数据），或者干脆代替JSP，选择其他的模板引擎，如Velocity等。</p>
+<h3 id="认识HTTP协议"><a href="#认识HTTP协议" class="headerlink" title="认识HTTP协议"></a>认识HTTP协议</h3><p>任何Web开发技术都无法避免学习Http协议，把握以下几点。</p>
+<ul>
+<li>应用层协议，基于Socket，TCP，完成可靠通讯</li>
+<li>由Header+Body组成</li>
+<li>注意Header中的一些字段，<ul>
+<li>状态码</li>
+<li>Method</li>
+<li>Content-Length</li>
+<li>Content-Type</li>
+<li>Cookies</li>
+</ul>
+</li>
+</ul>
+<h2 id="Web应用目录结构"><a href="#Web应用目录结构" class="headerlink" title="Web应用目录结构"></a>Web应用目录结构</h2><h3 id="常见目录结构"><a href="#常见目录结构" class="headerlink" title="常见目录结构"></a>常见目录结构</h3><p>新建的java web工程目录如下</p>
+<p><img src="https://tva1.sinaimg.cn/large/57427cf8gw1faejvlq3jtj20a80b474u.jpg" alt></p>
+<ul>
+<li>src 源码目录，存放java代码</li>
+<li>web web工程目录，该目录下除了web-inf以为都是可以被浏览器访问的，既<code>www.xxx.com</code>方法了index.jsp文件，<strong>建议存放<u>静态</u>资源文件（如css js html）</strong>。<ul>
+<li>WEB-INF（必须） ：重点理解，该目录下不可被浏览器直接访问，<strong>建议存放所有jsp文件与配置文件</strong><ul>
+<li>web.xml（必须）</li>
+<li>其他配置文件，如spring的servlet-context.xml</li>
+<li>jsp文件</li>
+</ul>
+</li>
+<li>index.jsp</li>
+<li>resource 可以存放静态资源文件</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>目录结构多种多样，但是基本要素相同。还有一种常见的是</p>
+<ul>
+<li>src <ul>
+<li>main<ul>
+<li>java</li>
+<li>resource <strong>该目录下的xml会被放到classpath下</strong>，经常放一些配置文件</li>
+<li>webapp<ul>
+<li>WEB-INF  jsp，web.xml，spring的servlet-context.xml等</li>
+<li>resource 可以存放静态资源文件</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>test<ul>
+<li>java</li>
+<li>resource</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<h3 id="web-xml分析"><a href="#web-xml分析" class="headerlink" title="web.xml分析"></a>web.xml分析</h3><p>web.xml是web工程的入口配置文件，一般分析一个web项目由它开始。</p>
+<ul>
+<li><p>header分析，指定了命名空间，重点关注，<strong>默认的命名空间</strong>（xmlns=”<a href="http://java.sun.com/xml/ns/javaee&quot;的内容），所有的直接应用，都是该命名空间的一个属性，如**`" target="_blank" rel="noopener">http://java.sun.com/xml/ns/javaee&quot;的内容），所有的直接应用，都是该命名空间的一个属性，如**`</a><web-app`**，`<context-param><code>,</code><servlet>`等。</servlet></web-app`**，`<context-param></p>
+</li>
+<li><p><strong>设置路由</strong>：</p>
+<ul>
+<li><code>&lt;filter-mapping&gt;</code>标签给filter设置路由，一般都是</li>
+<li><code>&lt;servlet-mapping&gt;</code>标签给servlet设置路由</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">   <span class="tag">&lt;<span class="name">filter</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">filter-name</span>&gt;</span>csrfFilter<span class="tag">&lt;/<span class="name">filter-name</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">filter-class</span>&gt;</span>org.springframework.web.filter.DelegatingFilterProxy<span class="tag">&lt;/<span class="name">filter-class</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">async-supported</span>&gt;</span>true<span class="tag">&lt;/<span class="name">async-supported</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">filter</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">filter-mapping</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">filter-name</span>&gt;</span>csrfFilter<span class="tag">&lt;/<span class="name">filter-name</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/*<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">filter-mapping</span>&gt;</span></span><br><span class="line">   </span><br><span class="line"><span class="comment">&lt;!-- Processes application requests --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">servlet</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>appServlet<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">servlet-class</span>&gt;</span>org.springframework.web.servlet.DispatcherServlet<span class="tag">&lt;/<span class="name">servlet-class</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">init-param</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">param-name</span>&gt;</span>contextConfigLocation<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">param-value</span>&gt;</span>/WEB-INF/spring/appServlet/servlet-context.xml<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">init-param</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">load-on-startup</span>&gt;</span>1<span class="tag">&lt;/<span class="name">load-on-startup</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">async-supported</span>&gt;</span>true<span class="tag">&lt;/<span class="name">async-supported</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">servlet</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>&lt;context-param&gt;</code> 定义一些自定义的初始化参数，这些值最终会被Servlet读入，可以自定义使用。</p>
+</li>
+<li><p><code>&lt;servlet&gt;</code> 定义了一个实现了<code>Servlet</code>接口的实例，可以定义多个</p>
+</li>
+<li><p><code>&lt;filter&gt;</code> 过滤器，定义了一个实现了<code>Filter</code>接口的实例，请求在进入servlet之前，会经过他，可以定义多个。</p>
+</li>
+<li><p><code>&lt;listener&gt;</code> servlet提供的一个事件通知回调机制，实现了<code>ServletContextListener</code>接口，会在启动和销毁时通知</p>
+</li>
+<li><p><code>&lt;session-config&gt;</code></p>
+</li>
+</ul>
+<blockquote>
+<ul>
+<li><p>关于 url-pattern 规则</p>
+<ul>
+<li>路径映射：以<code>/</code>开头且以<code>/*</code>结尾—-<code>/static/*</code></li>
+<li>扩展映射：以<code>*.</code>开头—- <code>*.js</code></li>
+<li><em>defualt servlet映射*</em>：特指 <code>/</code></li>
+<li>详细映射：详细路径—-<code>/static/a.js</code></li>
+<li>不能混合，如 <code>/static/*.js</code> 是<strong>错误的！</strong></li>
+<li><a href="http://stackoverflow.com/questions/4140448/difference-between-and-in-servlet-mapping-url-pattern" target="_blank" rel="noopener">容易混淆的几个设置</a>：<code>/*</code>与<code>/</code></li>
+</ul>
+</li>
+<li><p>关于ServletContext，下面源码时会分析，但是要记住，这个Context是一个webapp只有一个，所有Servlet共享的</p>
+</li>
+<li><p>默认Servlet：一个webapp有一个默认的servlet（servlet-name是default），可以通过<code>default</code>来引用，常常用来处理静态资源。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt;   <span class="tag">&lt;<span class="name">servlet-mapping</span>&gt;</span>  </span><br><span class="line">&gt;       <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>default<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span>  </span><br><span class="line">&gt;       <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/static/*<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span>  </span><br><span class="line">&gt;   <span class="tag">&lt;/<span class="name">servlet-mapping</span>&gt;</span> </span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</blockquote>
+<p>&gt;</p>
+<blockquote>
+<p>  ​</p>
+</blockquote>
+<h2 id="Servlet详解"><a href="#Servlet详解" class="headerlink" title="Servlet详解"></a>Servlet详解</h2><h3 id="编写基本功能的Servlet"><a href="#编写基本功能的Servlet" class="headerlink" title="编写基本功能的Servlet"></a>编写基本功能的Servlet</h3><p>我们<strong>可以直接继承<code>Servlet</code>接口</strong>实现<code>service(ServletRequest var1, ServletResponse var2)</code>方法。所有去请求都会走这里，但是为了更加方便，<strong>推荐使用<code>HttpServlet</code></strong>,对http请求进行了分类（get post put del等 ）。</p>
+<ul>
+<li><p>maven包引入：<strong>注意scope是provided</strong>。因为这里仅仅引用了api，代码在tomcat容器中。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.tomcat<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>tomcat-jsp-api<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>8.0.33<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>provided<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.tomcat<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>tomcat-servlet-api<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>8.0.33<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>provided<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>编写Servlet</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloServlet</span> <span class="keyword">extends</span> <span class="title">HttpServlet</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">processRequest</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span></span></span><br><span class="line"><span class="function">            <span class="keyword">throws</span> ServletException, IOException </span>&#123;</span><br><span class="line">        response.setContentType(<span class="string">"text/html;charset=UTF-8"</span>);</span><br><span class="line">        <span class="keyword">try</span> (PrintWriter out = response.getWriter()) &#123;</span><br><span class="line">            out.println(<span class="string">"&lt;!DOCTYPE html&gt;"</span>);</span><br><span class="line">            out.println(<span class="string">"&lt;html&gt;"</span>);</span><br><span class="line">            out.println(<span class="string">"&lt;head&gt;"</span>);</span><br><span class="line">            out.println(<span class="string">"&lt;title&gt;Servlet HelloServlet&lt;/title&gt;"</span>);            </span><br><span class="line">            out.println(<span class="string">"&lt;/head&gt;"</span>);</span><br><span class="line">            out.println(<span class="string">"&lt;body&gt;"</span>);</span><br><span class="line">            out.println(<span class="string">"&lt;h1&gt;Servlet HelloServlet at "</span> + request.getContextPath() + <span class="string">"&lt;/h1&gt;"</span>);</span><br><span class="line">            out.println(<span class="string">"&lt;/body&gt;"</span>);</span><br><span class="line">            out.println(<span class="string">"&lt;/html&gt;"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">doGet</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span></span></span><br><span class="line"><span class="function">            <span class="keyword">throws</span> ServletException, IOException </span>&#123;</span><br><span class="line">        processRequest(request, response);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">doPost</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span></span></span><br><span class="line"><span class="function">            <span class="keyword">throws</span> ServletException, IOException </span>&#123;</span><br><span class="line">        processRequest(request, response);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>web.xml中引用此Servlet </p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">servlet</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>HelloServlet<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">servlet-class</span>&gt;</span>com.test.servlet.HelloServlet<span class="tag">&lt;/<span class="name">servlet-class</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">servlet</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">servlet-mapping</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>HelloServlet<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/HelloServlet<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">servlet-mapping</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="转发与重定向"><a href="#转发与重定向" class="headerlink" title="转发与重定向"></a>转发与重定向</h3><ul>
+<li>转发：forward，只是web应用内部的跳转（Servlet间？），对用户而言不可知。</li>
+<li>重定向：redirect，直观来看，浏览器会重新跳转到一个新的url，重新路由并且加载页面。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 在doGet中，转发给jsp页面的Servlet处理</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">processRequest</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span></span></span><br><span class="line"><span class="function">            <span class="keyword">throws</span> ServletException, IOException </span>&#123;</span><br><span class="line">        response.setContentType(<span class="string">"text/html;charset=UTF-8"</span>);</span><br><span class="line">       <span class="comment">// 设置attr，可以在jsp中读取到这个值</span></span><br><span class="line">        request.setAttribute(<span class="string">"title"</span>, <span class="string">"Hello Servlet"</span>);</span><br><span class="line">        request.setAttribute(<span class="string">"content"</span>, <span class="string">"你好"</span>);</span><br><span class="line">        RequestDispatcher rd = request.getRequestDispatcher(<span class="string">"/WEB-INF/jsp/hello.jsp"</span>);</span><br><span class="line">        rd.forward(request, response);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 在doGet中，重定向给jsp页面的Servlet处理</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">processRequest</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span></span></span><br><span class="line"><span class="function">            <span class="keyword">throws</span> ServletException, IOException </span>&#123;</span><br><span class="line">      response.sendRedirect(<span class="string">"HelloServlet"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>jsp代码如下</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">    &lt;head&gt;</span><br><span class="line">        &lt;meta http-equiv=<span class="string">"Content-Type"</span> content=<span class="string">"text/html; charset=UTF-8"</span>&gt;</span><br><span class="line">        &lt;title&gt;$&#123;title&#125;&lt;/title&gt;</span><br><span class="line">    &lt;/head&gt;</span><br><span class="line">    &lt;body&gt;</span><br><span class="line">        &lt;h1&gt;$&#123;content&#125;&lt;/h1&gt;</span><br><span class="line">    &lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="几种常见场景"><a href="#几种常见场景" class="headerlink" title="几种常见场景"></a>几种常见场景</h4><ul>
+<li>静态文件（html,js,css文件）处理<ul>
+<li>web.xml 设置default，调用内置DefaultServlet</li>
+</ul>
+</li>
+<li>代码返回html字符串<ol>
+<li>response设置contenttype—“text/html;charset=UTF-8”</li>
+<li>response.getWriter().println输出html字符串</li>
+</ol>
+</li>
+<li><p>json返回</p>
+<ol>
+<li>response设置contenttype—“application/json;charset=UTF-8”</li>
+<li>response.getWriter().println输出JSON格式的字符串</li>
+</ol>
+</li>
+<li><p>servlet调用jsp（模板返回）</p>
+<ol>
+<li>response设置contenttype—“text/html;charset=UTF-8”</li>
+<li>设置模板变量，request.setAttribute(“title”, “Hello Servlet”);</li>
+<li>返回 request.getRequestDispatcher(“/WEB-INF/jsp/hello.jsp”).forward(request,response);</li>
+</ol>
+</li>
+<li><p>request处理</p>
+<ul>
+<li>获取baseurl  request.getRequestURI()</li>
+<li>获取query参数和<strong>post的form值</strong>  request.getParameterMap() getParameter</li>
+</ul>
+</li>
+</ul>
+<h3 id="Servlet-API"><a href="#Servlet-API" class="headerlink" title="Servlet API"></a>Servlet API</h3><ul>
+<li>Filter：过滤器是一个程序，它先于与之相关的servlet或JSP页面运行在服务器上。可以过滤完之后交给下一个处理，也可以直接返回信息。应用在用户登录判断等场景。一个应用可以有一个或者多个filter在web.xml中配置<ul>
+<li>dofilter函数的写法：<ul>
+<li>修改request</li>
+<li>chain.doFilter(req,res);</li>
+<li>修改response</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Listener：基于观察者模式，事件回调机制。常见的Listener如下<ul>
+<li>EventListener<ul>
+<li>ServletContextAttributeListener</li>
+<li>ServletContextListener：应用在Spring的context加载，参考<code>org.springframework.web.context.ContextLoaderListener</code>。</li>
+<li>HttpSessionListener</li>
+<li>HttpSessionAttributeListener</li>
+<li>HttpRequestListener</li>
+<li>HttpRequestAttributeListener</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="Servlet源码浅析"><a href="#Servlet源码浅析" class="headerlink" title="Servlet源码浅析"></a>Servlet源码浅析</h3><h4 id="接口分析"><a href="#接口分析" class="headerlink" title="接口分析"></a>接口分析</h4><ul>
+<li>Servlet接口<ul>
+<li><code>init(ServletConfig config)</code>：读入web.xml的Servlet配置</li>
+<li><code>service(ServletRequest req, ServletResponse res)</code>：主要的服务方法</li>
+<li><code>destroy()</code></li>
+<li><code>ServletConfig getServletConfig()</code></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><code>ServletConfig</code>—接口，从<strong><code>init()</code>传入</strong>的参数，可以<strong>获得解析好的web.xml中关于这个servelet自身的<code>&lt;init-param&gt;</code>参数</strong><ul>
+<li><strong>getServletContext()</strong> 获取所有servlet共享的Context</li>
+<li>getInitParameter,getInitParameterNames</li>
+<li>getServletName</li>
+</ul>
+</li>
+<li>ServletRequest</li>
+<li>ServletResponse</li>
+<li>ServletException<h4 id="继承关系"><a href="#继承关系" class="headerlink" title="继承关系"></a>继承关系</h4></li>
+</ul>
+<p>Servlet—GenericServlet—HttpServlet<br><img src="http://hi.csdn.net/attachment/201008/26/0_1282804027HHcv.gif" alt></p>
+<ul>
+<li>GenericServlet 装饰模式，<strong>对ServletConfig装饰了</strong>，子类可以调用ServletConfig接口的所有方法。</li>
+<li><p>HttpServlet，安照http的header分出，doGet doPost等方法</p>
+<h4 id="重要的对象"><a href="#重要的对象" class="headerlink" title="重要的对象"></a>重要的对象</h4></li>
+<li><p>ServletConfig 对象，通过Servlet中的getServletConfig获取，或者直接使用GenericServlet子类的方法。</p>
+<ul>
+<li>getServletContext，获取ServletContext</li>
+<li>getInitParameter getInitParameterNames：获取servelet自身的<code>&lt;init-param&gt;</code>参数。</li>
+<li>getServletName</li>
+</ul>
+</li>
+<li>ServletContext对象代表当前web工程的上下文，所有Servlet共享，ServletContext通过ServletConfig获得对象。<ul>
+<li>getInitParameter(name) 获取web.xml中配置的 <strong><code>&lt;context-param&gt;</code></strong>属性值</li>
+<li><strong>全局共享数据</strong> <ul>
+<li>setAttribute </li>
+<li>getsAttribute</li>
+<li>getAttributeNames</li>
+<li>removeAttribute</li>
+</ul>
+</li>
+<li>资源<ul>
+<li>getResource()路径是虚拟路径,web目录下的文件，即使”/“开头,代表web工程 部署好以后的配置文件的地址.ex:”/WEB-INF/classes/jdbc.properties”</li>
+<li>getResourceAsStream() 获取文件，返回Inputstream。<strong>最常用，一般用来读配置文件形成Properties</strong>。 props = new Properties(); props.load(in);</li>
+<li>getRealPath 得到资源文件磁盘上的绝对路径，在web项目中<strong>不能直接使用相对路径访问文件,如 new File</strong>。必须使用绝对路径。</li>
+</ul>
+</li>
+<li>servlet 转发<ul>
+<li>getRequestDispatcher</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>ServletRequest及其子类</li>
+<li><p>ServletResponse及其子类</p>
+<h3 id="Servlet运行模型"><a href="#Servlet运行模型" class="headerlink" title="Servlet运行模型"></a>Servlet运行模型</h3></li>
+<li><p><strong>servlet容器一般是单进程，servelt的service()方法是一个线程</strong>，必须等service()方法返回后，线程才能销毁。<a href="http://www.programcreek.com/2013/04/what-is-servlet-container/" target="_blank" rel="noopener">参考文章</a></p>
+</li>
+<li>因此存在<strong>线程安全问题</strong>，与node的巨大区别。</li>
+<li>我们一般在service()方法中进行阻塞调用，这也是Servlet设计的初衷（单进程多线程，对比于GCI）。但是Spring3.0以后支持异步响应（可以参考<a href="http://www.infoq.com/cn/news/2013/11/use-asynchronous-servlet-improve" target="_blank" rel="noopener">这篇</a>）</li>
+<li>那么，一般应用中有几个Servlet呢？尽量使用一个Servlet。Spring既是这种用法。</li>
+<li>当我们不使用框架，直接使用Servlet时，参考<a href="http://www.ibm.com/developerworks/cn/education/java/j-intserv/j-intserv.html" target="_blank" rel="noopener">这篇文章</a>（翻译的挺糟糕），使用action模式（命令模式）优雅的划分请求，Spring也是类似的思想。</li>
+</ul>
+<h3 id="值得注意的细节"><a href="#值得注意的细节" class="headerlink" title="值得注意的细节"></a>值得注意的细节</h3><ul>
+<li>地址的写法：地址给谁用的。如果是给服务器用的，以<code>/</code>代表当前web应用; 如果是给客户端（浏览器）用的<code>/</code>代表网站。</li>
+</ul>
+<ul>
+<li><code>request.getRequestDispatcher(&quot;/my.jsp&quot;).forward(request, response);</code> 转发，服务器内部使用</li>
+<li><code>this.getServletContext().getRealPath(&quot;/my.jsp&quot;);</code> 获取资源，服务器内部使用。<ul>
+<li><code>response.sendRedirect(&quot;/JavaWeb/my.jsp&quot;);</code> 重定向，客户端使用。JavaWeb是contextPath，包含在网址里，必须加上。</li>
+<li><code>&lt;form action=&quot;/JavaWeb/my.jsp&quot;&gt;</code> html中，客户端使用</li>
+</ul>
+</li>
+</ul>
+<h2 id="JSP简介"><a href="#JSP简介" class="headerlink" title="JSP简介"></a>JSP简介</h2><h3 id="理解JSP"><a href="#理解JSP" class="headerlink" title="理解JSP"></a>理解JSP</h3><p>JSP（JavaServer Pages）是以<code>.jsp</code>为后缀名的一种脚本语言。使Java代码和特定的预定义动作可以嵌入到静态页面中。<strong>它经过编译后成为Java的Servlet类</strong>。通俗的理解，我们编写的.jsp文件（包含html，css，js，java逻辑代码）会在服务端动态处理（执行了jsp中的java代码）成一个由Servlet，最终该Servlet会out.println输出的静态html语句。</p>
+<h3 id="JSP技术的取舍"><a href="#JSP技术的取舍" class="headerlink" title="JSP技术的取舍"></a>JSP技术的取舍</h3><p>JSP技术是特定历史时期的产物，用来方便我们编写动态网页，简化Servlet的编写（现有Servlet技术，所有html语句在java中print太复杂，后来才发展的JSP）。但是由于JSP功能丰富，可以直接调用任何java代码，如数据库操作等，会带来一个严重的问题，即<strong>容易将业务逻辑代码（Model层，大部分是java代码）混杂在View层中（html，css，js）</strong>，导致高度的耦合。因此现在网页开发框架中，依据Model2模型，往往<strong>使用模板技术代替JSP</strong>，模板仅仅有填值的功能，使用model层传过来的值渲染界面。</p>
+<p>当然，我们也可以使用JSP实现模板功能，并且使用扩展的标签（JSTL）来取代只有Java才能实现的逻辑判断（如if while）。这里谈一下JSP使用的最佳实践：</p>
+<ul>
+<li>不要使用：<ul>
+<li><strong>在JSP文件中含有任何Java代码。</strong></li>
+<li>不使用JSP中的Scriptlet（如<code>&lt;%..%&gt;</code>,<code>&lt;%=..%&gt;</code>）</li>
+</ul>
+</li>
+<li>使用：<ul>
+<li>使用EL表达式，填值。</li>
+<li>使用JSTL来做逻辑判断</li>
+<li>可以使用JSP原生的一些指令，如<code>&lt;%@ taglib ... %&gt;`` &lt;%@ page ... %&gt;</code></li>
+<li>适当的使用一些JSP的行为，jsp:useBean jsp:setProperty jsp:getProperty</li>
+</ul>
+</li>
+</ul>
+<h3 id="基本语法"><a href="#基本语法" class="headerlink" title="基本语法"></a>基本语法</h3><ul>
+<li><del>引入Java代码块</del>：<code>&lt;% 代码片段 %&gt;</code><ul>
+<li>if<ul>
+<li>while、for</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><del>JSP声明</del>：可以声明一个或多个变量、方法，供后面的Java代码使用。 <code>&lt;%! declaration; [ declaration; ]+ ... %&gt;</code></li>
+<li><del>JSP表达式</del> 模板填值：包含的脚本语言表达式，先被转化成String，然后插入到表达式出现的地方<code>&lt;%= 表达式 %&gt;</code></li>
+<li>jsp指令：<code>&lt;%@ directive attribute=&quot;value&quot; %&gt;</code> <ul>
+<li>page 定义页面的依赖属性，比如脚本语言、error页面、缓存需求等等</li>
+<li>include 包含其他文件</li>
+<li>tablib <strong>引入标签库的定义，可以是自定义标签</strong></li>
+</ul>
+</li>
+<li>jsp行为<ul>
+<li>jsp:useBean 寻找和初始化一个JavaBean组件</li>
+<li>jsp:setProperty 设置JavaBean组件的值 对应setXxx</li>
+<li>jsp:getProperty 获取JavaBean组件的值 对应getXxx</li>
+<li>jsp:include 用于在当前页面中包含静态或动态资源</li>
+<li>其他</li>
+</ul>
+</li>
+<li>隐含对象：request response out session pageContext等</li>
+</ul>
+<h3 id="EL"><a href="#EL" class="headerlink" title="EL"></a>EL</h3><p>用来取代JSP的表达式功能（<code>&lt;%=..%&gt;</code>），可以用来进行属性、请求参数、cookies的获取，以及一些简单运算判断。</p>
+<ul>
+<li>语法参考：<a href="http://www.runoob.com/jsp/jsp-expression-language.html" target="_blank" rel="noopener">http://www.runoob.com/jsp/jsp-expression-language.html</a></li>
+<li>最常用：${expr}</li>
+<li>操作符：<ul>
+<li>. 访问一个Bean属性或者一个映射条目</li>
+<li>[] 访问一个数组或者链表的元素</li>
+<li><code>+</code> <code>-</code>  <code>*</code> <code>/(div)</code></li>
+<li>==(eq) !=(ne) &lt;(lt) &gt;(gt) &lt;=(le) &gt;=(ge)</li>
+<li>empty 判空</li>
+</ul>
+</li>
+<li>调用自定义标签中的函数 <code>${ns:func(param1, param2, ...)}</code></li>
+<li>内置对象<ul>
+<li>param、paramValues：访问参数值。如<code>${param.order}</code>，或者<code>${param[&quot;order&quot;]}</code>。</li>
+<li>pageContext</li>
+<li>cookie</li>
+<li>。。。。</li>
+</ul>
+</li>
+</ul>
+<h3 id="JSTL"><a href="#JSTL" class="headerlink" title="JSTL"></a>JSTL</h3><p>最基础的功能是提供逻辑判断的标签，可以彻底取代jsp文件中的java代码。当然它还提供了通过标签加入各种功能。但是不建议滥用。</p>
+<ul>
+<li>具体语法：<a href="http://www.runoob.com/jsp/jsp-jstl.html" target="_blank" rel="noopener">http://www.runoob.com/jsp/jsp-jstl.html</a></li>
+<li>导入：如导入core库，<code>&lt;%@ taglib prefix=&quot;c&quot;uri=&quot;http://java.sun.com/jsp/jstl/core&quot; %&gt;</code></li>
+<li>5大标签<ul>
+<li>core 核心表情库，提供条件判断，属性存取，url处理，错误处理等。<ul>
+<li><a href="http://www.runoob.com/jsp/jstl-core-if-tag.html" target="_blank" rel="noopener"><code>&lt;c:if&gt;</code></a></li>
+<li><a href="http://www.runoob.com/jsp/jstl-core-choose-tag.html" target="_blank" rel="noopener"><code>&lt;c:when&gt;</code></a></li>
+<li><a href="http://www.runoob.com/jsp/jstl-core-foreach-tag.html" target="_blank" rel="noopener"><code>&lt;c:forEach&gt;</code></a></li>
+</ul>
+</li>
+<li>fmt 格式化 日期格式，国际化功能等</li>
+<li>sql 与关系型数据库（Oracle，MySQL，SQL Server等等）进行交互的标签</li>
+<li>xml 创建和操作XML文档的标签</li>
+<li>functions jstl函数，JSTL包含一系列标准函数，大部分是通用的字符串处理函数。<ul>
+<li><a href="http://www.runoob.com/jsp/jstl-function-substring.html" target="_blank" rel="noopener">fn:substring()</a></li>
+<li><a href="http://www.runoob.com/jsp/jstl-function-contains.html" target="_blank" rel="noopener">fn:contains()</a></li>
+<li><a href="http://www.runoob.com/jsp/jstl-function-length.html" target="_blank" rel="noopener">fn:length()</a></li>
+<li><a href="http://www.runoob.com/jsp/jstl-function-split.html" target="_blank" rel="noopener">fn:split()</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+            <div class="social-item">
+              <a target="_blank" class="social-link" href="https://t.me/mltalk">
+                <span class="icon">
+                  <i class="fa fa-telegram"></i>
+                </span>
+
+                <span class="label">机器学习碎碎念</span>
+              </a>
+            </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/JavaWeb/" rel="tag"># JavaWeb</a>
+              <a href="/tags/后端/" rel="tag"># 后端</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/10/05/JavaWeb后台开发知识目录与结构/" rel="prev" title="JavaWeb后台开发知识目录与结构">
+      <i class="fa fa-chevron-left"></i> JavaWeb后台开发知识目录与结构
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2016/10/15/JavaWeb开发入门二--JavaWeb框架历史/" rel="next" title="JavaWeb开发入门二--JavaWeb框架历史">
+      JavaWeb开发入门二--JavaWeb框架历史 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#WEB开发基础"><span class="nav-number">1.</span> <span class="nav-text">WEB开发基础</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Servlet与JSP的功能与职责"><span class="nav-number">1.1.</span> <span class="nav-text">Servlet与JSP的功能与职责</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#认识HTTP协议"><span class="nav-number">1.2.</span> <span class="nav-text">认识HTTP协议</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Web应用目录结构"><span class="nav-number">2.</span> <span class="nav-text">Web应用目录结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#常见目录结构"><span class="nav-number">2.1.</span> <span class="nav-text">常见目录结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#web-xml分析"><span class="nav-number">2.2.</span> <span class="nav-text">web.xml分析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Servlet详解"><span class="nav-number">3.</span> <span class="nav-text">Servlet详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#编写基本功能的Servlet"><span class="nav-number">3.1.</span> <span class="nav-text">编写基本功能的Servlet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#转发与重定向"><span class="nav-number">3.2.</span> <span class="nav-text">转发与重定向</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#几种常见场景"><span class="nav-number">3.2.1.</span> <span class="nav-text">几种常见场景</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Servlet-API"><span class="nav-number">3.3.</span> <span class="nav-text">Servlet API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Servlet源码浅析"><span class="nav-number">3.4.</span> <span class="nav-text">Servlet源码浅析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#接口分析"><span class="nav-number">3.4.1.</span> <span class="nav-text">接口分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#继承关系"><span class="nav-number">3.4.2.</span> <span class="nav-text">继承关系</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#重要的对象"><span class="nav-number">3.4.3.</span> <span class="nav-text">重要的对象</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Servlet运行模型"><span class="nav-number">3.5.</span> <span class="nav-text">Servlet运行模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#值得注意的细节"><span class="nav-number">3.6.</span> <span class="nav-text">值得注意的细节</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JSP简介"><span class="nav-number">4.</span> <span class="nav-text">JSP简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#理解JSP"><span class="nav-number">4.1.</span> <span class="nav-text">理解JSP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JSP技术的取舍"><span class="nav-number">4.2.</span> <span class="nav-text">JSP技术的取舍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基本语法"><span class="nav-number">4.3.</span> <span class="nav-text">基本语法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#EL"><span class="nav-number">4.4.</span> <span class="nav-text">EL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JSTL"><span class="nav-number">4.5.</span> <span class="nav-text">JSTL</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">limuzhi</p>
+  <div class="site-description" itemprop="description">something about tech, android etc...</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muzhi1991" title="GitHub → https://github.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:muzhi1991@gmail.com" title="E-Mail → mailto:muzhi1991@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/muzhi1991" title="Twitter → https://twitter.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.chenyupeng.com/" title="https://www.chenyupeng.com/" rel="noopener" target="_blank">陈玉鹏的个人空间</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://macshuo.com/" title="http://macshuo.com/" rel="noopener" target="_blank">MacTalk</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">limuzhi</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'G5HLDFmPsllxIjax4F2JTLnl-gzGzoHsz',
+      appKey     : 'A5PTgbvpJwjPlcBJ3Brl8rDs',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="[TOC] 什么是基数基数(cardinality，也译作势)，维基百科中的解释是： cardinality of a set) is a measure of the “number of elements) of the set”。我们可以理解为一个集合（这里的集合允许存在重复元素）中不重复元素的个数。例如集合{1,2,3,1,2}，它有5个元素，但它的基数/Distinct数为3。">
+<meta name="keywords" content="算法,大数据">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大数据算法：基数统计">
+<meta property="og:url" content="http://limuzhi.com/2017/11/18/cardinality-counting/index.html">
+<meta property="og:site_name" content="Night Piece">
+<meta property="og:description" content="[TOC] 什么是基数基数(cardinality，也译作势)，维基百科中的解释是： cardinality of a set) is a measure of the “number of elements) of the set”。我们可以理解为一个集合（这里的集合允许存在重复元素）中不重复元素的个数。例如集合{1,2,3,1,2}，它有5个元素，但它的基数/Distinct数为3。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1flhcvtsz6bj308601zglm.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tKfTcgy1fle8cbeebsj30il0hfwfx.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tKfTcgy1fljtt1uhgbj30le0ky0t5.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tKfTcgy1fljt637v7yj30le0ks75g.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tKfTcgy1fljre6bjy3j30l20lmt96.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tKfTcgy1fljxr02gcvj309s02wa9x.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tKfTcgy1fljzleivhgj30o00ng403.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tKfTcgy1flk16jwr4tj30pe0880t8.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tKfTcgy1flk1gip4o2j30nw0nujst.jpg">
+<meta property="og:updated_time" content="2020-02-25T09:44:15.455Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="大数据算法：基数统计">
+<meta name="twitter:description" content="[TOC] 什么是基数基数(cardinality，也译作势)，维基百科中的解释是： cardinality of a set) is a measure of the “number of elements) of the set”。我们可以理解为一个集合（这里的集合允许存在重复元素）中不重复元素的个数。例如集合{1,2,3,1,2}，它有5个元素，但它的基数/Distinct数为3。">
+<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/006tNc79gy1flhcvtsz6bj308601zglm.jpg">
+
+<link rel="canonical" href="http://limuzhi.com/2017/11/18/cardinality-counting/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>大数据算法：基数统计 | Night Piece</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Night Piece</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">white && black</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tools">
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-wrench"></i>利器</a>
+
+  </li>
+        <li class="menu-item menu-item-read">
+
+    <a href="/read/" rel="section"><i class="fa fa-fw fa-book"></i>阅读</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://limuzhi.com/2017/11/18/cardinality-counting/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="limuzhi">
+      <meta itemprop="description" content="something about tech, android etc...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Night Piece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          大数据算法：基数统计
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-11-18 15:49:01" itemprop="dateCreated datePublished" datetime="2017-11-18T15:49:01+08:00">2017-11-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-25 17:44:15" itemprop="dateModified" datetime="2020-02-25T17:44:15+08:00">2020-02-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2017/11/18/cardinality-counting/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2017/11/18/cardinality-counting/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>[TOC]</p>
+<h2 id="什么是基数"><a href="#什么是基数" class="headerlink" title="什么是基数"></a>什么是基数</h2><p>基数(cardinality，也译作势)，维基百科中的解释是： <strong>cardinality</strong> of a <a href="https://en.wikipedia.org/wiki/Set_(mathematics" target="_blank" rel="noopener">set</a>) is a measure of the “number of <a href="https://en.wikipedia.org/wiki/Element_(mathematics" target="_blank" rel="noopener">elements</a>) of the set”。我们可以理解为一个集合（这里的集合允许存在重复元素）中不重复元素的个数。例如集合{1,2,3,1,2}，它有5个元素，但它的基数/Distinct数为3。</p>
+<h2 id="应用举例"><a href="#应用举例" class="headerlink" title="应用举例"></a>应用举例</h2><ol>
+<li>UV统计：统计日、月的独立用户访问数。</li>
+<li>电商应用中，统计一段时间内查看某个商品的独立用户数，分析产品的受众。</li>
+<li>搜索引擎中，统计一段时间内用户搜索的unique query数量，分析搜索query特征。</li>
+</ol>
+<h2 id="问题总结"><a href="#问题总结" class="headerlink" title="问题总结"></a>问题总结</h2><ol>
+<li>输入数据量大：数据不可一次性加入到内存中。</li>
+<li>不具有可累加性：任务不可分割成更小粒度，如天/小时的粒度，然后把特征直接合并计算出月级数据。</li>
+<li>对于某些任务，如上面的2、3，需要对key先GroupBy再统计。因此其中有很多稀疏数据。</li>
+</ol>
+<p>因此，我们希望算法具有如下特性：</p>
+<ul>
+<li>内存占用少</li>
+<li>数据结构易于合并</li>
+</ul>
+<h2 id="概率算法"><a href="#概率算法" class="headerlink" title="概率算法"></a>概率算法</h2><p>实际上，在<strong>大数据</strong>场景中<strong>准确</strong>计算基数十分困难，因此在不追求绝对准确的情况下，使用概率算法算是一个不错的解决方案。常用的算法包括：</p>
+<ul>
+<li>Linear Counting</li>
+<li>LogLog Counting</li>
+<li>HyperLogLog Counting</li>
+<li>HyperLogLog++</li>
+</ul>
+<h2 id="基础：Hash函数与Bitmap"><a href="#基础：Hash函数与Bitmap" class="headerlink" title="基础：Hash函数与Bitmap"></a>基础：Hash函数与Bitmap</h2><h3 id="HashSet"><a href="#HashSet" class="headerlink" title="HashSet"></a>HashSet</h3><p>一个最基本的想法是，使用HashSet，对任何数据进行Hash求值，并放入Hash Set中。一个Hash函数是 $H(M)=h$ （其中M为密文，h为定长的hash值）需要满足：</p>
+<ul>
+<li>单向性</li>
+<li>抗冲突性</li>
+<li>映射分布均匀性和差分分布均匀性</li>
+</ul>
+<p>这种方式可以十分<strong>精确</strong>的记录集合的基数，对于128bit的Hash算法，需要的空间是128*N bit （N为基数）。在大数据场景下，基数巨大，无法在单机内存中存储所有的值。</p>
+<h3 id="Bitmap算法"><a href="#Bitmap算法" class="headerlink" title="Bitmap算法"></a>Bitmap算法</h3><p>在Bitmap算法中，我们不存储完整的hash值，而是用bit数组的某一位表示某一数据，从而一个bit数组可以表示海量数据。用0表示某一元素不在集合中，用1表示某一元素在集合中，如<code>0100000011000000</code>可以用来表示集合{1,8,9}。问题的关键成为，如何选择合适的Hash函数，将目标M映射成bitmap中的一位？我只需要选择Hash函数满足<strong>抗冲突性</strong>。实际算法选择时，以32位的MD5算法为例，需要$2^{128}$bit的空间，这显然是不可行的，因此，我们只取其结果的前8位（32bit），那么整个Hash函数的映射空间就有$16^8$（40多亿，尽量减少冲突）个值，取一个长度为$16^8$的bitmap（大约536MB）。每一位对应Hash函数映射空间中的一个值，初始值全为0。每当有新访问产生，对该访客标识进行Hash，并映射到bitmap中的某一位上，若该位置为0，则置1；若为1，则不作处理。最后统计整个bitmap中1的个数即为基数。</p>
+<blockquote>
+<p>如果要精确统计，不使用Hash来映射Bitmap，可以维护一张目标M与index之间的映射表，并增量更新</p>
+</blockquote>
+<p>优点：</p>
+<ul>
+<li>算法简单直观</li>
+<li>较为准确，理论上选择足够大的映射空间，减少冲突即可</li>
+</ul>
+<p>缺点</p>
+<ul>
+<li>所需空间依旧巨大，bitmap的长度与实际的基数无关，而是与<strong>基数的上限</strong>有关，即空间复杂度$O(N_{max})$</li>
+</ul>
+<p>为了进一步减少存储所需要的空间，我们使用基于概率的基数统计算法。</p>
+<h3 id="BloomFilter"><a href="#BloomFilter" class="headerlink" title="BloomFilter"></a>BloomFilter</h3><p>使用BF实现一个简单的概率统计方法。布隆过滤器可以k个Hash函数来判断一个元素是否在集合中。用误判率$P_{fp}$表示判断的准确性。</p>
+<p><img src="https://tva1.sinaimg.cn/large/006tNc79gy1flhcvtsz6bj308601zglm.jpg" alt></p>
+<p>误判率估算公式：<script type="math/tex">P_{fp} \approx (1-e^{-kn/m})^k</script>（集合大小n，bitmap位数m，Hash函数个数k）</p>
+<script type="math/tex; mode=display">m=\frac{n\ln P_{fp}}{(\ln 2)^2}</script><script type="math/tex; mode=display">k=\frac{m}{n}\ln 2</script><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> breeze.util.<span class="type">BloomFilter</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> bf = <span class="type">BloomFilter</span>.optimallySized[<span class="type">Int</span>](<span class="number">5</span>, <span class="number">0.01</span>)</span><br><span class="line"><span class="keyword">val</span> arr = <span class="type">Array</span>(<span class="number">1</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">6</span>, <span class="number">3</span>, <span class="number">1</span>)</span><br><span class="line"><span class="keyword">var</span> cnt = <span class="number">0</span></span><br><span class="line">arr.foreach &#123; t =&gt;</span><br><span class="line">  bf.contains(t) <span class="keyword">match</span> &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="literal">false</span> =&gt; cnt += <span class="number">1</span>; bf.+=(t)</span><br><span class="line">    <span class="keyword">case</span> _ =&gt;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">println(arr.distinct.length) <span class="comment">// 6</span></span><br><span class="line">println(cnt) <span class="comment">// 6</span></span><br></pre></td></tr></table></figure>
+<p>特点</p>
+<ul>
+<li>需要记录当前的基数值，新的数据加入时先判断是否在BF中，</li>
+<li>虽然多个BF可以合并，但是无法计算出新的基数值。</li>
+</ul>
+<h2 id="Linear-Counting"><a href="#Linear-Counting" class="headerlink" title="Linear Counting"></a>Linear Counting</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>LC算法是较为简单的概率算法，<strong>计算过程与Bitmap方法类似，实验完成后统计bitmap中0的个数即可</strong>。</p>
+<p>核心计算公式如下：</p>
+<script type="math/tex; mode=display">\hat n=−m\log\dfrac{u}{m}$$（这里的m为bitmap的大小；u为0的个数；n̂为n的一个估计，且为最大似然估计）
+
+算法过程如下
+
+- 选择一个哈希函数h，其结果服从**均匀分布**
+- 开一个长度为m的bitmap，均初始化为0(m设为多大后面有讨论)
+- 数据流每来一个元素，计算其哈希值并对m取模，然后将该位置为1
+- 查询时，设bitmap中还有u个bit为0，则不同元素的总数近似为$ -m\log\dfrac{u}{m}$
+
+![](https://tva1.sinaimg.cn/large/006tKfTcgy1fle8emyegnj309004at8n.jpg)
+
+### 基本思想
+
+直观上，随着Hash不断的映射，使得bitmap中为空桶不断减少（即u值不断减少），对于固定长度m的bitmap，其满足与某种关系，使得我们求解的目标基数值满足随着u的减少，单调增加。
+
+我们可以从概率上推导出上述公式，由于选择的Hash函数满足均匀分布，也就是说集合A中的**每一个元素映射到bitmap中的每一位都是等可能的**。设$C_j$为“经过$n$次元素Hash后，bitmap上第$j$位为0的概率”：
+
+$$C_j=(1-\frac{1}{m})^n</script><p><del>把整个试验过程看做伯努利过程，即每一bit是一次实验且每个bit间相互独立</del>，由于bitmap上每一位都是独立的，所以$u=C_1+C_2+…C_n$的期望为（独立同分布的期望之和）</p>
+<script type="math/tex; mode=display">E(u)=\sum_{j=1}^{m}P(C_j)=m(1- \frac{1}{m})^n=m[(1+\frac{1}{-m})^{-m}]^{-\frac{n}{m}}</script><p>当$m$和$n$都趋于无穷时有</p>
+<script type="math/tex; mode=display">E(u)=me^{-\frac{n}{m}}</script><p>即</p>
+<script type="math/tex; mode=display">n=-m\ln\frac{E(u)}{m}</script><p>因此，可以推导</p>
+<ul>
+<li>因为bitmap上每一位的值服从参数相同0-1分布，因此u服从二项分布</li>
+<li>当n很大时，可以用正态分布逼近二项分布，因此可以认为当n和m趋于无穷大时u服从正态分布</li>
+<li>正态分布$f(x)=\frac{1}{\sigma \sqrt{2\pi}}e^{- \frac{(x-\mu )^2}{2\sigma ^2}}$的期望的最大似然估计是样本均值</li>
+<li>我们观测到的值u，<strong>是$\mu$ （即$E(u)$ ）的极大似然估计</strong></li>
+<li>$\hat{n}=-m\log\frac{u}{m}$为$n=-m\log\frac{E(u)}{m}$的一个极大似然估计。（因为函数$n=-m\log\frac{E(u)}{m}$可逆）</li>
+</ul>
+<h3 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h3><h4 id="Hash-函数选择"><a href="#Hash-函数选择" class="headerlink" title="Hash 函数选择"></a>Hash 函数选择</h4><p>Hash函数的选择，在Bitmap方法中因为其过于追求Hash函数的抗冲突性，进而导致映射空间m过大。在LC算法中，我们只需要Hash函数具有<strong>分布均匀性</strong>即可。</p>
+<h4 id="参数选择"><a href="#参数选择" class="headerlink" title="参数选择"></a>参数选择</h4><p>选择合适的参数m，减少u为0情况（从上面的公式看错当u为0时候，值为无穷的，算法失效）</p>
+<p>因此我们要选择足够大小的参数m。主要需要考虑的是bitmap长度<code>m</code>。<strong>m主要由两个因素决定，基数大小以及容许的误差</strong>。假设基数大约为n，允许的误差为ϵ，则m需要满足如下约束，</p>
+<p>$m&gt;\dfrac{ϵ^t−t−1}{(ϵt)^2}$, 其中 $t=\dfrac{n}{m}$ </p>
+<p>为了减少u为0情况</p>
+<script type="math/tex; mode=display">m>β(e^t−t−1)$$ 其中$$β=max(5,1/(ϵt)^2)</script><p>我们可以参考作者论文中给出的实验结果分布图</p>
+<p><img src="https://tva1.sinaimg.cn/large/006tKfTcgy1fle8cbeebsj30il0hfwfx.jpg" alt></p>
+<h4 id="合并特性"><a href="#合并特性" class="headerlink" title="合并特性"></a>合并特性</h4><p>LC非常方便于合并，合并方案与传统bitmap映射方法无异，都是通过按位或的方式，合并后重新使用上述公式计算即可。</p>
+<h4 id="空间复杂度"><a href="#空间复杂度" class="headerlink" title="空间复杂度"></a>空间复杂度</h4><p>可以看出精度要求越高，则bitmap的长度越大。<strong>可以看出对于N是几万以内这张元素数量较少是很有优势的</strong>。但是，随着m和n的增大，m大约为n的十分之一。。因此，<strong>LC所需要的空间只有传统的bitmap直接映射方法的1/10</strong>，但是从渐进复杂性的角度看，空间复杂度仍为<script type="math/tex">O(N_{max})</script>。</p>
+<h3 id="误差分析"><a href="#误差分析" class="headerlink" title="误差分析"></a>误差分析</h3><script type="math/tex; mode=display">StdError(\dfrac{\hat n}{n})=\dfrac{\sqrt{m}(e^t−t−1)^{1/2}}{n}$$，其中$t=\dfrac{n}{m}$ 
+
+### 总结
+
+该算法改进了Bitmap所需空间，但是需要的空间依然是线性增加的。在**基数较少的情况下表现不错**，一般不会单独使用，往往与下面的算法结合使用。
+
+## LogLog Counting
+
+使用LC算法，对于n（基数）很大情况下，依然需要极大的空间（相比与Bitmap已经是他的十分之一了）。对于上万/亿基数这种情况，我需要更小的空间复杂度的算法。假设基数的上限为1亿，原始bitmap方法需要12.5M内存，而LogLog Counting（以下简称LLC）只需不到1K内存（640字节）就可以在标准误差不超过4%的精度下对基数进行估计，效果可谓十分惊人。
+
+### 简介
+
+LLC算法不再使用Bitmap数据结构，我们依旧需要对对象进行Hash求值，但是，只需关心Hash比特串h中**第一个1出现的位置ρ(h)**（例如h为`098950fc`，则ρ(h)=5），并记录所有ρ(h)中的最大值$\rho_{max}$。
+
+核心计算公式如下
+
+$$\hat n=2^{\rho_{max}}$$（$\rho_{max}$是所有元素中首个“1”的位置最大的那个元素的“1”的位置，$\hat n$是n的一个粗糙估计）
+
+算法过程如下
+
+- 选择一个固定长度m的哈希函数h，其结果服从**均匀分布**，且**碰撞几率极小**。
+- 分配一个变量$\rho_{max}$，来存储最大值，大小是：$p=\log_2m$ 即p bit
+- 数据流每来一个元素，计算其哈希值并算出第一个1出现的位置$\rho$，判断是否有$\rho>\rho_{max}$，然后更新$\rho_{max}$。
+- 查询时，计算$\hat n=2^{\rho_{max}}$，这里$\hat n$是n的一个**粗糙估计**。
+
+### 基本思想
+
+设a为待估集合中的一个元素，h=H(a)，这里把h表示为<u>长度为L的比特串</u>（如h为`098950fc`，写为`00001001100010010101000011111100`），将这L个比特串从左至右依次编号为1、2、……、L。因为Hash函数是均匀分布的，所以这L个比特服从如下分布且相互独立
+
+$$ P(x=k) = \lbrace_{0.5(k=1)}^{0.5(k=0)}</script><p>我们可以把上述寻找比特串中第一个1的过程看作一个投硬币试验：当硬币为反面时，记为0；当硬币为正面时，记为1，试验停止，记录投掷次数。设n次试验中，最大投掷数为k。</p>
+<p>现在考虑如下两个事件：</p>
+<ul>
+<li>事件A：进行n次试验，每次投掷次数都不大于k —&gt; <script type="math/tex">P(X \leq k)=(1-\frac {1}{2^k})^n</script></li>
+<li>事件B：进行n次试验，至少有一次投掷次数大于等于k —&gt;  <script type="math/tex">P(X \geq k)=1-(1-\frac {1}{2^{k-1}})^n</script></li>
+</ul>
+<p>注意到，</p>
+<ul>
+<li>假设一：如果$n \gg 2^k$时，$P(A) \to 0$，</li>
+<li>假设二：如果$n \ll 2^k$时，$P(B) \to 0$，</li>
+</ul>
+<p>转换为自然语言描述就是，当n远远大于$2^k$时，每次试验投掷次数都不大于k的概率几乎为0，当n远远小于$2^k$时，至少有一次试验投掷次数大于等于k的概率也为0。而这些均与我们观察到的试验结果不符，即<strong>存在至少一次试验的投掷次数等于k，且不存在比k更多的投掷次数（即最大投掷那一次）</strong>。</p>
+<p>假设一、二均无法满足，所以唯一合理的推断是$n \approx 2^k$。</p>
+<h3 id="应用-1"><a href="#应用-1" class="headerlink" title="应用"></a>应用</h3><h4 id="平均分桶"><a href="#平均分桶" class="headerlink" title="平均分桶"></a>平均分桶</h4><p>实际应用时，上述方法由于偶然性而存在较大误差。因此，LLC采用了<strong>分桶平均</strong>的思想来消减误差。具体来说，就是将哈希空间平均分成m份，每份称之为一个桶（bucket）。对于每一个元素，其哈希值的<u>前k比特作为桶编号</u>，其中$2^k=m$，而后L-k个比特作为真正用于基数估计的比特串。桶编号相同的元素被分配到同一个桶，在进行基数估计时，首先计算每个桶内元素最大的第一个“1”的位置，设为<code>M[i]</code>，然后对这m个值取<strong>算数平均</strong>后再进行估计，即：</p>
+<script type="math/tex; mode=display">\hat n =2^{\dfrac{1}{m} \sum_{i=1}^{m} M[i]}</script><h4 id="偏差修正"><a href="#偏差修正" class="headerlink" title="偏差修正"></a>偏差修正</h4><p>通过数学分析可以知道这并不是基数n的无偏估计。因此需要修正成无偏估计</p>
+<script type="math/tex; mode=display">\hat n =α_m*2^{\dfrac{1}{m} \sum_{i=1}^{m} M[i]}</script><p>其中$α_m$为修正量，它是一个关于m分桶数的公式，计算参考公式，推导过程（略），实际使用过程中会根据m预先算好修正量。</p>
+<p>需要注意的是<strong>其无偏性是渐近的，只有当n远远大于m时，其估计值才近似无偏</strong>。</p>
+<h4 id="Hash-函数选择-1"><a href="#Hash-函数选择-1" class="headerlink" title="Hash 函数选择"></a>Hash 函数选择</h4><ol>
+<li>H的结果具有很好的均匀性，也就是说无论原始集合元素的值分布如何，其哈希结果的值几乎服从均匀分布。</li>
+<li>H的碰撞几乎可以忽略不计。也就是说我们认为对于不同的原始值，其哈希结果相同的概率非常小以至于可以忽略不计。</li>
+<li>H的哈希结果是固定长度的。（原论文使用32bit Bash）</li>
+</ol>
+<h4 id="参数选择-1"><a href="#参数选择-1" class="headerlink" title="参数选择"></a>参数选择</h4><p>因为算法精度与分桶的数量有关，所以主要考虑的是<strong>分桶数m</strong>，而这个m主要取决于误差。</p>
+<p>这里不证明推导过程，如果要将误差控制在ϵ之内，则：</p>
+<p>$m&gt;(\dfrac{1.30}{ϵ})^2$</p>
+<h4 id="合并特性-1"><a href="#合并特性-1" class="headerlink" title="合并特性"></a>合并特性</h4><p>合并时取<strong>相同桶编号数值最大者</strong>为合并后此桶的数值即可。</p>
+<h4 id="空间复杂度-1"><a href="#空间复杂度-1" class="headerlink" title="空间复杂度"></a>空间复杂度</h4><p>空间复杂度与<strong>Hash长度L</strong>和<strong>分桶数m</strong>有关。</p>
+<ul>
+<li>设基数空间n，$2^L=n$ —&gt; $L=\log_2n$ </li>
+<li>$\rho_{max}\leq L$ —&gt; 每个桶需要 $p=\log_2L$ bit—&gt;每个桶需要 $\log_2{\log_2n}$ bit大小</li>
+<li>桶数m —&gt; m*p —&gt; 一共需要 $m\log_2{\log_2n}$</li>
+</ul>
+<p>可以看到，LLC算法需要的空间仅仅是<strong>基数空间n的两次log的大小</strong>。这也是loglogCounting算法的命名来源。</p>
+<p>假设m为1024，H的值为32bit，每个桶需要5bit空间存储，一共需要5×1024 = 5120 bit = 640字节。此时误差为$\dfrac{1.30}{\sqrt{1024}}$=0.040625，也就是约为4%。</p>
+<h3 id="误差分析-1"><a href="#误差分析-1" class="headerlink" title="误差分析"></a>误差分析</h3><p>公式与参数m选择相同，这里不证明，<strong>渐近标准误差</strong>为：</p>
+<p>$StdError(\dfrac{\hat n} {n})≈\dfrac{1.30}{\sqrt m}$</p>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>LLC在<strong>基数大的情况下占用空间极少</strong>。但是，就是当n不是特别大时，其估计误差过大，因此HLL算法在次基础上进一步优化。</p>
+<h2 id="HyperLogLog-Counting"><a href="#HyperLogLog-Counting" class="headerlink" title="HyperLogLog Counting"></a>HyperLogLog Counting</h2><p>在了解LC和LLC之后，我们可以进一步学习实用的算法了。HLLC优化了LLC对离群值敏感的问题，并结合了LC，解决LLC算法在基数较少时误差较大的问题。</p>
+<h3 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h3><h4 id="使用调和平均代替几何平均数"><a href="#使用调和平均代替几何平均数" class="headerlink" title="使用调和平均代替几何平均数"></a>使用调和平均代替几何平均数</h4><p>调和平均数：$H=\dfrac{n}{\sum_{i=1}^{n}\dfrac{1}{x_i}}$</p>
+<p>$\hat n =α_m*\dfrac{m^2}{ \sum_{j=1}^{m} 2^{-M[j]}}$  其中，重新修正后  $α_m=(m\int_0^∞{(\log_2{(\dfrac{2+u}{1+u})})^mdu})^{-1}$</p>
+<p>根据论文中的分析结论，与LLC一样HLLC是渐近无偏估计。<strong>渐近标准差</strong>为</p>
+<p>$StdError(\dfrac{\hat n} {n})≈\dfrac{1.04}{\sqrt m}$</p>
+<h4 id="分段偏差修正"><a href="#分段偏差修正" class="headerlink" title="分段偏差修正"></a>分段偏差修正</h4><p>HLLC中，为了解决LLC在基数较小时偏差大的问题，在小基数时，选择LC估计。设E为估计值：</p>
+<ul>
+<li>当$E \leq \dfrac{5}{2}m$时，使用LC进行估计。（Small range correction）。注意：<strong>此时每一个桶相当于LC中的一个bit，如果桶非空则为1，否则为0</strong>。</li>
+<li>当$\dfrac{5}{2}m \leq E \leq \dfrac{1}{30}2^{32}$是，使用上面给出的HLLC公式进行估计。</li>
+<li>当$E \geq \dfrac{1}{30}2^{32}$时，估计公式如为$\hat n=−2^{32}\log(1−\dfrac{E}{2^{32}})$。（Large range corrections）</li>
+</ul>
+<h2 id="HyperLogLog"><a href="#HyperLogLog" class="headerlink" title="HyperLogLog++"></a>HyperLogLog++</h2><p>在HLLC的理论基础上，Google对其进行了<strong>工程上的优化</strong>，解决了实际运用的一些问题。我们把HLLC中不使用分段修正的原始算法记作HLLC_orign。</p>
+<h3 id="优化-1"><a href="#优化-1" class="headerlink" title="优化"></a>优化</h3><h4 id="使用64位Hash代替32位"><a href="#使用64位Hash代替32位" class="headerlink" title="使用64位Hash代替32位"></a>使用64位Hash代替32位</h4><ul>
+<li>使用64bit的hash函数（L=64），仅仅增加1bit（2^5—&gt;2^6）,</li>
+<li>桶数目m选择在$2^4$–$2^{16}$（$p\in[4，16]$），桶大小为$\log(L+1-p)\approx 6$</li>
+<li>减少在基数巨大的情况下hash冲突问题，可以处理100Billion的基数的情况。</li>
+<li>同时避免了HLLC中分段偏差修正的Large range corrections。（2^64太大）</li>
+</ul>
+<h4 id="优化基数小时偏差抖动问题"><a href="#优化基数小时偏差抖动问题" class="headerlink" title="优化基数小时偏差抖动问题"></a>优化基数小时偏差抖动问题</h4><p>由于HLLC使用渐进偏差进行估计，在基数较小的情况下，HLLC在实践中表现为<strong>偏差偏大</strong>。不考虑使用LC的分段修正，在n为0时，具有约0.7m的固定误差。</p>
+<p>我们以m=16384（p=14）为例，偏差随基数数目变化的实验结果如下图所示。</p>
+<p><img src="https://tva1.sinaimg.cn/large/006tKfTcgy1fljtt1uhgbj30le0ky0t5.jpg" width="400px"></p>
+<p>得出一下结论与修正过程如下：</p>
+<ul>
+<li>在基数n&lt;5m时，偏差比较明显</li>
+<li>我们可以使用预先计算的误差对原始结果进行纠正，为此Google进行了大量实验，计算了$p\in[4，16]$时，分别取了小于5m的200个点计算了他们的原始估计值<code>rawEstimateData</code>和偏差<code>biasData</code>。（值参考<a href="http://goo.gl/iU8Ig）" target="_blank" rel="noopener">http://goo.gl/iU8Ig）</a></li>
+<li>在实际运用时，我们计算出原始估计E，并使用k邻近算法从rawEstimateData中选择k个相近的点（k=6）。找出对于的偏差求出EstimateBias。以此作为对计算出修正值：$E’ = E-EstimateBias$</li>
+</ul>
+<p>在HLLC中为了修正这个问题我们比较LC，HLLC ，HLLC_nobias的平均误差（p=14）：</p>
+<p><img src="https://tva1.sinaimg.cn/large/006tKfTcgy1fljt637v7yj30le0ks75g.jpg" width="400px"></p>
+<p>可以发现如下结论</p>
+<ul>
+<li>在60000以内，HLLC_nobias结果优于HLLC的原始估计</li>
+<li>对于小数据集，在p=14，n&lt;11500时，LC算法整体上还是优于修正后的HLLC_nobias</li>
+</ul>
+<p><strong>综合这些结论</strong>，我们结合LC，HLLC，HLLC_nobias，来优化我们的算法</p>
+<ul>
+<li><code>n &lt; Threshold</code>：使用LC算法，其中Threshold是一个经验值（值参考<a href="http://goo.gl/iU8Ig）" target="_blank" rel="noopener">http://goo.gl/iU8Ig）</a></li>
+<li>在 <code>Threshold &lt; n &lt; 5m</code>：使用修正算法HLLC_nobias</li>
+<li>在<code>n &gt; 5m</code>：使用HLLC算法</li>
+</ul>
+<p>对比，LC+HLLC的算法和LC+HLLC_nobias+HLLC修正偏差效果如下 ，可以发现<strong>新加入的HLLC_nobias优化了突变值</strong>，使偏差变得平缓：</p>
+<p><img src="https://tva1.sinaimg.cn/large/006tKfTcgy1fljre6bjy3j30l20lmt96.jpg" width="400px"></p>
+<h4 id="使用稀疏数组（空间优化）"><a href="#使用稀疏数组（空间优化）" class="headerlink" title="使用稀疏数组（空间优化）"></a>使用稀疏数组（空间优化）</h4><p>HLLC（64bit Hash）算法中使用了6m的<strong>固定空间</strong>存储数据，但是在基数较少的情况下（n&lt;&lt;m），大部分桶的值为0，这是一个典型的稀疏数组。因此，</p>
+<ul>
+<li><p>在稀疏表示的大小<code>size(list) &lt; 6m</code>时，使用$(idx, \sigma(w))$ 这种稀疏pair表示，其中idx为桶号， ρ(w)为该桶值。大小<code>size(list)=(p+6)*x</code>(x为非0个数)，实际存储使用Integer从高Bit位开始存储。</p>
+<p><img src="https://tva1.sinaimg.cn/large/006tKfTcgy1fljxr02gcvj309s02wa9x.jpg" alt></p>
+</li>
+<li><p>在内存中排序存储所有pairs，为了实现<strong>高效插入</strong>数据，我们维护一个零时的集合。插入时直接放入tmp_set中，当tmp_set的大小大于25%的size(list)时，会对tmp_set排序并<strong>批量merge到list中</strong>，合并相同的idx，取最大值，凭顺序插入新idx（这些操作一次遍历即可完成）。</p>
+</li>
+<li><p>在稀疏表示的大小<code>size(list) &gt;= 6m</code>时，稀疏表示会转换成原始的表示方法。</p>
+</li>
+</ul>
+<p>通过稀疏表示法，我们通过一点计算开销实现了大量空间的节约。</p>
+<h4 id="稀疏数组中使用动态精度（准确性优化）"><a href="#稀疏数组中使用动态精度（准确性优化）" class="headerlink" title="稀疏数组中使用动态精度（准确性优化）"></a>稀疏数组中使用动态精度（准确性优化）</h4><p>在对精度要求更高的场合，我们可以利用稀疏数组节约的空间提高在基数较小的情况下的精度p，本质是<strong>临时提高分桶数m</strong>来实现。（实际算法中我们可以设置动态的范围p’）,称此算法为<code>HLL_sparse1</code>。</p>
+<ul>
+<li>临时增加精度p—&gt;p’，<code>size(list&#39;)=(p&#39;+6)*x</code>，此时的临时分桶数是m’=2^p’。并按照稀疏数组逻辑存储$(idx’, \sigma’(w))$。</li>
+<li>随着数据不断加入，size(list’)==6m。需要<strong>对p’降级到p</strong>。此时，需要更新$(idx’, \sigma’(w))$为$(idx, \sigma(w))$。<ul>
+<li>由于p&lt;p’，从$idx’$中选出前p个最大的桶，组成$idx$</li>
+<li>更新桶中的值：当新增<code>p...p&#39;</code>的这几位都是0时， $\sigma (w) = \sigma(w′)+(p′ −p)$。当<code>p...p&#39;</code>这几位有1时，直接算出$\sigma (w) $</li>
+</ul>
+</li>
+</ul>
+<p>使用动态精度后(p’=25)，对比HLLC_nobias 效果如图，可以看到在使用LC算法的阶段（基数小）的时候精度大大增加:</p>
+<p><img src="https://tva1.sinaimg.cn/large/006tKfTcgy1fljzleivhgj30o00ng403.jpg" width="400px"></p>
+<blockquote>
+<p>备注：在Google提供的算法代码中，默认在稀疏数组表示中使用高精度p’，<strong>降级为p时自动切换为正常表示方法</strong>。 若设置的p’过大，会导致过早切换。参考代码EncodeHash/DecodeHash</p>
+</blockquote>
+<h4 id="压缩稀疏数组（空间优化）"><a href="#压缩稀疏数组（空间优化）" class="headerlink" title="压缩稀疏数组（空间优化）"></a>压缩稀疏数组（空间优化）</h4><p>由于在稀疏数组表示时我们可以使用更高的精度p’，所以进一步压缩稀疏数组的存储，可以尽可能的提高效果。主要利用这两个特性</p>
+<ol>
+<li>之前我们直接使用Integer来存储pair $(idx, \sigma(w))$。在大部分编程语言中整型占用32bit，但是实际上size(pair)大小为(p+6)/(p’+6)。其余的空间浪费了。</li>
+<li>稀疏表示的list中，pair是顺序存储的，我们可以利用这一点优化空间。</li>
+</ol>
+<p>对应的优化点是</p>
+<ol>
+<li><strong>方案一</strong>：使用变长编码的integer，对<strong>较小的值的整数占用较少的空间bit</strong>。称此算法为<code>HLL_sparse2</code>。</li>
+<li><strong>方案二</strong>：$\sigma(w)$中不存储绝对值，而利用有序性，<strong>存储差值</strong>。对于$a_1,a_2,a_3,…$ 存储为$a_1,a_2 − a_1,a_3 − a_2,…$。这样存储的值又小了，理论上需要的空间更小。称此算法为<code>HLL_sparse3</code></li>
+</ol>
+<p>此外，还有一个比较隐蔽的优化点（详细描述参考论文 5.3.3 Encoding Hash Values以及代码EncodeHash/DecodeHash）：在使用稀疏数组的高精度p’表示时，都只会用LC算法（此时基数显然很小），是用不到后面的6bit的$\sigma’(w)$值，我们只关心，桶出现在稀疏数组中，表示他为非空的。这6bit的作用是方便我们在转换为原始表示方法的时候恢复桶的值。</p>
+<p><strong>方案三</strong>：在某些情况下，我们可以不存储这个$\sigma’(w)$值。通过前面<strong>对p’降级到p的过程</strong>的分析，我们知道，只有当<code>p...p&#39;</code>的这几位<strong>都是0</strong>时，才会用到6bit的$\sigma’(w)$值。因此我们有很大的概率（$1-\dfrac{1}{2^{p’-p}}$）可以不存储这个值，而是是要增加1bit来表示这种存储格式即可：0表示省略了6bit，1表示存储了6bit。称此算法为<code>HLL++</code>，伪代码入下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">if ⟨x63−p,...,x64−p′⟩ = 0 then</span><br><span class="line">	return ⟨x63,...,x64−p′⟩ || ⟨ρ(⟨x63−p′,...,x0⟩)⟩ || ⟨1⟩</span><br><span class="line">else</span><br><span class="line">	return ⟨x63,...,x64−p′⟩ || ⟨0⟩</span><br><span class="line">end if</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Google论文中提供了一个实践的建议：选择p’=25，则存储6bit的情况下，使用32bit的int是合适的选择</p>
+</blockquote>
+<p>上述几种算法在稀疏数组表示时可以存储的pair数量（p’=25）对比如下</p>
+<p><img src="https://tva1.sinaimg.cn/large/006tKfTcgy1flk16jwr4tj30pe0880t8.jpg" width="400px"></p>
+<h3 id="序列化相关"><a href="#序列化相关" class="headerlink" title="序列化相关"></a>序列化相关</h3><ul>
+<li>利用列式存储的Dictionary Encoding特性优化存储值：把每个桶作为列存储在文件中，其值的Distinct空间是$2^p ·(64−p′ −1)+2p ·(2^{p′−p} −1) $。减少了字典空间。</li>
+<li>如果用数组存储，利用Kyro序列化存数组。</li>
+</ul>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>HLL++算法最终的效果对比原始HLL实现（p=14，p’=25）：</p>
+<p><img src="https://tva1.sinaimg.cn/large/006tKfTcgy1flk1gip4o2j30nw0nujst.jpg" width="400px"></p>
+<p>参考文章</p>
+<ul>
+<li><a href="http://blog.codinglabs.org/articles/algorithms-for-cardinality-estimation-part-i.html" target="_blank" rel="noopener">解读Cardinality Estimation算法</a></li>
+<li><a href="https://bindog.github.io/blog/2015/02/14/cardinality-counting/" target="_blank" rel="noopener">如何科学的计数？</a></li>
+<li><a href="https://research.google.com/pubs/pub40671.html" target="_blank" rel="noopener">Google的论文</a>：完整算法伪代码实现</li>
+<li><a href="http://www.cnblogs.com/fxjwind/p/3755300.html" target="_blank" rel="noopener">Google论文的中文解读</a></li>
+<li><a href="http://dblab.kaist.ac.kr/Publication/pdf/ACM90_TODS_v15n2.pdf" target="_blank" rel="noopener">LC论文</a></li>
+<li><a href="http://algo.inria.fr/flajolet/Publications/DuFl03-LNCS.pdf" target="_blank" rel="noopener">LLC论文</a></li>
+</ul>
+<p>实现</p>
+<ul>
+<li><a href="https://github.com/apache/spark/blob/1270e71753f40c353fb726a0a3d373d181aedb40/sql/catalyst/src/main/scala/org/apache/spark/sql/catalyst/expressions/aggregate/HyperLogLogPlusPlus.scala" target="_blank" rel="noopener">Spark源码中HLL++的实现</a></li>
+<li><a href="https://issues.apache.org/jira/browse/SPARK-16484" target="_blank" rel="noopener">Spark关于改进HLL++算法的JIRA</a>：open状态，作者提供了一种实现</li>
+<li><a href="https://databricks.com/blog/2015/10/13/interactive-audience-analytics-with-apache-spark-and-hyperloglog.html" target="_blank" rel="noopener">在业务中应用HyperLogLog的实例-Spark</a></li>
+<li><a href="https://github.com/clarkduvall/hyperloglog" target="_blank" rel="noopener">Go语言中HLL/HLL++算法的实现&amp;&amp;实验比较</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+            <div class="social-item">
+              <a target="_blank" class="social-link" href="https://t.me/mltalk">
+                <span class="icon">
+                  <i class="fa fa-telegram"></i>
+                </span>
+
+                <span class="label">机器学习碎碎念</span>
+              </a>
+            </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/算法/" rel="tag"># 算法</a>
+              <a href="/tags/大数据/" rel="tag"># 大数据</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/07/02/Scala代码规范/" rel="prev" title="Scala代码规范">
+      <i class="fa fa-chevron-left"></i> Scala代码规范
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/01/10/learn-actor/" rel="next" title="初识Actor - 从Scala库开始">
+      初识Actor - 从Scala库开始 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是基数"><span class="nav-number">1.</span> <span class="nav-text">什么是基数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#应用举例"><span class="nav-number">2.</span> <span class="nav-text">应用举例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题总结"><span class="nav-number">3.</span> <span class="nav-text">问题总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#概率算法"><span class="nav-number">4.</span> <span class="nav-text">概率算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基础：Hash函数与Bitmap"><span class="nav-number">5.</span> <span class="nav-text">基础：Hash函数与Bitmap</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HashSet"><span class="nav-number">5.1.</span> <span class="nav-text">HashSet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Bitmap算法"><span class="nav-number">5.2.</span> <span class="nav-text">Bitmap算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BloomFilter"><span class="nav-number">5.3.</span> <span class="nav-text">BloomFilter</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linear-Counting"><span class="nav-number">6.</span> <span class="nav-text">Linear Counting</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#简介"><span class="nav-number">6.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#应用"><span class="nav-number">6.2.</span> <span class="nav-text">应用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Hash-函数选择"><span class="nav-number">6.2.1.</span> <span class="nav-text">Hash 函数选择</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#参数选择"><span class="nav-number">6.2.2.</span> <span class="nav-text">参数选择</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#合并特性"><span class="nav-number">6.2.3.</span> <span class="nav-text">合并特性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#空间复杂度"><span class="nav-number">6.2.4.</span> <span class="nav-text">空间复杂度</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#误差分析"><span class="nav-number">6.3.</span> <span class="nav-text">误差分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#应用-1"><span class="nav-number">6.4.</span> <span class="nav-text">应用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#平均分桶"><span class="nav-number">6.4.1.</span> <span class="nav-text">平均分桶</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#偏差修正"><span class="nav-number">6.4.2.</span> <span class="nav-text">偏差修正</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Hash-函数选择-1"><span class="nav-number">6.4.3.</span> <span class="nav-text">Hash 函数选择</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#参数选择-1"><span class="nav-number">6.4.4.</span> <span class="nav-text">参数选择</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#合并特性-1"><span class="nav-number">6.4.5.</span> <span class="nav-text">合并特性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#空间复杂度-1"><span class="nav-number">6.4.6.</span> <span class="nav-text">空间复杂度</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#误差分析-1"><span class="nav-number">6.5.</span> <span class="nav-text">误差分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小结"><span class="nav-number">6.6.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HyperLogLog-Counting"><span class="nav-number">7.</span> <span class="nav-text">HyperLogLog Counting</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#优化"><span class="nav-number">7.1.</span> <span class="nav-text">优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#使用调和平均代替几何平均数"><span class="nav-number">7.1.1.</span> <span class="nav-text">使用调和平均代替几何平均数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分段偏差修正"><span class="nav-number">7.1.2.</span> <span class="nav-text">分段偏差修正</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HyperLogLog"><span class="nav-number">8.</span> <span class="nav-text">HyperLogLog++</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#优化-1"><span class="nav-number">8.1.</span> <span class="nav-text">优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#使用64位Hash代替32位"><span class="nav-number">8.1.1.</span> <span class="nav-text">使用64位Hash代替32位</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#优化基数小时偏差抖动问题"><span class="nav-number">8.1.2.</span> <span class="nav-text">优化基数小时偏差抖动问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用稀疏数组（空间优化）"><span class="nav-number">8.1.3.</span> <span class="nav-text">使用稀疏数组（空间优化）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#稀疏数组中使用动态精度（准确性优化）"><span class="nav-number">8.1.4.</span> <span class="nav-text">稀疏数组中使用动态精度（准确性优化）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#压缩稀疏数组（空间优化）"><span class="nav-number">8.1.5.</span> <span class="nav-text">压缩稀疏数组（空间优化）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#序列化相关"><span class="nav-number">8.2.</span> <span class="nav-text">序列化相关</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">8.3.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">limuzhi</p>
+  <div class="site-description" itemprop="description">something about tech, android etc...</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muzhi1991" title="GitHub → https://github.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:muzhi1991@gmail.com" title="E-Mail → mailto:muzhi1991@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/muzhi1991" title="Twitter → https://twitter.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.chenyupeng.com/" title="https://www.chenyupeng.com/" rel="noopener" target="_blank">陈玉鹏的个人空间</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://macshuo.com/" title="http://macshuo.com/" rel="noopener" target="_blank">MacTalk</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">limuzhi</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'G5HLDFmPsllxIjax4F2JTLnl-gzGzoHsz',
+      appKey     : 'A5PTgbvpJwjPlcBJ3Brl8rDs',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

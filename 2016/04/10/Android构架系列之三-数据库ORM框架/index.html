@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="数据库方案 原生sqlite orm框架 ContentProvider+LoaderManager 结合使用  最终选择了DBFlow框架，基于以下几点优势：">
+<meta name="keywords" content="Android,主框架">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android构架系列之三--数据库ORM框架">
+<meta property="og:url" content="http://limuzhi.com/2016/04/10/Android构架系列之三-数据库ORM框架/index.html">
+<meta property="og:site_name" content="Night Piece">
+<meta property="og:description" content="数据库方案 原生sqlite orm框架 ContentProvider+LoaderManager 结合使用  最终选择了DBFlow框架，基于以下几点优势：">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-02-25T09:44:15.470Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android构架系列之三--数据库ORM框架">
+<meta name="twitter:description" content="数据库方案 原生sqlite orm框架 ContentProvider+LoaderManager 结合使用  最终选择了DBFlow框架，基于以下几点优势：">
+
+<link rel="canonical" href="http://limuzhi.com/2016/04/10/Android构架系列之三-数据库ORM框架/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>Android构架系列之三--数据库ORM框架 | Night Piece</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Night Piece</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">white && black</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tools">
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-wrench"></i>利器</a>
+
+  </li>
+        <li class="menu-item menu-item-read">
+
+    <a href="/read/" rel="section"><i class="fa fa-fw fa-book"></i>阅读</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://limuzhi.com/2016/04/10/Android构架系列之三-数据库ORM框架/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="limuzhi">
+      <meta itemprop="description" content="something about tech, android etc...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Night Piece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android构架系列之三--数据库ORM框架
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-04-10 21:09:42" itemprop="dateCreated datePublished" datetime="2016-04-10T21:09:42+08:00">2016-04-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-25 17:44:15" itemprop="dateModified" datetime="2020-02-25T17:44:15+08:00">2020-02-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2016/04/10/Android构架系列之三-数据库ORM框架/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2016/04/10/Android构架系列之三-数据库ORM框架/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="数据库方案"><a href="#数据库方案" class="headerlink" title="数据库方案"></a><a href="https://www.zhihu.com/question/27977160" target="_blank" rel="noopener">数据库方案</a></h2><ul>
+<li>原生sqlite</li>
+<li>orm框架</li>
+<li>ContentProvider+LoaderManager</li>
+<li>结合使用</li>
+</ul>
+<p>最终选择了DBFlow框架，基于以下几点优势：</p>
+<ul>
+<li>速度快，没有反射，使用编译时生成相关类。</li>
+<li><strong>支持Content Provider</strong>，与schematic库相集成。</li>
+<li>流式的sql API，接口友好。</li>
+<li>Google在Demo中使用，算是官方推荐的库。</li>
+</ul>
+<p>下面介绍一下ContentProvider和DBFlow框架</p>
+<h2 id="ContentProvider"><a href="#ContentProvider" class="headerlink" title="ContentProvider"></a>ContentProvider</h2><h3 id="何时使用"><a href="#何时使用" class="headerlink" title="何时使用"></a>何时使用</h3><p>Google建议：<a href="http://developer.android.com/intl/zh-cn/guide/topics/providers/content-provider-creating.html" target="_blank" rel="noopener">http://developer.android.com/intl/zh-cn/guide/topics/providers/content-provider-creating.html</a></p>
+<h3 id="使用ContentProvider"><a href="#使用ContentProvider" class="headerlink" title="使用ContentProvider"></a>使用ContentProvider</h3><ul>
+<li>一个app多个ContentProvider，一个ContentProvider，对应一个数据库，一个数据库中含有n个table（表）</li>
+<li>快速生成ContentProvider的工具-<a href="https://github.com/SimonVT/schematic" target="_blank" rel="noopener">schematic</a>，<a href="https://github.com/SimonVT/schematic/blob/master/schematic-samples%2Fsrc%2Fmain%2Fjava%2Fnet%2Fsimonvt%2Fschematic%2Fsample%2Fdatabase%2FNotesProvider.java" target="_blank" rel="noopener">demo</a></li>
+<li>事务操作：创建一个 ContentProviderOperation 数组，然后将相应的操作添加到数组中，最后通过 ContentResolver.applyBatch 实现批量操作。</li>
+</ul>
+<h3 id="注意点"><a href="#注意点" class="headerlink" title="注意点"></a>注意点</h3><ul>
+<li>进程安全，但不是线程安全，query 等方法可以同时被多个线程调用，所以这些方法必须线程安全。也就是不能使用全局变量、静态变量。（如果非要使用，必须加锁）。但是，数据库dbhelp自身会对操作排队，所以不用担心数据库的线程安全。</li>
+<li>避免在 onCreate() 中执行长时间操作，只构建DbHelper。。不getdb，这很快。</li>
+<li>外部应用访问数据有多重方式，通过路径开发部分内容、临时权限，intent访问等</li>
+</ul>
+<h2 id="DBFlow功能介绍"><a href="#DBFlow功能介绍" class="headerlink" title="DBFlow功能介绍"></a>DBFlow功能介绍</h2><p>这个库的基本使用，先学习<a href="https://github.com/Raizlabs/DBFlow" target="_blank" rel="noopener">官方文档</a>，<a href="https://www.gitbook.com/book/3yumenokanata/dbflow-tutorials/details" target="_blank" rel="noopener">中文</a>，不再赘述。</p>
+<h3 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h3><p>步骤：</p>
+<ol>
+<li>Application中初始化</li>
+<li>建立DataBase。一般情况下，一个App只有一个DB，然后有多张表。</li>
+<li>根据业务需求建立Table,必须实现Model接口（更多是继承BaseModel类）</li>
+</ol>
+<p>实际开发中，可能还需要建立表之间的关联（Relation），在建立Table时，通过<code>foreignKey</code>来实现（1对1，1对多，多对多-3.0以上）</p>
+<p>其他几个概念:</p>
+<ul>
+<li>类型转换器：<code>@Column</code>只支持基本数据类型/相关封装类/Date，使用自定义的转换器，可以支持自己实现的类。</li>
+<li>_Table类：DBFlow会自动生成的类，里面的字段是查询条件常用的</li>
+<li>_Adapter类:</li>
+</ul>
+<h3 id="流式API"><a href="#流式API" class="headerlink" title="流式API"></a>流式API</h3><p>使用DBFlow掌握了<a href="https://github.com/Raizlabs/DBFlow/blob/master/usage/SQLQuery.md" target="_blank" rel="noopener">流式的API</a>基本掌握了它的使用：<br>下面两种使用方式功能相同：</p>
+<ul>
+<li><code>SQLite.select().from(someTable).where(conditions).query();</code></li>
+<li><p><code>new Select().from(someTable).where(conditions).query();</code></p>
+<p>  其中</p>
+<ul>
+<li>conditions为查询条件，一般为<code>someTable_Table.name.eq(&quot;muz&quot;)</code>，从<code>_Table</code>类中找。</li>
+<li>同样适用于insert update delete。注意：<strong>不用忘了最后都要调用</strong><code>query()</code>。</li>
+</ul>
+</li>
+</ul>
+<h3 id="面向对象API"><a href="#面向对象API" class="headerlink" title="面向对象API"></a>面向对象API</h3><p>另外一种使用DBFlow的方式，没有上面那种方式灵活，但是更加友好。<br>对于我们使用<code>@Table</code>注解的类，可以直接新建一个对象，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SomeTable oneRecord = <span class="keyword">new</span> SomeTable();</span><br><span class="line">oneRecord.id=<span class="number">1</span></span><br><span class="line">oneRecord.load();</span><br></pre></td></tr></table></figure>
+<p>注意：局限性只能查找<code>@PrimaryKey</code>属性<br>同样的，有update,insert等方法。</p>
+<h3 id="一些使用要点"><a href="#一些使用要点" class="headerlink" title="一些使用要点"></a>一些使用要点</h3><ul>
+<li>select中<code>query()</code>与<code>queryList()</code>：前者返回Cursor，后者直接返回对象List，<strong>更安全</strong>,不用close Cursor。</li>
+<li>同步与异步：<strong>默认是同步查询</strong>，需要异步加上<code>async()</code>和回调<code>query(listener)</code></li>
+<li><p>如果需要多个查询条件，两种方式:</p>
+<ol>
+<li>在where后添加and(xxx)或者or(xxx)—<strong>更常用</strong></li>
+<li><p>使用组合查询条件ConditionGroup</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">SQLite.select()</span><br><span class="line">  .from(MyTable<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line">  .where(MyTable_Table.someColumn.is("SomeValue"))</span><br><span class="line">  .and(MyTable_Table.anotherColumn.is(<span class="string">"ThisValue"</span>));</span><br><span class="line"><span class="comment">// 或者</span></span><br><span class="line">SQLite.select()</span><br><span class="line">   .from(MyTable<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">   .<span class="title">where</span>(<span class="title">ConditionGroup</span>.<span class="title">clause</span>()</span></span><br><span class="line">   .and(MyTable_Table.someColumn.is("SomeValue")</span><br><span class="line">   .or(MyTable_Table.anotherColumn.is(<span class="string">"ThisValue"</span>));</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+</ul>
+<h3 id="其他的高级功能（有用的）"><a href="#其他的高级功能（有用的）" class="headerlink" title="其他的高级功能（有用的）"></a>其他的高级功能（有用的）</h3><h4 id="数据迁移-数据库升级"><a href="#数据迁移-数据库升级" class="headerlink" title="数据迁移 - 数据库升级"></a>数据迁移 - 数据库升级</h4><p>DBFlow支持使用<code>Migration</code>支持升级数据库<code>@Database</code>版本.</p>
+<ul>
+<li><p>继承<code>AlterTableMigration&lt;SomeTable&gt;</code>，修改SomeTable表操作</p>
+  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Migration</span>(version = <span class="number">2</span>, database = AppDatabase<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">class</span> <span class="title">Migration1</span> <span class="keyword">extends</span> <span class="title">AlterTableMigration</span>&lt;<span class="title">TestModel</span>&gt; </span>&#123;</span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onPreMigrate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 一些数据库操作，如修改表，需要测试！</span></span><br><span class="line">    addColumn(Long.class, "timestamp");</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">* 继承`UpdateTableMigration&lt;SomeTable&gt;`，修改SomeTable表中内容操作</span><br><span class="line"></span><br><span class="line">	```java</span><br><span class="line"><span class="meta">@Migration</span>(version = <span class="number">2</span>, database = AppDatabase<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">class</span> <span class="title">Migration1</span> <span class="keyword">extends</span> <span class="title">UpdateTableMigration</span>&lt;<span class="title">TestModel</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onPreMigrate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">      <span class="comment">// UPDATE TestModel SET deviceType = "phablet" WHERE screenSize &gt; 5.7 AND screenSize &lt; 7;</span></span><br><span class="line">      set(TestModel_Table.deviceType.is(<span class="string">"phablet"</span>))</span><br><span class="line">        .where(TestModel_Table.screenSize.greaterThan(<span class="number">5.7</span>), TestModel_Table.screenSize.lessThan(<span class="number">7</span>));</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>扩展功能：<br>注意：如果<strong>想要在第一次创建时对数据库进行初始化操作</strong>，只需要使用<strong><code>version = 0</code></strong></p>
+<h4 id="支持ContentProvider"><a href="#支持ContentProvider" class="headerlink" title="支持ContentProvider"></a>支持ContentProvider</h4><p>支持ContentProvider只有很少的修改。</p>
+<ol>
+<li><p>将有@Database的类添加@ContentProvider</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">	<span class="meta">@ContentProvider</span>(authority = TestDatabase.AUTHORITY,</span><br><span class="line">        database = TestDatabase<span class="class">.<span class="keyword">class</span>,</span></span><br><span class="line"><span class="class">        <span class="title">baseContentUri</span> </span>= TestDatabase.BASE_CONTENT_URI)</span><br><span class="line"><span class="meta">@Database</span>(name = TestDatabase.NAME, version = TestDatabase.VERSION)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestDatabase</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String NAME = <span class="string">"TestDatabase"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> VERSION = <span class="string">"1"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String AUTHORITY = <span class="string">"com.raizlabs.android.dbflow.test.provider"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String BASE_CONTENT_URI = <span class="string">"content://"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在Manifest添加provider，注意名称为<code>类名$Provider</code>。</p>
+ <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">provider</span></span></span><br><span class="line"><span class="tag">   <span class="attr">android:authorities</span>=<span class="string">"com.raizlabs.android.dbflow.test.provider"</span></span></span><br><span class="line"><span class="tag">   <span class="attr">android:exported</span>=<span class="string">"true|false"</span></span></span><br><span class="line"><span class="tag">   <span class="attr">android:name</span>=<span class="string">".provider.TestContentProvider$Provider"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>至少添加一个 <code>@TableEndpoint</code>:在<code>@Table</code>类中指定content provider的类名，代码如下，注意<code>@ContentUri</code></p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">	<span class="meta">@TableEndpoint</span>(name = ContentProviderModel.NAME, contentProviderName = <span class="string">"ContentDatabase"</span>)</span><br><span class="line"><span class="meta">@Table</span>(database = ContentDatabase<span class="class">.<span class="keyword">class</span>, <span class="title">tableName</span> </span>= ContentProviderModel.NAME)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ContentProviderModel</span> <span class="keyword">extends</span> <span class="title">BaseProviderModel</span>&lt;<span class="title">ContentProviderModel</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String NAME = <span class="string">"ContentProviderModel"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@ContentUri</span>(path = NAME, type = ContentUri.ContentType.VND_MULTIPLE + NAME)</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Uri CONTENT_URI = ContentUtils.buildUri(ContentDatabase.AUTHORITY);</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Column</span></span><br><span class="line">    <span class="meta">@PrimaryKey</span>(autoincrement = <span class="keyword">true</span>)</span><br><span class="line">    <span class="keyword">long</span> id;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Column</span></span><br><span class="line">    String notes;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Column</span></span><br><span class="line">    String title;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Uri <span class="title">getDeleteUri</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> TestContentProvider.ContentProviderModel.CONTENT_URI;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Uri <span class="title">getInsertUri</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> TestContentProvider.ContentProviderModel.CONTENT_URI;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Uri <span class="title">getUpdateUri</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> TestContentProvider.ContentProviderModel.CONTENT_URI;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Uri <span class="title">getQueryUri</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> TestContentProvider.ContentProviderModel.CONTENT_URI;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>(非必须，会使在Model上的操作使用ContentProvider）修改Table继承的类为下面的一种，如上的代码。<strong>强烈推荐第二个<code>BaseSyncableProviderModel</code>**</strong>????疑问ContentProvider不写数据库吗**</p>
+<ul>
+<li>BaseProviderModel：Model上的所有操作都是通过ContentProvider</li>
+<li>BaseSyncableProviderModel：与上面相同，<strong>除此之外，还会同步到本地的App数据库，即本地数据库会有相同数据</strong></li>
+</ul>
+</li>
+<li><p>使用，有两种方式</p>
+<ul>
+<li><p>通用方式如下：</p>
+  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">	ContentProviderModel contentProviderModel = ...; <span class="comment">// some instance</span></span><br><span class="line"><span class="keyword">int</span> count = ContentUtils.update(getContentResolver(), ContentProviderModel.CONTENT_URI, contentProviderModel);</span><br><span class="line">Uri uri = ContentUtils.insert(getContentResolver(), ContentProviderModel.CONTENT_URI, contentProviderModel);</span><br><span class="line"><span class="keyword">int</span> count = ContentUtils.delete(getContentResolver(), someContentUri, contentProviderModel);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果使用了上面步骤4，还可以像下面这样:</p>
+  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">		MyModel model = <span class="keyword">new</span> MyModel();</span><br><span class="line">model.id = <span class="number">5</span>;</span><br><span class="line">model.load(); <span class="comment">// queries the content provider</span></span><br><span class="line">model.someProp = <span class="string">"Hello"</span></span><br><span class="line">model.update(<span class="keyword">false</span>); <span class="comment">// runs an update on the CP</span></span><br><span class="line">model.insert(<span class="keyword">false</span>); <span class="comment">// inserts the data into the CP</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ol>
+<h4 id="DBFlow的特殊List"><a href="#DBFlow的特殊List" class="headerlink" title="DBFlow的特殊List"></a>DBFlow的特殊List</h4><p>DBFlow可以直接从数据库获取的数据用以下两种数据结构返回。具体使用查看<a href="https://github.com/Raizlabs/DBFlow/blob/master/usage/TableList.md" target="_blank" rel="noopener">文档中代码</a></p>
+<ul>
+<li>FlowCursorList：用在大量数据查询与Android中的<code>BaseAdapter</code>绑定，不需要一次性加载数据到List中，而是，只加载使用到的（用户看到的）数据。<strong>十分有用！</strong></li>
+<li>FlowQueryList：用在List中数据与数据库中的数据同步修改</li>
+</ul>
+<h4 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h4><p><a href="https://github.com/Raizlabs/DBFlow/blob/master/usage/Transactions.md" target="_blank" rel="noopener">参考官方文档</a></p>
+<h4 id="其他功能"><a href="#其他功能" class="headerlink" title="其他功能"></a>其他功能</h4><ul>
+<li>ModelCache缓存：select操作可以先从内存缓存中读取，需要手动打开<br>  注意：<ul>
+<li>FlowCursorList与FlowQueryList使用独立的ModelCache缓存，并不与@Tabel/Model类的缓存通用</li>
+</ul>
+</li>
+<li>支持索引：设置某些列使用索引，加快select速度</li>
+<li>触发器：在数据库的某些操作之前或之后自动触发执行的一些动作</li>
+</ul>
+<h3 id="其他数据库操作常识"><a href="#其他数据库操作常识" class="headerlink" title="其他数据库操作常识"></a>其他数据库操作常识</h3><ul>
+<li>不要在循环中操作数据库，而是使用事务</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+            <div class="social-item">
+              <a target="_blank" class="social-link" href="https://t.me/mltalk">
+                <span class="icon">
+                  <i class="fa fa-telegram"></i>
+                </span>
+
+                <span class="label">机器学习碎碎念</span>
+              </a>
+            </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Android/" rel="tag"># Android</a>
+              <a href="/tags/主框架/" rel="tag"># 主框架</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/04/04/Android构架系列之二-常见框架分析/" rel="prev" title="Android构架系列之二--常见框架分析(一）">
+      <i class="fa fa-chevron-left"></i> Android构架系列之二--常见框架分析(一）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2016/04/17/Android构架系列之二-MVP&&Clean理解与实践之疑问/" rel="next" title="Android构架系列之二--MVP&&Clean理解与实践之疑问">
+      Android构架系列之二--MVP&&Clean理解与实践之疑问 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#数据库方案"><span class="nav-number">1.</span> <span class="nav-text">数据库方案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ContentProvider"><span class="nav-number">2.</span> <span class="nav-text">ContentProvider</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#何时使用"><span class="nav-number">2.1.</span> <span class="nav-text">何时使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用ContentProvider"><span class="nav-number">2.2.</span> <span class="nav-text">使用ContentProvider</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#注意点"><span class="nav-number">2.3.</span> <span class="nav-text">注意点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DBFlow功能介绍"><span class="nav-number">3.</span> <span class="nav-text">DBFlow功能介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本使用"><span class="nav-number">3.1.</span> <span class="nav-text">基本使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#流式API"><span class="nav-number">3.2.</span> <span class="nav-text">流式API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#面向对象API"><span class="nav-number">3.3.</span> <span class="nav-text">面向对象API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一些使用要点"><span class="nav-number">3.4.</span> <span class="nav-text">一些使用要点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他的高级功能（有用的）"><span class="nav-number">3.5.</span> <span class="nav-text">其他的高级功能（有用的）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#数据迁移-数据库升级"><span class="nav-number">3.5.1.</span> <span class="nav-text">数据迁移 - 数据库升级</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#支持ContentProvider"><span class="nav-number">3.5.2.</span> <span class="nav-text">支持ContentProvider</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DBFlow的特殊List"><span class="nav-number">3.5.3.</span> <span class="nav-text">DBFlow的特殊List</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#事务"><span class="nav-number">3.5.4.</span> <span class="nav-text">事务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#其他功能"><span class="nav-number">3.5.5.</span> <span class="nav-text">其他功能</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他数据库操作常识"><span class="nav-number">3.6.</span> <span class="nav-text">其他数据库操作常识</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">limuzhi</p>
+  <div class="site-description" itemprop="description">something about tech, android etc...</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muzhi1991" title="GitHub → https://github.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:muzhi1991@gmail.com" title="E-Mail → mailto:muzhi1991@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/muzhi1991" title="Twitter → https://twitter.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.chenyupeng.com/" title="https://www.chenyupeng.com/" rel="noopener" target="_blank">陈玉鹏的个人空间</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://macshuo.com/" title="http://macshuo.com/" rel="noopener" target="_blank">MacTalk</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">limuzhi</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'G5HLDFmPsllxIjax4F2JTLnl-gzGzoHsz',
+      appKey     : 'A5PTgbvpJwjPlcBJ3Brl8rDs',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

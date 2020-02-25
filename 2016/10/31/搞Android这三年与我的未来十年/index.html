@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="自大学接触编程起，我没有想到会从事Android应用开发，更没有想到这么一搞就是3年。 这话得从大学说起，作为一名软件工程的理工男，也是兴趣使然，立志从事开发软件。然而我并不知道，这个目标还是多少有些宽泛的。对那时的我而言，软件直觉上是那一个个精美的界面，是那一行行酷酷的命令行，甚至是搞启动盘重装系统😌。C语言作为启蒙语言，就像打开了新世界的大门，让人痴迷的喜爱，我甚至隔三差五去网吧包宿刷教科书">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="搞Android这三年与我的未来十年">
+<meta property="og:url" content="http://limuzhi.com/2016/10/31/搞Android这三年与我的未来十年/index.html">
+<meta property="og:site_name" content="Night Piece">
+<meta property="og:description" content="自大学接触编程起，我没有想到会从事Android应用开发，更没有想到这么一搞就是3年。 这话得从大学说起，作为一名软件工程的理工男，也是兴趣使然，立志从事开发软件。然而我并不知道，这个目标还是多少有些宽泛的。对那时的我而言，软件直觉上是那一个个精美的界面，是那一行行酷酷的命令行，甚至是搞启动盘重装系统😌。C语言作为启蒙语言，就像打开了新世界的大门，让人痴迷的喜爱，我甚至隔三差五去网吧包宿刷教科书">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-02-25T09:44:15.418Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="搞Android这三年与我的未来十年">
+<meta name="twitter:description" content="自大学接触编程起，我没有想到会从事Android应用开发，更没有想到这么一搞就是3年。 这话得从大学说起，作为一名软件工程的理工男，也是兴趣使然，立志从事开发软件。然而我并不知道，这个目标还是多少有些宽泛的。对那时的我而言，软件直觉上是那一个个精美的界面，是那一行行酷酷的命令行，甚至是搞启动盘重装系统😌。C语言作为启蒙语言，就像打开了新世界的大门，让人痴迷的喜爱，我甚至隔三差五去网吧包宿刷教科书">
+
+<link rel="canonical" href="http://limuzhi.com/2016/10/31/搞Android这三年与我的未来十年/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>搞Android这三年与我的未来十年 | Night Piece</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Night Piece</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">white && black</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tools">
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-wrench"></i>利器</a>
+
+  </li>
+        <li class="menu-item menu-item-read">
+
+    <a href="/read/" rel="section"><i class="fa fa-fw fa-book"></i>阅读</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://limuzhi.com/2016/10/31/搞Android这三年与我的未来十年/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="limuzhi">
+      <meta itemprop="description" content="something about tech, android etc...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Night Piece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          搞Android这三年与我的未来十年
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-10-31 16:17:00" itemprop="dateCreated datePublished" datetime="2016-10-31T16:17:00+08:00">2016-10-31</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-25 17:44:15" itemprop="dateModified" datetime="2020-02-25T17:44:15+08:00">2020-02-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/总结/" itemprop="url" rel="index"><span itemprop="name">总结</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2016/10/31/搞Android这三年与我的未来十年/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2016/10/31/搞Android这三年与我的未来十年/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>自大学接触编程起，我没有想到会从事Android应用开发，更没有想到这么一搞就是3年。</p>
+<p>这话得从大学说起，作为一名软件工程的理工男，也是兴趣使然，立志从事开发软件。然而我并不知道，这个目标还是多少有些宽泛的。对那时的我而言，软件直觉上是那一个个精美的界面，是那一行行酷酷的命令行，甚至是搞启动盘重装系统😌。C语言作为启蒙语言，就像打开了新世界的大门，让人痴迷的喜爱，我甚至隔三差五去网吧包宿刷教科书（没错就是那本再破千万的神书，迷之微笑）。那时的我都有C语言情节—以为这才是正统，Java这个low逼！</p>
+<p>大一下学期，我和班长一起打鸡血地跑到实验室找到了C语言的任课老师—车老板，希望在实验室找点事情干。没想到凭着班长同志的神力和我那超高的C语言成绩的一丝印象，车老板留下了我们，于是我们成了实验室唯一的大一学生。天真的我们，开始了愉快的搞机时光。</p>
+<p>2011年初，Android刚刚兴起，记得我上大学用第一款手机就是HTC G8，深深地被电容屏幕的操控体验震撼。恰巧实验室刚刚起步，以Android为方向做一些东西，于是我们以Google大学生Android应用大赛为目标开始了一年多的Android开发。1周”搞定”Java，1周Android入门，然后选定了一个软硬结合的项目。从嵌入式到Arduino，最后到Android应用的控制界面，期间夹杂了各种实验室的私活，一路走来各种心酸，最终也取得不错的结果。从此对Android API有了基本的了解，我想那也是我<strong>入门Android的这一年（2011–2012）</strong>。</p>
+<p>之后的一年多，我都很少接触Android开发了，直到毕业前找工作。2014年是Android最火爆的一年，作为应届毕业生的我，求职成了最重要的事情。虽然我一心想找一个嵌入式（C方向）或者后台开发的岗位，然而真正参加招聘才发现，竞争激烈，工资被压低。在金钱的驱使下，一横心拿起Android。Android的实践基础加上算法的底子真有种所向披靡的感觉，大公司Offer基本没有问题。然而心中依然有一丝丝不爽，搞这个这有点Low。</p>
+<p>不管怎么说，我开始了两年正式的Android开发工程师的职业生涯。投入到工作中才发现自己的偏见多么的无知。互联网公司的氛围，很快让我<strong>摒弃了语言的偏见</strong>，主流语言没有高低，只有是否合适，核心在于设计。同时，我也<strong>抛弃了对客户端的偏见</strong>，软件开发是一门工程学科，技术没有高低，后台与前端都是对框架的熟悉使用，最终深入挖掘。核心在于解决业务需求，这里市场成了最关键的因素。从某种程度上说这几年的Android技术生态发展更好！工作的头一年，我也感恩去了一个优秀的团队（京东钱包团队），树立了我对软件设计的正确认识，了解Android技术的方方面面，尤其是比较深入的插件化技术。这一年是<strong>我对Android深入了解的一年（2014-2015）</strong>。</p>
+<p>不安分是年轻人的天性，从更好的职业发展考虑，我选择了百度作为下一站，百度自由放任的政策让我尝试了很多新鲜的技术，虽然不够深入，却实在地扩宽了眼界，实验了各种框架，功能库，见识了各种项目（大部分是混乱的）。有对比才有进步，可以说这一年是<strong>扩宽认知的一年（2015–2016）</strong>。</p>
+<p>很快，我就要暂时告别Android开发了，细细想来，这些年也不算虚度，Android开发让我在软件开发的某一个具体的技术上有了比较深入的了解。总的来说，<strong>是对软件有了粗浅的认知，对框架与系统有了感觉，知道了重点在哪里。下一步是设计方面还要深入</strong>（这也是我不会完全放弃Android的原因之一）。这篇文章我会把我对Android开发技术的所有认知，列一个条目，在剩下的一周的时间内不断完善，力求覆盖这些年的涉及的方方面面。</p>
+<h2 id="Android知识概述"><a href="#Android知识概述" class="headerlink" title="Android知识概述"></a>Android知识概述</h2><p>参考下面的文件：<a href="/files/Android知识汇总.mindnode">安卓知识汇总</a></p>
+<h2 id="感想与展望"><a href="#感想与展望" class="headerlink" title="感想与展望"></a>感想与展望</h2><p>其实，对于Android开发，我还远没有到精通的地步。RxJava，RN，热修复，这些当前火热的技术并没有涉猎，Android Framework的设计也没有深入，我仅仅停留在片段化地看过一些代码。现在离开还依旧有些不舍。<strong>我希望不是完全的放弃Android，而是把它作为我工具箱中的一项重要的技能。</strong>工程技术很多技能是通用的，如设计模式。由于对Android比较熟悉，我还是希望在这里把这些学习一下，以后也好融会贯通。下面的日子里，这些事情要坚持</p>
+<ul>
+<li>《Android源码设计模式》这本书抽空看完，时间是明年2月左右(过年期间)。</li>
+<li>跟进Android的最新动态，做到新技术不落伍。RxJava这些与我现在工作也有关。</li>
+</ul>
+<p>新的工作方向是，大数据挖掘工程师，使用的技术栈是Hadoop &amp;&amp; Spark &amp;&amp; Scala。我不希望是盲目的开始，而是<strong>借鉴Android的学习的经验与教训，有计划地科学地开始新的技术栈的学习</strong>。分为下面的几个阶段（一年内）：</p>
+<ul>
+<li>入门（2017年2月之前，2-3个月）<ul>
+<li>官方原版英文Guide文档学习：API与基本原理</li>
+<li>官方Demo Example工程学习：了解众多最佳实践</li>
+<li>阅读基本入门书籍各一本形成完整知识体系：Scala语言 &amp;&amp; Spark编程 &amp;&amp; Hadoop指南</li>
+<li>了解公司代码架构与使用，足以完成开发任务</li>
+</ul>
+</li>
+<li>进阶（2017年6月前，3-4个月）<ul>
+<li>一个优秀开源项目代码通读，提升工程质量，认识一些新技术</li>
+<li>性能优化切入点学习</li>
+<li>高级特性了解与应用场景</li>
+<li>Spark源码分析：关键模块代码</li>
+<li>阅读包含高级内容的书籍：Spark Yarn Scala</li>
+</ul>
+</li>
+<li>高级（2017年底，半年，内容待定）<ul>
+<li>基本数据挖掘算法策略学习</li>
+<li>统计学</li>
+<li>机器学习与深度学习入门</li>
+</ul>
+</li>
+</ul>
+<p>非常幸运选择了软件行业，更幸运地走上大数据分析的道路。这是我人生的一个重要的转折点。如果说Android是过去5年或者未来3年流行的技术，那么，<strong>我看好大数据分析行业（包括机器学习相关领域）未来十年的发展</strong>，并且相关知识可以很好的扩展。我想这是我40岁前要一心投入的事业。当然几年后会调整具体业务方向，毕竟8年就是一辈子，总有新东西值得学习。</p>
+<p>方向已定，起帆远航！</p>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+            <div class="social-item">
+              <a target="_blank" class="social-link" href="https://t.me/mltalk">
+                <span class="icon">
+                  <i class="fa fa-telegram"></i>
+                </span>
+
+                <span class="label">机器学习碎碎念</span>
+              </a>
+            </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Android/" rel="tag"># Android</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/10/15/JavaWeb开发入门二--JavaWeb框架历史/" rel="prev" title="JavaWeb开发入门二--JavaWeb框架历史">
+      <i class="fa fa-chevron-left"></i> JavaWeb开发入门二--JavaWeb框架历史
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2016/12/04/技术债/" rel="next" title="技术债">
+      技术债 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Android知识概述"><span class="nav-number">1.</span> <span class="nav-text">Android知识概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#感想与展望"><span class="nav-number">2.</span> <span class="nav-text">感想与展望</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">limuzhi</p>
+  <div class="site-description" itemprop="description">something about tech, android etc...</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muzhi1991" title="GitHub → https://github.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:muzhi1991@gmail.com" title="E-Mail → mailto:muzhi1991@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/muzhi1991" title="Twitter → https://twitter.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.chenyupeng.com/" title="https://www.chenyupeng.com/" rel="noopener" target="_blank">陈玉鹏的个人空间</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://macshuo.com/" title="http://macshuo.com/" rel="noopener" target="_blank">MacTalk</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">limuzhi</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'G5HLDFmPsllxIjax4F2JTLnl-gzGzoHsz',
+      appKey     : 'A5PTgbvpJwjPlcBJ3Brl8rDs',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

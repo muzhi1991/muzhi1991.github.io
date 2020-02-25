@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="分析spark初版本的源码，代码行数1w+，比较简单，但是基本架构变换不大，有必要阅读。先提出阅读Spark论文的一些疑问，再阅读源码。 阅读论文的问题RDD">
+<meta name="keywords" content="Spark,大数据">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spark源码分析-0.5最初版本">
+<meta property="og:url" content="http://limuzhi.com/2018/08/18/spark-source-analyse-05/index.html">
+<meta property="og:site_name" content="Night Piece">
+<meta property="og:description" content="分析spark初版本的源码，代码行数1w+，比较简单，但是基本架构变换不大，有必要阅读。先提出阅读Spark论文的一些疑问，再阅读源码。 阅读论文的问题RDD">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fy63zt3p9kj30n006caac.jpg =414x114">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fy640vwks4j30j80fmzmc.jpg =314x314">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fy641yldwwj30ge04o0sr.jpg =295x84">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fy64272z66j314k0fmjso.jpg =730x281">
+<meta property="og:updated_time" content="2020-02-25T09:44:15.404Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spark源码分析-0.5最初版本">
+<meta name="twitter:description" content="分析spark初版本的源码，代码行数1w+，比较简单，但是基本架构变换不大，有必要阅读。先提出阅读Spark论文的一些疑问，再阅读源码。 阅读论文的问题RDD">
+<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/006tNbRwgy1fy63zt3p9kj30n006caac.jpg =414x114">
+
+<link rel="canonical" href="http://limuzhi.com/2018/08/18/spark-source-analyse-05/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>Spark源码分析-0.5最初版本 | Night Piece</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Night Piece</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">white && black</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tools">
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-wrench"></i>利器</a>
+
+  </li>
+        <li class="menu-item menu-item-read">
+
+    <a href="/read/" rel="section"><i class="fa fa-fw fa-book"></i>阅读</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://limuzhi.com/2018/08/18/spark-source-analyse-05/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="limuzhi">
+      <meta itemprop="description" content="something about tech, android etc...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Night Piece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Spark源码分析-0.5最初版本
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-08-18 15:49:01" itemprop="dateCreated datePublished" datetime="2018-08-18T15:49:01+08:00">2018-08-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-25 17:44:15" itemprop="dateModified" datetime="2020-02-25T17:44:15+08:00">2020-02-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2018/08/18/spark-source-analyse-05/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2018/08/18/spark-source-analyse-05/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>分析spark初版本的源码，代码行数1w+，比较简单，但是基本架构变换不大，有必要阅读。先提出阅读Spark论文的一些疑问，再阅读源码。</p>
+<h2 id="阅读论文的问题"><a href="#阅读论文的问题" class="headerlink" title="阅读论文的问题"></a>阅读论文的问题</h2><h3 id="RDD"><a href="#RDD" class="headerlink" title="RDD"></a>RDD</h3><ul>
+<li>如何构造RDD（4中方式）<ul>
+<li>从paralize</li>
+<li>从hdfs</li>
+<li>从已有RDD转化</li>
+<li>通过将已有的RDD持久化？（直接用内存的RDD）</li>
+</ul>
+</li>
+<li>如何缓存—如何存放比物理内存大的RDD（对比虚拟缓存）</li>
+<li>如何高效的错误容忍：节点失败了，RDD如何重建—-继续运行不出错<ul>
+<li>粗粒度转换(coarse-grained transformation)的接口</li>
+</ul>
+</li>
+</ul>
+<h3 id="lazy问题"><a href="#lazy问题" class="headerlink" title="lazy问题"></a>lazy问题</h3><ul>
+<li>read rdd时是lazy？</li>
+<li>cache是lazy？</li>
+</ul>
+<h3 id="cache问题："><a href="#cache问题：" class="headerlink" title="cache问题："></a>cache问题：</h3><ul>
+<li>shuffle的rdd，宽依赖是否会自动cache？（有人说是的）。cache在哪里（论文中说在父节点？类似MR？）<br>答：不会，但是会落盘。</li>
+<li>每一个RDD可以设置persistence priority?什么</li>
+<li>LRU策略具体是什么</li>
+</ul>
+<h3 id="操作问题"><a href="#操作问题" class="headerlink" title="操作问题"></a>操作问题</h3><ul>
+<li>论文中说以后会提供一个在map里面的lookup操作？是什么鬼？</li>
+<li>论文中说会有自动的checkpoint（persist(REPLICATE)还）</li>
+<li>join操作的实现，是否使用broadcast？</li>
+</ul>
+<h3 id="架构问题"><a href="#架构问题" class="headerlink" title="架构问题"></a>架构问题</h3><ul>
+<li>调度起schedule具体是个什么东西</li>
+</ul>
+<h2 id="start"><a href="#start" class="headerlink" title="start"></a>start</h2><p>以 <code>sc.parallelize(data, numSlices).count</code> 这个最简单的例子为例，学习流程</p>
+<h3 id="阅读sparkContext"><a href="#阅读sparkContext" class="headerlink" title="阅读sparkContext"></a>阅读sparkContext</h3><h4 id="构建-amp-amp-初始化一些重要的变量"><a href="#构建-amp-amp-初始化一些重要的变量" class="headerlink" title="构建&amp;&amp;初始化一些重要的变量"></a>构建&amp;&amp;初始化一些重要的变量</h4><ul>
+<li>构建SparkEnv（ThreadLocal中）<ul>
+<li>构建Cache：<code>BoundedMemoryCache extends Cache</code></li>
+<li>serializer：<code>JavaSerializer extends Serializer</code></li>
+<li>cacheTracker：<code>CacheTracker</code> （参考下面Cache设计要点）<ul>
+<li>在master上启动一个<code>CacheTrackerActor</code>（<code>extends DaemonActor</code>）</li>
+<li>在worker上会连接master的Actor</li>
+<li>注意CacheTracker类中定义了缓存&amp;&amp;计算(<code>getOrCompute</code>)的逻辑！！</li>
+</ul>
+</li>
+<li>mapOutputTracker：记录了每一个maper的输出的位置信息，下面的fetcher会用。</li>
+<li>shuffleFetcher：读取方法，获取远程的shuffle数据</li>
+<li>shuffleMgr:每个worker上都会有（master也有？），提供了shuffler的文件获取http服务</li>
+</ul>
+</li>
+<li>Broadcast.initialize</li>
+<li>构建Scheduler</li>
+<li>Methods for creating RDDs</li>
+<li>Methods for creating shared variables</li>
+</ul>
+<h4 id="runJob函数"><a href="#runJob函数" class="headerlink" title="runJob函数"></a>runJob函数</h4><p>该函数是运行任务的<strong>入口</strong>，触发的Action都会调用该函数触发计算：stage划分，task生成，提交task到集群</p>
+<h4 id="读取输入数据函数"><a href="#读取输入数据函数" class="headerlink" title="读取输入数据函数"></a>读取输入数据函数</h4><p>形成输入数据的RDD</p>
+<ul>
+<li>parallelize：内存的数据输入，比较特殊</li>
+<li>textFile：调用了hadoopFile获取hdfs上的文件</li>
+<li>hadoopFile、HadoopRDD</li>
+</ul>
+<h4 id="object-SparkContext内定义隐式转换"><a href="#object-SparkContext内定义隐式转换" class="headerlink" title="object SparkContext内定义隐式转换"></a>object SparkContext内定义隐式转换</h4><p> contains a number of implicit conversions and parameters for use with various Spark features.</p>
+<h3 id="SparkEnv内重要的组件"><a href="#SparkEnv内重要的组件" class="headerlink" title="SparkEnv内重要的组件"></a>SparkEnv内重要的组件</h3><h4 id="Cache设计要点"><a href="#Cache设计要点" class="headerlink" title="Cache设计要点"></a>Cache设计要点</h4><p>每个exector上已有一个Cache实例,</p>
+<ul>
+<li>存储both partitions of cached RDDs and broadcast variables （存储RDD的分区和广播变量）</li>
+<li>Caches are also aware of which entries are part of the same dataset （可以区分出不同的partition是不是同一个dataset的）</li>
+<li>key是(datasetID, partition) ，这里的datasetID包含了命名空间（Space）信息</li>
+</ul>
+<p><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1fy63zt3p9kj30n006caac.jpg =414x114" alt></p>
+<p>key的设计—KeySpace<br>原因：每个exector上已有一个cache实例，所有模块共享，需要区分命名空间<br>实现：</p>
+<ul>
+<li>使用了一个int的keySpaceId来区分：(datasetID, partition) 其中：datasetID=(keySpaceId, datasetId) 这里datasetId是真实的id</li>
+<li>实现Cache的接口的子类的key都是被KeySpace处理过的。</li>
+</ul>
+<p>cache对象大小评估—SizeEstimator </p>
+<ul>
+<li>Estimates the sizes of Java objects (number of bytes of memory they occupy), for use in memory-aware caches.</li>
+<li>原理 <a href="http://www.javaworld.com/javaworld/javaqa/2003-12/02-qa-1226-sizeof.html" target="_blank" rel="noopener">http://www.javaworld.com/javaworld/javaqa/2003-12/02-qa-1226-sizeof.html</a></li>
+<li>limitations; most notably, we will overestimate total memory used if some cache entries have pointers to a shared object</li>
+</ul>
+<p>jvm内存分配 — Runtime.getRuntime.maxMemory<br><a href="https://stackoverflow.com/questions/23701207/why-do-xmx-and-runtime-maxmemory-not-agree" target="_blank" rel="noopener">https://stackoverflow.com/questions/23701207/why-do-xmx-and-runtime-maxmemory-not-agree</a></p>
+<p>内部表示-LinkedHashMap（存储顺序与读取一致）：<br>原因：<strong>实现LRU</strong> order<br>注意：</p>
+<ul>
+<li>LinkedHashMap的线程安全问题</li>
+<li>get逻辑（一次get一个partition）<ul>
+<li>比较简单就是map的get，注意key</li>
+</ul>
+</li>
+<li>put逻辑（一次put一个partition）<ul>
+<li>判断空间足够，直接put（可能覆盖相同的cache—重复put）</li>
+<li>判断无法放下（<code>ensureFreeSpace</code>）：需要的空间小于剩余空间&amp;&amp;查找到自己的datasetId(rdd.id)，这说明：<ul>
+<li>其他的rdd的所有分区已经都删除了，都放不下他。（可能这个rdd的其他partiton已经放了，这肯定是最新的！）</li>
+<li>或者，曾经cache过这个rdd（已经放下—重复put）</li>
+</ul>
+</li>
+<li>注意：<strong>这里的逻辑保证了即使空间不够放下rdd的所有分区，也能尽量放入一部分分区</strong>。</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>理解LRU设计逻辑<br>Cannot make space without removing part of the same dataset, or a more recently used one<br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1fy640vwks4j30j80fmzmc.jpg =314x314" alt><br><a href="https://blog.csdn.net/luanlouis/article/details/43017071" target="_blank" rel="noopener">https://blog.csdn.net/luanlouis/article/details/43017071</a></p>
+</blockquote>
+<p>总结</p>
+<ol>
+<li>cache的基本架构，driver的Actor服务 + 每个exector想他汇报信息</li>
+<li>如何实现缓存，LRU，所以我们不需要手动uncache，具体实现在Cache极其子类中</li>
+<li>添加缓存的过程：<ul>
+<li>rdd中cache（driver中），设置标记位<code>shouldCache</code>，并不会立刻缓存，表示该rdd触发action运算时请缓存数据。</li>
+<li>发起位置（已经在executor中）：在rdd的<code>iterator</code>函数中，如果需要缓存调用<code>SparkEnv.get.cacheTracker.getOrCompute[T](this, split)</code></li>
+<li>CacheTracker的getOrCompute函数是核心逻辑：判断是否已经缓存，没缓存时，调用rdd.compute()执行计算并缓存</li>
+<li>成功后，通知driver上的trackerActor（AddedToCache消息）</li>
+<li>driver上的trackerActor，统计信息并几率缓存位置（hashmap:(rdd_id,partition)-&gt;host）</li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p>iterator函数何时调用？参考下面的schedule</p>
+</blockquote>
+<h4 id="Serializer"><a href="#Serializer" class="headerlink" title="Serializer"></a>Serializer</h4><p>线程安全的序列化封装，返回一个序列化工具的实例<code>SerializerInstance</code>，该接口是序列化相关的方法，one instance used by one thread at a time.<br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1fy641yldwwj30ge04o0sr.jpg =295x84" alt><br><img src="https://tva1.sinaimg.cn/large/006tNbRwgy1fy64272z66j314k0fmjso.jpg =730x281" alt></p>
+<p>使用时<code>val ser = SparkEnv.get.serializer.newInstance()</code></p>
+<p>疑问：<br>效率低吗？每次都是构建了一个新的实例，不过一个线程一个实例其实还好</p>
+<h4 id="CacheTracker"><a href="#CacheTracker" class="headerlink" title="CacheTracker"></a>CacheTracker</h4><p>wait&amp;&amp;notify并发编程</p>
+<p>rdd.compute(split).</p>
+<p>MapOutputTracker<br>ConcurrentHashMap<br>什么是generation？</p>
+<h4 id="SimpleShuffleFetcher"><a href="#SimpleShuffleFetcher" class="headerlink" title="SimpleShuffleFetcher"></a>SimpleShuffleFetcher</h4><p>重点逻辑</p>
+<ul>
+<li>master保存了shuffle的元信息：var serverUris = new ConcurrentHashMap[Int, Array[String]]</li>
+<li>获得数据：·<code>val url = &quot;%s/shuffle/%d/%d/%d&quot;.format(serverUri, shuffleId, i, reduceId)</code><ul>
+<li>serverUri：上游机器地址</li>
+<li>shuffleId：对应一个shuffle任务</li>
+<li>i：某个shuffle任务的一个map的输出的mapid【0,1,2….】</li>
+<li>reduceId，map端reduce处理后的分配好了的给reduce的id。</li>
+</ul>
+</li>
+<li>每个shuffle数据块格式：total_count[int] + n*object[K,V]</li>
+<li>func(pair._1, pair._2)</li>
+<li>异常处理<ul>
+<li>每个块最多try 4次</li>
+<li>FetchFailedException</li>
+</ul>
+</li>
+</ul>
+<h2 id="Schedule"><a href="#Schedule" class="headerlink" title="Schedule"></a>Schedule</h2><p>action代码运行过程：<br>action(如rdd.count()) —&gt; sc.runjob(业务逻辑函数作为参数) —&gt; schedule.runjob(DAGScheduler) —&gt; schedule.submitTask(LocalScheduler)</p>
+<p>Scheduler：</p>
+<ul>
+<li>DAGScheduler—核心调度算法=根据RDD生成Stage，根据Stage生成Task，按顺序调度Task</li>
+<li>LocalScheduler—具体运行task（线程池） + 通知完成</li>
+<li>MesosScheduler</li>
+</ul>
+<p>总结：核心逻辑都在DAGScheduler的runJob函数中</p>
+<ol>
+<li>根据RDD生成Stage：参考下面Stage与Dependency/RDD的关系</li>
+<li>根据Stage生成Task：参考下面Task与Stage</li>
+<li>按顺序调度Task：参考下面Task与Stage</li>
+</ol>
+<p>生成DAG的Stage图 — newStage-getParentStages函数，递归调用，使用了rdd.dependencies判断ShuffleDependency/Narrow</p>
+<ul>
+<li>除了finalRDD，其他窄依赖的RDD不会生成Stage<br>提交任务 </li>
+<li>getMissingParentStages：从finalStage向前向前查找missing<br>等待任务完成 — wait(timeout)+notify</li>
+</ul>
+<p>查找表<br>shuffleToMapStage：更具shuffleid<br>idToStage</p>
+<p>理清Dependency与RDD的关系：</p>
+<ul>
+<li>Dependency表示一般情况下表示<strong>两个RDD</strong>之间的依赖联系，因此<code>xxxRDD</code>的变量<code>dependencies</code>表示<strong>这个RDD的n个上游的依赖的RDD，假设每个Dependency里面有个变量<code>yyyRDD</code>，就表示<code>xxxRDD</code>与<code>yyyRDD</code>之间的关系</strong>，Dependency的子类包括<ul>
+<li>NarrowDependency：他又有子类 <code>OneToOneDependency</code> <code>RangeDependency</code>。表示<strong>两个RDD</strong>之间可以合并的窄依赖关系。</li>
+<li>ShuffleDependency ：表示<strong>两个RDD</strong>之间必须经过shuffle才能关联的关系。</li>
+</ul>
+</li>
+<li>使用窄依赖的最后一个rdd作为<code>ShuffleDependency</code>的包含的RDD</li>
+<li>用<strong>图的数据结构</strong>来理解：<ul>
+<li>RDD是图中的节点。</li>
+<li>Dependency是图中的路径，是一个<strong>向前指针</strong>（xxxDependency里面包含的rdd就是指向上游节点）。路径又两种不同类型。</li>
+</ul>
+</li>
+</ul>
+<p>Stage与Dependency/RDD的关系（重点！！）：<br>Stage是对上述的图的一种合并&amp;&amp;划分，代码逻辑如下：</p>
+<ul>
+<li>构建finalStage，即执行Action的最后一个RDD作为Stage</li>
+<li>从finalStage开始<strong>从后往前</strong>遍历图。<ul>
+<li>遇到NarrowDependency，不用管，继续向前遍历。本质上，结合窄依赖的合并原理，这一步合并所有的<strong>连续NarrowDependency</strong></li>
+<li>遇到ShuffleDependency，<strong>生成新的Stage</strong>（代码里命名为ShuffleMapStage）。Stage包括：<ul>
+<li>ShuffleDependency自身：注意是他尾巴上的那个Shuffle，含义一个重要变量<strong>ShuffleID</strong></li>
+<li>ShuffleDependency里面的指向的上游RDD。有了它，新生成的Stage就含有上一个窄依赖运算所有的信息，</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>重复第二步，直到没有父节点</li>
+</ul>
+<p>Task与Stage：</p>
+<ul>
+<li>task是实际执行的最小单元</li>
+<li>每一个Stage依据他包含的RDD（由上面知道，就是每个窄依赖的最后一个RDD）的n个分区数目，生成n个task,。主要包含两类task:<ul>
+<li>finalStage的task：ResultTask</li>
+<li>其他所有Stage的task（也可以叫ShuffleMapStage）:ShuffleMapTask</li>
+</ul>
+</li>
+<li>schedule<strong>按顺序（图的从前往后）</strong>调度每个task：<ul>
+<li>寻找所有父依赖的task都完成的task（在driver中，DAGScheduler）</li>
+<li>序列化需要运行的Task对象（在driver中）：注意Task包含了很多信息：runid,stageid,rdd,partition这个是必须的，尤其是<strong>把RDD对象序列化</strong>了</li>
+<li>发送Task到executor中（local中没有看mesos）</li>
+<li>运行Task中定义的run函数（在executor中）：<ul>
+<li>ResultTask.run:简单的对finalRdd.iterator的调用生成最终结果，会触发rdd的链式调用（合并）</li>
+<li>ShuffleMapTask.run:<ul>
+<li>也是对rdd.iterator调用—&gt;这个RDD一般是窄依赖的最后一个调用，会触发rdd的链式调用（合并）</li>
+<li>使用定义的agg函数（shuffle合并逻辑）</li>
+<li>对上述结果使用partitioner分区—》本地分桶</li>
+<li>分桶结果，分文件输出，文件路径<code>SparkEnv.get.shuffleManager.getOutputFile</code>决定，后续可以被读取。</li>
+</ul>
+</li>
+<li>发送结果到driver？？（local中没有看mesos）</li>
+</ul>
+</li>
+<li>接收到return的结果（在driver），如：ShuffleMapTask是一个地址，ResultTask是一个值</li>
+<li>通知完成（在driver，LocalScheduler）：taskEnded</li>
+<li>等待task完成（在driver中，DAGScheduler）<ul>
+<li>如果是ShuffleMapTask：在stage中记录每个task的输出地址</li>
+<li>如果是ResultTask：标记完成。</li>
+</ul>
+</li>
+<li>继续调度剩下可以满足上述条件的task（在driver中，DAGScheduler）</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p><code>xxxTask</code>中的<code>rdd.iterator</code>调用会引发rdd的链式调用，注意一个特点，这个链式调用/合并的头一般是一个窄依赖的开始RDD，一般是Shuffle后的一个RDD，如果<code>ShuffledRDD</code>/<code>CoGroupedRDD</code>。他们具有如下特点：</p>
+<pre><code>* 他们的compute函数包含了fetcher逻辑，从上游读取数据
+* 他们没有parent的RDD，rdd链已经到头了
+</code></pre></blockquote>
+<p>窄依赖的合并原理：在RDD的compute接口实现中（子类实现）对prev的RDD进行调用，因此形如<code>rdd.map().filter()</code>会先生成<code>MappedRDD</code>，在生成<code>FilteredRDD</code>，在生成这些rdd时的构造参数会传入前一个RDD，即<code>prev</code>。<code>FilteredRDD</code>的<code>compute()</code>的实现类似<code>prev.iterator(split).filter(f)</code>。后期shedule调用时，只要引用并调用<strong>最后一个RDD</strong>的<code>compute</code>即可合并所有计算过程。</p>
+<p>shuffle的原理：参考Task与Stage</p>
+<p>Scheduler的同步方法使用wait（waitForEvent函数）与notify（taskEnded函数）</p>
+<p>DAG-&gt;stage图-&gt;转化为n个ShuffleMapTask和m个ResultTask（n=ShuffledDependency的数目，m=最后一个rdd的partition数目）</p>
+<h2 id="RDD-1"><a href="#RDD-1" class="headerlink" title="RDD"></a>RDD</h2><p>建议阅读RDD的源码的头部注释，定义了RDD最关键的几个函数</p>
+<p>A Resilient Distributed Dataset (RDD), the basic abstraction in Spark. Represents an immutable, partitioned collection of elements that can be operated on in parallel.<br>Each RDD is characterized by five main properties:</p>
+<ul>
+<li>A list of splits (partitions)</li>
+<li>A function for computing each split</li>
+<li>A list of dependencies on other RDDs</li>
+<li><strong>Optionally</strong>, a Partitioner for key-value RDDs (e.g. to say that the RDD is hash-partitioned)</li>
+<li><strong>Optionally</strong>, a list of preferred locations to compute each split on (e.g. block locations for HDFS)<br>All the scheduling and execution in Spark is done based on these methods, allowing each RDD to implement its own way of computing itself.</li>
+</ul>
+<p>This class also contains transformation methods available on all RDDs (e.g. map and filter).<br>In addition, PairRDDFunctions contains extra methods available on RDDs of key-value pairs, and SequenceFileRDDFunctions contains extra methods for saving RDDs to Hadoop SequenceFiles.</p>
+<h3 id="创建RDD"><a href="#创建RDD" class="headerlink" title="创建RDD"></a>创建RDD</h3><ul>
+<li>parallelize：ParallelCollection<ul>
+<li>splits：分块的数组信息Array[ParallelCollectionSplit],其中ParallelCollectionSplit是Split的子类，代表partition</li>
+<li>compute：返回了某个分区代表的某个数组的iterator</li>
+<li>preferredLocations 无</li>
+<li>dependencies：由于是头部的RDD，所以没有为Nil</li>
+<li>partitioner：无，为None，主要用在pairRDD中，这个不是</li>
+</ul>
+</li>
+<li>hadoopFile：HadoopRDD、NewHadoopRDD<ul>
+<li>hadoop inputformat知识</li>
+<li>java序列化知识，<a href="http://bluepopopo.iteye.com/blog/486548" target="_blank" rel="noopener">http://bluepopopo.iteye.com/blog/486548</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="输出RDD-存储数据"><a href="#输出RDD-存储数据" class="headerlink" title="输出RDD-存储数据"></a>输出RDD-存储数据</h3><ul>
+<li>savehadoopfile<br>学习hadoop-InputFormat/OutputFormat相关知识：<a href="https://www.cnblogs.com/noures/archive/2012/07/13/2589767.html" target="_blank" rel="noopener">https://www.cnblogs.com/noures/archive/2012/07/13/2589767.html</a></li>
+</ul>
+<h3 id="转换rdd"><a href="#转换rdd" class="headerlink" title="转换rdd"></a>转换rdd</h3><h4 id="单个RDD间转换"><a href="#单个RDD间转换" class="headerlink" title="单个RDD间转换"></a>单个RDD间转换</h4><ul>
+<li>filter — FilteredRDD</li>
+<li>map — MappedRDD </li>
+<li>flatMap — FlatMappedRDD</li>
+<li>glom — GlommedRDD</li>
+<li>mapPartitions — MapPartitionsRDD</li>
+<li>pipe — PipedRDD</li>
+<li>其他<ul>
+<li>groupBy — ShuffledRDD：RDD的方法，要先转换成(K,V)，然后原理参考groupByKey</li>
+<li>sample — SampledRDD：采样方法</li>
+</ul>
+</li>
+</ul>
+<h4 id="多个RDD合并"><a href="#多个RDD合并" class="headerlink" title="多个RDD合并"></a>多个RDD合并</h4><ul>
+<li>union — UnionRDD</li>
+<li>cartesian — CartesianRDD</li>
+</ul>
+<h4 id="转化为PairRDDFunctions"><a href="#转化为PairRDDFunctions" class="headerlink" title="转化为PairRDDFunctions"></a>转化为PairRDDFunctions</h4><ul>
+<li>groupByKey/reduceByKey/partitionBy/combineByKey — ShuffledRDD：shuffle的逻辑（groupByKey reduceByKey），有数据fetch<ul>
+<li>了解aggregator</li>
+<li>了解partitioner</li>
+</ul>
+</li>
+<li>join/cogroup — CoGroupedRDD：join的逻辑，有数据fetch<ul>
+<li>了解aggregator</li>
+<li>了解partitioner</li>
+</ul>
+</li>
+</ul>
+<h4 id="转化为OrderedRDDFunctions"><a href="#转化为OrderedRDDFunctions" class="headerlink" title="转化为OrderedRDDFunctions"></a>转化为OrderedRDDFunctions</h4><ul>
+<li>sortByKey — SortedRDD：使用了partitionByRDD间排序，再加上RDD的内部排序</li>
+</ul>
+<h3 id="RDD的action"><a href="#RDD的action" class="headerlink" title="RDD的action"></a>RDD的action</h3><p>collect take first toArray<br>count<br>reduce fold aggregate<br>foreach<br>采样：<br>takeSample</p>
+<p>总结<br>不涉及shuffle的情况下，mapPartitions是一个最通用的函数</p>
+<ul>
+<li>action（count foreach reduce fold aggregate collect等等）时通过sc.runjob+一个partition的函数来为每个计算一个值+最后汇总这个值</li>
+<li>transform（例如filter map flatMap glom）是通过对分区的计算返回一个新的iterator。</li>
+</ul>
+<h2 id="Mesos调度"><a href="#Mesos调度" class="headerlink" title="Mesos调度"></a>Mesos调度</h2><p>调度的过程由DAGScheduler调用submitTasks方法触发，流程如下：<br>MesosScheduler -&gt; SimpleJob -&gt; Task(Mesos) -&gt; …setData发送序列化的task(Spark)… -&gt; Executor</p>
+<p>代码逻辑可以简单总结为：Scheduler管理Job，Job管理Task</p>
+<h3 id="MesosScheduler"><a href="#MesosScheduler" class="headerlink" title="MesosScheduler"></a>MesosScheduler</h3><p>功能包括</p>
+<ul>
+<li>实现了DAGScheduler作为spark的调度接口<ul>
+<li>主要是submitTasks函数：生成SimpleJob</li>
+<li>start函数接口，是用来运行一个后台常驻的MesosSchedulerDriver线程</li>
+<li>defaultParallelism:spark.default.parallelism 8（todo：需要真实查询mesos获得当前所有executor一共的cores数据）</li>
+</ul>
+</li>
+<li>最重要的是，他实现了<code>org.apache.mesos.Scheduler</code>这个Mesos的入口<ul>
+<li>Mesos的资源分配（resourceOffers）：<ul>
+<li>判断<strong>内存是否满足Executor</strong>运行条件：<code>SPARK_MEM</code>环境变量设定</li>
+<li>调用SimpleJob的slaveOffer获得实际运行Task &amp;&amp; launchTasks</li>
+</ul>
+</li>
+<li>状态通知（statusUpdate）：更新Job状态 &amp;&amp; 调用SimpleJob的statusUpdate更新Task状态</li>
+<li>其他常见的回调：registered，error，stop</li>
+</ul>
+</li>
+<li>逻辑上：实现了对n个tasks封装为job的抽象，<strong>他只负责管理调度job，job再处理tasks</strong>，具体参考SimpleJob。</li>
+<li>额外的：jar包服务器</li>
+</ul>
+<h3 id="Mesos-job的概念"><a href="#Mesos-job的概念" class="headerlink" title="Mesos-job的概念"></a>Mesos-job的概念</h3><p>spark在使用mesos运行时有个job的概念，对应的类是SimpleJob，会被MesosScheduler调用。我们知道调度的过程由DAGScheduler调用submitTasks方法触发，一次submitTasks的所有tasks形成一个job（参考MesosScheduler的submitTasks函数）。由于，在DAGSchedule中一次submitTasks就是提交一个Stage的<strong>所有未完成</strong>的Tasks，因此，在初始情况下，Job可以理解成一个Stage。</p>
+<p>SimpleJob：</p>
+<ul>
+<li>构造SimpleJob<ul>
+<li>构造等待任务队列：allPendingTasks包含所有任务</li>
+<li>构造按host分类的等待队列：pendingTasksForHost，方便本地化运行</li>
+</ul>
+</li>
+<li>Job内所有Task的资源请求处理-slaveOffer<ul>
+<li>包含数据本地化是否接收offer<ul>
+<li>判断cpu是否满足Task（内存不在这，判断由ExecutorInfo决定）</li>
+<li>按照host地址查找可以运行的任务</li>
+<li>按照delay scheduling算法确定任务</li>
+</ul>
+</li>
+<li>生成Task（包含了真正运行的data）并返回给MesosScheduler去启动<ul>
+<li>设置task占用的资源:CPU</li>
+<li>设置task的ExecutorInfo，用来slaver首次运行Task时启动Executor（具体过程参考Mesos中的启动流程）</li>
+<li>setData-序列化的需要运行的真正的Task。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Job内所有Task的状态处理：<ul>
+<li>有task运行成功<ul>
+<li>taskEnded通知成功</li>
+<li>finished标记+1 &amp;&amp; 判断是否需要jobFinished</li>
+</ul>
+</li>
+<li>有task运行失败（包括lost和fail）：<ul>
+<li>如果是FetchFailed，参考下面『fetcher错误处理』一节，<ul>
+<li>调用taskEnded通知</li>
+<li>finished标记+1 &amp;&amp; 判断是否需要jobFinished</li>
+<li><strong>直接返回</strong>（具体原因见『fetcher错误处理』）</li>
+</ul>
+</li>
+<li>重新加入等待任务队列allPendingTasks，效果是：<strong>下次slaveOffer时会重新运行他</strong>！！</li>
+<li><strong>控制每个task失败次数不超过MAX_TASK_FAILURES（4）次，否则结束这个job</strong>（这里不是异常，只是jobFinished-标记job结束，不再调度。todo：kill所有其他正在运行的task）</li>
+</ul>
+</li>
+<li>task被kill：The task was killed by the executor.类似上面失败的过程，但是不记录失败次数</li>
+<li>所有task运行完成（不一定是成功！）：就是上面的判断是否调用jobFinished（tasksFinished == numTasks ）</li>
+</ul>
+</li>
+<li>数据本地化细节：<ul>
+<li>把所有task的preferredLocations组织成 host-&gt;List[Task]的形式，方便依据机器的host地址选择任务（即pendingTasksForHost队列）</li>
+<li>delay scheduling算法：原理非常简单，在<code>LOCALITY_WAIT</code>间隔(curTime-lastPreferredLaunchTime)内使用localOnly调度，超时后再开始调度非本地任务。</li>
+</ul>
+</li>
+<li>ExecutorInfo的细节（见MesosScheduler的createExecutorInfo方法）  <ul>
+<li>设置一下Executor的环境变量：SPARK_MEM，SPARK_CLASSPATH，SPARK_LIBRARY_PATH，SPARK_JAVA_OPTS</li>
+<li>设置了Executor的整体的memory</li>
+<li>command：<strong>启动Executor的脚本</strong>：spark根目录下的<code>spark-executor</code>文件</li>
+<li>启动脚本的参数:本地Driver系统属性中<code>spark.</code>开头的配置</li>
+</ul>
+</li>
+</ul>
+<h3 id="思考：这个调度框架如何实现任务失败重新获取资源运行？"><a href="#思考：这个调度框架如何实现任务失败重新获取资源运行？" class="headerlink" title="思考：这个调度框架如何实现任务失败重新获取资源运行？"></a>思考：这个调度框架如何实现任务失败重新获取资源运行？</h3><p>spark的容错基于<strong>一个基本假设：某个机器失败后，大概率不会把失败的机器又分配过来</strong>。具体而言：<br>任务失败后会重新加入等待任务队列allPendingTasks。下次slaveOffer时会重新运行失败的任务。这里只能说下次提供的新资源大概率不是失败的节点。如果需要优化可以添加一个资源黑名单，offer中由经常失败的slaver直接拒绝。（DAGScheduler,108行代码的todo中也说了）</p>
+<h2 id="spark-shell"><a href="#spark-shell" class="headerlink" title="spark-shell"></a>spark-shell</h2><p>入口类：SparkILoop<br>入口方法：process函数<br>基本原理：</p>
+<ul>
+<li>启动spark-shell，本质上就是运行<code>scala spark.repl.Main args...</code>命令<ul>
+<li>参数解析args：使用scala的<code>CommandLine</code>来解析，获得settings</li>
+</ul>
+</li>
+<li>SparkILoop.process<ul>
+<li>printWelcome</li>
+<li>createInterpreter：构造了intp变量&amp;&amp;初始化（SparkIMain），他内部包含了compiler解释器（核心），intp.interpret(codeString)来解释运行代码</li>
+<li>构造in：这个控制台是输入流的抽象，自定义了<code>SparkJLineReader extends InteractiveReader</code>。提供了spark代码补全等功能。注意他的内部实现使用了JLine库（处理控制台输入的Java类库）</li>
+<li>initializeSpark：初始化sparkContext变量</li>
+<li>loop：循环读入数据&amp;&amp;解释执行逻辑<ul>
+<li>readOneLine：<code>in readLine prompt</code>，读入<code>scala &gt;</code> 后面的一行数据（一般这里读了<strong>第一行</strong>）</li>
+<li>processLine：调用<code>command(line)</code>,解析代码，分为两类：<ul>
+<li>uniqueCommand：命令行的特殊命令，典型的如<code>:paste</code> <code>:cp xxx</code>了，对他们进行单独处理。如paste会循环读数据。</li>
+<li>interpretStartingWith：普通代码,又分为3种情况，这里主要看进入执行逻辑<code>reallyInterpret</code><ul>
+<li>intp.interpret(code)：<strong>真正解析&amp;&amp;运行代码</strong></li>
+<li>根据返回结果执行<ul>
+<li>成功(Success)：返回结果，继续运行</li>
+<li>失败(Error)：返回false</li>
+<li>命令不完整(Incomplete)：使用in继续读取数据&amp;&amp;递归interpretStartingWith    </li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>死循环</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>SparkIMain：是整个shell的语句解析的核心类，入口是interpret方法，如果输入了一行完整的语句，主要做两件事情：<ul>
+<li>每一行完整语句构造Request：requestFromLine<ul>
+<li>使用语法解析器syntaxAnalyzer构造语法树Trees（构造失败返回None，认为Incomplete）</li>
+<li>返回包含语法树和code的Request对象<code>new Request(line, trees)</code>。注意：特殊处理了只有一层的tree，如赋值语句。</li>
+</ul>
+</li>
+<li>编译Request：<code>req.compile</code>：内部使用了ReadEvalPrint类构造一些新代码，包括<ul>
+<li>ObjectSourceCode包裹源代码生成新的源码类（ReadEvalPrint.complie编译-注意新类的命名，package $linexxx包下，xxx为行id），在该包名下有read对象</li>
+<li>ResultObjectSourceCode包裹源代码的结果类（ReadEvalPrint.complie编译-包名同上），在该包名下有eval对象</li>
+<li>两者的关系自己分析代码</li>
+</ul>
+</li>
+<li>运行Request： loadAndRunReq—调用<code>req.loadAndRun</code><ul>
+<li>调用了上面生成的<code>eval</code>对象中的<code>export</code>值，来开始执行整个request（代表一行代码）</li>
+</ul>
+</li>
+<li>返回结果</li>
+</ul>
+</li>
+<li>重要技术点<ul>
+<li>在shell中生成的类需要传递给集群中的其他机器，因此我们需要<ul>
+<li>把每一行编译生成的类存储到一个目录中（outputDir），初始化compiler时直接设置就行</li>
+<li>提供一个服务器classServer（服务器地址通过spark.repl.class.uri环境变量），是得其他机器能访问到生成的类</li>
+<li>需要一个特别的classloader可以动态读取远程路径加载里面的新增的class—<code>ExecutorClassLoader</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="accumulator"><a href="#accumulator" class="headerlink" title="accumulator"></a>accumulator</h2><h2 id="broadcast"><a href="#broadcast" class="headerlink" title="broadcast"></a>broadcast</h2><h2 id="几个重要的问题"><a href="#几个重要的问题" class="headerlink" title="几个重要的问题"></a>几个重要的问题</h2><h3 id="shuffle-fetcher错误处理（分布式）："><a href="#shuffle-fetcher错误处理（分布式）：" class="headerlink" title="shuffle fetcher错误处理（分布式）："></a>shuffle fetcher错误处理（分布式）：</h3><ul>
+<li>流程<ul>
+<li>submitTasks任务后，会序列化任务发送给Exectuor执行task。由于task包含了stage合并后的逻辑，所以一般都会有fetch逻辑</li>
+<li>SimpleShuffleFetcher：<ul>
+<li>根据某个shufflerID(<strong>注意他是上游的shuffleID</strong>)获取某个reduce的上游数据数据，一个分块<strong>重试4次</strong>，失败后抛出异常—包含了上游的shuffleID（Executor中）。注意：<strong>这里隐含了必须要重新执行上游的任务，否则只重启自身是没有用的</strong>。</li>
+</ul>
+</li>
+<li>Eexcutor捕获异常，序列化后把FetchFailed异常通过mesos的sendStatusUpdate方法发送给Scheduler（master）</li>
+<li>MesosScheduler的statusUpdate获得task的异常状态，调用该task所属的SimpleJob的statusUpdate方法来处理，该方法会<ul>
+<li>反序列化异常，并<strong>调用taskEnd</strong>，通知DAGScheduler的逻辑</li>
+</ul>
+</li>
+<li>DAGScheduler：<ul>
+<li>获得了异常，以及异常包含的<strong>上游的shuffleID</strong></li>
+<li>使用上游的shuffleID找到上游Stage（注意ShuffleMapStage的结构）</li>
+<li>移除上游完成的标记removeOutputLoc</li>
+<li>把改stage加入失败队列，等一段时间后重新提交该上游Stage的<strong>所有Task</strong>（todo：先kill上游Stage没有完成的task）</li>
+</ul>
+</li>
+<li>DAGScheduler中只要<ul>
+<li>收到FetchFailed失败会<strong>无限次重试</strong>！！！</li>
+<li>收到其他Exception一律退出跳出程序</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>结论：<ul>
+<li>下游的某个task由于fetch导致失败，但是其他task成功并不会重算其他task，只会重算该task。</li>
+<li>虽然下游只有一个task失败（甚至就是fetch某一个分块重试四次失败）会导致<strong>整个上游stage的所有task</strong>重算（因为shuffle）</li>
+<li>stage重算可以无限循环</li>
+</ul>
+</li>
+</ul>
+<h3 id="spark-default-parallelism"><a href="#spark-default-parallelism" class="headerlink" title="spark.default.parallelism"></a>spark.default.parallelism</h3><p>表示程序的并行度，</p>
+<p>设置由Scheduler决定：</p>
+<ul>
+<li>localScheduler：线程数目</li>
+<li>MesosScheduler：当前为8（spark.default.parallelism配置）</li>
+</ul>
+<p>影响范围：</p>
+<ul>
+<li>影响了使用Partitioner的方法（作为参数），主要是shuffle操作可能有包括groupBy，join。可以理解为含有过个分区的的reduce操作</li>
+<li>影响了一些读入数据<ul>
+<li>parallelize、makeRDD 直接指定并行度</li>
+<li>textFile，hadoopFile,SequenceFile的最小并行度，如果文件分块比这个值小，则运行时使用parallelism</li>
+</ul>
+</li>
+</ul>
+<p>不影响 ：</p>
+<ul>
+<li>map，filter等没有shuffle的操作：并行度与之前的RDD一直</li>
+<li><strong>spark读入hdfs的文件</strong>：与文件存储的分片有关（大部分情况下）</li>
+</ul>
+<h3 id="资源问题"><a href="#资源问题" class="headerlink" title="资源问题"></a>资源问题</h3><p>mesos集群的Executor的资源由两部分组成：</p>
+<ul>
+<li>内存：对每个Executor是固定的（SPARK_MEM决定），具体而言在mesos框架的ExecutorInfo中指定死了。</li>
+<li>cpu：由当前Executor实际运行Task的个数<strong>动态</strong>决定，每个Task占1个cpu（由spark.task.cpus配置），即spark.task.cpus * n。由于mesos框架的性质：新加入Task，cpu资源自动加入。同样，Task运行完成，每个task的cpu资源会自动释放。</li>
+</ul>
+<h3 id="preferredLocations问题"><a href="#preferredLocations问题" class="headerlink" title="preferredLocations问题"></a>preferredLocations问题</h3><p>这里讨论一下spark中选择任务执行位置时的策略，我们知道选择发生在Scheduler中，具体而言，对于Mesos来说发送在MesosScheduler对资源offer的选择时，从上面的分析可以知道，就近调度的策略只使用了一个关键数据来判断位置，就是Task中的preferredLocations函数，该函数中只是简单的返回了参数传入的位置locs，这个值是在DAGSchedule中决定的。<br>我们知道一个Task，无论是ResultTask还是ShuffleMapTask都包含了某个Stage中N个RDD的逻辑（或者说一个窄依赖内PipeLine形成的逻辑，在Stage中可以由最后一个RDD表示），因此，这个Task的preferredLocations值是由这N个RDD共同决定的。决策关键代码在DAGSchedule中<code>getPreferredLocs</code>，他的输入是<code>finalRDD</code>或者Stage的最后一个RDD<code>stage.rdd</code>。<strong>会把Stage内的RDD从后到前寻找</strong>满足如下条件的Location:</p>
+<ul>
+<li>RDD是否存在于Cache中，如果在返回Cache位置</li>
+<li>调用rdd.preferredLocations获取期望运行的位置，有则返回。（具体情况看下面）</li>
+<li>对rdd的<strong>每一个窄依赖（NarrowDependency）的rdd向上递归</strong>上面步骤，返回<strong>第一个找到的</strong>位置。</li>
+</ul>
+<p>RDD的preferredLocations函数根据当前的分片返回期望调度（preferred）的位置列表。<strong>随着我们不断的运行算子，一个RDD不断的Transform为新的RDD，此时也会发生改变</strong>。RDD的分类和preferredLocationsd的实现情况如下：</p>
+<ul>
+<li>RDD生成：<ul>
+<li>ParallelCollection(parallelize生成)：无</li>
+<li>HadoopRDD/NewHadoop(RDD文件输入textFile、sequenceFile等)：返回文件的locations，与hdfs上文件分布一致，参考下面『如何结合hdfs的多副本就近访问』</li>
+</ul>
+</li>
+<li>无shuffle依赖的RDD：<ul>
+<li>MappedRDD/FilteredRDD/FlatMappedRDD/GlommedRDD/MapPartitionsRDD(对应map,filter,flatmap,glom,mapPartitions):无</li>
+<li>PipedRDD：无</li>
+<li>UnionRDD：转换为上游某个RDD的Split的preferredLocations</li>
+<li>CartesianRDD：合并两个RDD的preferredLocations数组。运行时由于必须要传递一部分数据，失去了部分数据本地行</li>
+<li>SampledRDD：使用pre那个RDD的preferredLocations。如果原理和我下面理解的一样，使用Nil也可以。</li>
+</ul>
+</li>
+<li>含Shuffle依赖的RDD<ul>
+<li>ShuffledRDD：Nil（等价无）</li>
+<li>CoGroupedRDD：Nil（等价无）</li>
+<li>SortedRDD：无</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>Shuffle相关的任务直接preferredLocations赋值为Null，强调会失去了本地运行</p>
+</blockquote>
+<p>总结可以发现：</p>
+<ul>
+<li>使用Cache可以打断寻找preferredLocations的流程，直接优先使用Cache</li>
+<li>只有窄依赖存在preferredLocations，任何宽依赖（含shuffle）都会失去信息</li>
+<li>我们发现很多含有窄依赖的RDD（MappedRDD），preferredLocations没有实现。很好理解，根据DAGSchedule中的代码会向上递归查找窄依赖的rdd，所以使用默认的实现返回Nil无伤大雅。除非有些RDD的preferredLocations需要特殊处理时，才要实现改逻辑，来停止递归逻辑，如UnionRDD等。</li>
+<li>由上面可知<ul>
+<li>ShuffledRDD，SortedRDD：如groupBy必然会触发shuffle，preferredLocations就会消失</li>
+<li>CoGroupedRDD：看情况，可能出现上游窄依赖的情况，以join操作为例<ul>
+<li>目标partitioner与某一个RDD的partitioner相同，此时会使用这个RDD的preferredLocations</li>
+<li>目标partitioner与两个RDD的partitioner相同，此时会使用第一个RDD的preferredLocations</li>
+<li>目标partitioner与两个RDD均不同（最常见，因为join默认的partitioner是HashPartitioner，大部分RDD默认是None）：preferredLocations就会消失</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="如何结合hdfs的多副本就近访问？"><a href="#如何结合hdfs的多副本就近访问？" class="headerlink" title="如何结合hdfs的多副本就近访问？"></a>如何结合hdfs的多副本就近访问？</h3><p>在Spark中参考HadoopRDD、NewHadoopRDD类，都是用了hdfs的API来操作，由几个关键点如下</p>
+<ul>
+<li>inputformat是hdfs数据读取的入口，他包含了所有的信息<ul>
+<li>可以获得InputSplits，这个包含了一个重要信息Location数组（因为多副本存储）。表示InputFormat<strong>期望这个Split被处理的Location</strong>，理想的情况下，这个api会返回多个副本的Block的真实位置，或者就近的位置。（但是，它完全可以跟实际Block的Location没有半点关系）</li>
+<li>可以获得RecordReader，他可以实际读记录。会根据InputSplits实现（如FileSplit）中的具体文件的Path信息（注意：不是Location！，而只是一个hdfs的路径）和offset信息读取真实的数据。</li>
+</ul>
+</li>
+<li>为了获得数据本地性，我们只要把preferredLocations设置为HDFS的InputSplits的Locations即可！！<strong>其原理是：如果我们从Location的机器上运行RecordReader去读HDFS数据，那么首先Path会传递给NameNode，他会根据我们机器的位置和Path的位置，给我们返回一个就近Block副本的机器，此时本地的RecordReader就能就近访问了。</strong></li>
+<li>由于InputSplits的Locations是多个位置，我们把它作为preferredLocations的函数返回值，就会实现了容错的本地性。其原理和之前『如何实现任务失败重新获取资源运行？』一致，某个副本错误后，大概率不会把失败的机器又分配过来。新分配的资源同样会查找preferredLocations位置，优先运行。</li>
+</ul>
+<blockquote>
+<p>Split是逻辑概念，Block才是HDFS真实的位置<br>参考<a href="https://blog.csdn.net/hsuxu/article/details/7673171" target="_blank" rel="noopener">这篇文章</a>讲解了HDFS文件读取的本地化机制。</p>
+</blockquote>
+<h2 id="可能的优化点"><a href="#可能的优化点" class="headerlink" title="可能的优化点"></a>可能的优化点</h2><ul>
+<li>shuffle 的纯内存，容易爆了</li>
+<li>Scheduler剔除经常出错的节点</li>
+<li>资源控制：如何控制executor的个数，也没有控制每个executor的最大cpu数目（容易把集群的所有cpu都占了）</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+            <div class="social-item">
+              <a target="_blank" class="social-link" href="https://t.me/mltalk">
+                <span class="icon">
+                  <i class="fa fa-telegram"></i>
+                </span>
+
+                <span class="label">机器学习碎碎念</span>
+              </a>
+            </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Spark/" rel="tag"># Spark</a>
+              <a href="/tags/大数据/" rel="tag"># 大数据</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/07/15/Linear-algebra-feeling/" rel="prev" title="线性代数的直觉">
+      <i class="fa fa-chevron-left"></i> 线性代数的直觉
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/03/24/ml-notes-about-andrewng/" rel="next" title="机器学习学习笔记-AndrewNg公开课">
+      机器学习学习笔记-AndrewNg公开课 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#阅读论文的问题"><span class="nav-number">1.</span> <span class="nav-text">阅读论文的问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RDD"><span class="nav-number">1.1.</span> <span class="nav-text">RDD</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lazy问题"><span class="nav-number">1.2.</span> <span class="nav-text">lazy问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cache问题："><span class="nav-number">1.3.</span> <span class="nav-text">cache问题：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#操作问题"><span class="nav-number">1.4.</span> <span class="nav-text">操作问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#架构问题"><span class="nav-number">1.5.</span> <span class="nav-text">架构问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#start"><span class="nav-number">2.</span> <span class="nav-text">start</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#阅读sparkContext"><span class="nav-number">2.1.</span> <span class="nav-text">阅读sparkContext</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#构建-amp-amp-初始化一些重要的变量"><span class="nav-number">2.1.1.</span> <span class="nav-text">构建&amp;&amp;初始化一些重要的变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#runJob函数"><span class="nav-number">2.1.2.</span> <span class="nav-text">runJob函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#读取输入数据函数"><span class="nav-number">2.1.3.</span> <span class="nav-text">读取输入数据函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#object-SparkContext内定义隐式转换"><span class="nav-number">2.1.4.</span> <span class="nav-text">object SparkContext内定义隐式转换</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SparkEnv内重要的组件"><span class="nav-number">2.2.</span> <span class="nav-text">SparkEnv内重要的组件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Cache设计要点"><span class="nav-number">2.2.1.</span> <span class="nav-text">Cache设计要点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Serializer"><span class="nav-number">2.2.2.</span> <span class="nav-text">Serializer</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CacheTracker"><span class="nav-number">2.2.3.</span> <span class="nav-text">CacheTracker</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SimpleShuffleFetcher"><span class="nav-number">2.2.4.</span> <span class="nav-text">SimpleShuffleFetcher</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Schedule"><span class="nav-number">3.</span> <span class="nav-text">Schedule</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RDD-1"><span class="nav-number">4.</span> <span class="nav-text">RDD</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#创建RDD"><span class="nav-number">4.1.</span> <span class="nav-text">创建RDD</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#输出RDD-存储数据"><span class="nav-number">4.2.</span> <span class="nav-text">输出RDD-存储数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#转换rdd"><span class="nav-number">4.3.</span> <span class="nav-text">转换rdd</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#单个RDD间转换"><span class="nav-number">4.3.1.</span> <span class="nav-text">单个RDD间转换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#多个RDD合并"><span class="nav-number">4.3.2.</span> <span class="nav-text">多个RDD合并</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#转化为PairRDDFunctions"><span class="nav-number">4.3.3.</span> <span class="nav-text">转化为PairRDDFunctions</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#转化为OrderedRDDFunctions"><span class="nav-number">4.3.4.</span> <span class="nav-text">转化为OrderedRDDFunctions</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RDD的action"><span class="nav-number">4.4.</span> <span class="nav-text">RDD的action</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Mesos调度"><span class="nav-number">5.</span> <span class="nav-text">Mesos调度</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MesosScheduler"><span class="nav-number">5.1.</span> <span class="nav-text">MesosScheduler</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Mesos-job的概念"><span class="nav-number">5.2.</span> <span class="nav-text">Mesos-job的概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#思考：这个调度框架如何实现任务失败重新获取资源运行？"><span class="nav-number">5.3.</span> <span class="nav-text">思考：这个调度框架如何实现任务失败重新获取资源运行？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#spark-shell"><span class="nav-number">6.</span> <span class="nav-text">spark-shell</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#accumulator"><span class="nav-number">7.</span> <span class="nav-text">accumulator</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#broadcast"><span class="nav-number">8.</span> <span class="nav-text">broadcast</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#几个重要的问题"><span class="nav-number">9.</span> <span class="nav-text">几个重要的问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#shuffle-fetcher错误处理（分布式）："><span class="nav-number">9.1.</span> <span class="nav-text">shuffle fetcher错误处理（分布式）：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#spark-default-parallelism"><span class="nav-number">9.2.</span> <span class="nav-text">spark.default.parallelism</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#资源问题"><span class="nav-number">9.3.</span> <span class="nav-text">资源问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#preferredLocations问题"><span class="nav-number">9.4.</span> <span class="nav-text">preferredLocations问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何结合hdfs的多副本就近访问？"><span class="nav-number">9.5.</span> <span class="nav-text">如何结合hdfs的多副本就近访问？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#可能的优化点"><span class="nav-number">10.</span> <span class="nav-text">可能的优化点</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">limuzhi</p>
+  <div class="site-description" itemprop="description">something about tech, android etc...</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muzhi1991" title="GitHub → https://github.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:muzhi1991@gmail.com" title="E-Mail → mailto:muzhi1991@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/muzhi1991" title="Twitter → https://twitter.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.chenyupeng.com/" title="https://www.chenyupeng.com/" rel="noopener" target="_blank">陈玉鹏的个人空间</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://macshuo.com/" title="http://macshuo.com/" rel="noopener" target="_blank">MacTalk</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">limuzhi</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'G5HLDFmPsllxIjax4F2JTLnl-gzGzoHsz',
+      appKey     : 'A5PTgbvpJwjPlcBJ3Brl8rDs',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

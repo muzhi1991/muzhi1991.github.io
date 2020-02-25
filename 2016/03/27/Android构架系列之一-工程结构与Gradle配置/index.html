@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="从最基本结构说起新建一个helloworld工程结构：工程目录下只有根目录和一个app模块，没有其他模块。  根目录build.gradle：关于项目的一些总体配置(比如编译系统使用的仓库和依赖，其他模块都使用的仓库和依赖)； 根目录settings.gralde：项目的模块构成，最简单。 app模块build.gradle：app模块的具体配置，该模块自身的性质，该模块依赖的库（jcenter的">
+<meta name="keywords" content="Android,主框架">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android构架系列之一--工程结构与Gradle配置">
+<meta property="og:url" content="http://limuzhi.com/2016/03/27/Android构架系列之一-工程结构与Gradle配置/index.html">
+<meta property="og:site_name" content="Night Piece">
+<meta property="og:description" content="从最基本结构说起新建一个helloworld工程结构：工程目录下只有根目录和一个app模块，没有其他模块。  根目录build.gradle：关于项目的一些总体配置(比如编译系统使用的仓库和依赖，其他模块都使用的仓库和依赖)； 根目录settings.gralde：项目的模块构成，最简单。 app模块build.gradle：app模块的具体配置，该模块自身的性质，该模块依赖的库（jcenter的">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://limuzhi.com/images/android_helloworld_project_gradle_files.png">
+<meta property="og:updated_time" content="2020-02-25T09:44:15.467Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android构架系列之一--工程结构与Gradle配置">
+<meta name="twitter:description" content="从最基本结构说起新建一个helloworld工程结构：工程目录下只有根目录和一个app模块，没有其他模块。  根目录build.gradle：关于项目的一些总体配置(比如编译系统使用的仓库和依赖，其他模块都使用的仓库和依赖)； 根目录settings.gralde：项目的模块构成，最简单。 app模块build.gradle：app模块的具体配置，该模块自身的性质，该模块依赖的库（jcenter的">
+<meta name="twitter:image" content="http://limuzhi.com/images/android_helloworld_project_gradle_files.png">
+
+<link rel="canonical" href="http://limuzhi.com/2016/03/27/Android构架系列之一-工程结构与Gradle配置/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>Android构架系列之一--工程结构与Gradle配置 | Night Piece</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Night Piece</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">white && black</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tools">
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-wrench"></i>利器</a>
+
+  </li>
+        <li class="menu-item menu-item-read">
+
+    <a href="/read/" rel="section"><i class="fa fa-fw fa-book"></i>阅读</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://limuzhi.com/2016/03/27/Android构架系列之一-工程结构与Gradle配置/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="limuzhi">
+      <meta itemprop="description" content="something about tech, android etc...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Night Piece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android构架系列之一--工程结构与Gradle配置
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-03-27 13:51:46" itemprop="dateCreated datePublished" datetime="2016-03-27T13:51:46+08:00">2016-03-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-25 17:44:15" itemprop="dateModified" datetime="2020-02-25T17:44:15+08:00">2020-02-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2016/03/27/Android构架系列之一-工程结构与Gradle配置/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2016/03/27/Android构架系列之一-工程结构与Gradle配置/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="从最基本结构说起"><a href="#从最基本结构说起" class="headerlink" title="从最基本结构说起"></a>从最基本结构说起</h2><p>新建一个helloworld工程结构：<br><img src="/images/android_helloworld_project_gradle_files.png" alt><br>工程目录下只有根目录和一个app模块，没有其他模块。</p>
+<ul>
+<li>根目录<code>build.gradle</code>：关于项目的一些总体配置(比如编译系统使用的仓库和依赖，其他模块都使用的仓库和依赖)；</li>
+<li>根目录<code>settings.gralde</code>：项目的模块构成，最简单。</li>
+<li>app模块<code>build.gradle</code>：app模块的具体配置，该模块自身的性质，该模块依赖的库（jcenter的开源外部库，内部模块之间）</li>
+</ul>
+<h3 id="根目录build-gradle"><a href="#根目录build-gradle" class="headerlink" title="根目录build.gradle"></a>根目录build.gradle</h3><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Top-level build file where you can add configuration options common to all sub-projects/modules.</span></span><br><span class="line"></span><br><span class="line">buildscript &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">    dependencies &#123;</span><br><span class="line">        classpath <span class="string">'com.android.tools.build:gradle:1.5.0'</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// <span class="doctag">NOTE:</span> Do not place your application dependencies here; they belong</span></span><br><span class="line">        <span class="comment">// in the individual module build.gradle files</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">allprojects &#123;</span><br><span class="line">    repositories &#123;</span><br><span class="line">        jcenter()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">task clean(<span class="string">type:</span> Delete) &#123;</span><br><span class="line">    delete rootProject.buildDir</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先，区分一个概念：<strong>编译系统自身</strong>与<strong>被编译的内容</strong>,<a href="http://stackoverflow.com/questions/30158971/whats-the-difference-between-buildscript-and-allprojects-in-build-gradle" target="_blank" rel="noopener">见stackoverflow</a>。</p>
+<ul>
+<li><p><code>buildscript</code>：配置的是<strong>buildsystem自身（即Gradle）</strong>使用的仓库和依赖，在这里，buildsystem依赖的库/插件是android gradle1.5，从jcenter下载。gradle就是用来编译的。</p>
+<blockquote>
+<p>区分一个东西：gradle 与 Android tools的gradle插件<br>gradle自身是一个编译系统，它的版本配置在AS的设置中。<br>Android tools的gradle插件，是google开发的在一个gradle插件，在gralde中使用，可以让gradle支持编译Android应用程序。也就是说</p>
+<ul>
+<li>如果gradle引用其他插件可以编译其他应用程序</li>
+<li>可以自定义插件，修改gradle编译android应用的行为，实现一些自定义功能。相应的<strong>会引入plugin（必有）、一些自定义的命令、配置区块！</strong></li>
+</ul>
+</blockquote>
+<p>  此外buildsystem还可能依赖一些其他常用的库/插件，<strong>编译注解</strong>常用的apt：</p>
+  <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">  classpath <span class="string">'com.android.tools.build:gradle:1.5.0'</span></span><br><span class="line">  classpath <span class="string">'com.neenbedankt.gradle.plugins:android-apt:1.4'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>allprojects</code>：不是必须的，作用是遍历所有的模块并且应用同一个配置。在这里配置的是所有模块都使用jcenter仓库。如果不在这里配置，可以在每个模块的<code>build.gradle</code>中单独配置（思考：how to？）。除此之外，<code>allprojects</code>中还可以配置：</p>
+<ul>
+<li><code>dependencies</code>，所有模块公用的dependencies</li>
+<li><p>一些变量，所有模块都用的变量,</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">	allprojects &#123;</span><br><span class="line">	<span class="comment">//为什么是ext，请参考其他文章</span></span><br><span class="line">  ext &#123;</span><br><span class="line">    androidApplicationId = <span class="string">'com.fernanependocejas.android10.sample.presentation'</span></span><br><span class="line">    androidVersionCode = <span class="number">1</span></span><br><span class="line">    androidVersionName = <span class="string">"1.0"</span></span><br><span class="line">    testInstrumentationRunner = <span class="string">"android.support.test.runner.AndroidJUnitRunner"</span></span><br><span class="line">    testApplicationId = <span class="string">'com.fernandocejas.android10.sample.presentation.test'</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>自定义<code>task</code>：上面的clean是覆盖了系统的clean任务，同样在这里我们可以写一下自定义的gradle 任务</p>
+  <figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">	task wrapper(<span class="string">type:</span> Wrapper) &#123;</span><br><span class="line">  description <span class="string">'Creates the gradle wrapper.'</span></span><br><span class="line">  gradleVersion <span class="string">'2.10'</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 例如定义一下task运行某个模块的单元测试</span></span><br><span class="line">task runDomainUnitTests(<span class="string">dependsOn:</span> [<span class="string">':domain:test'</span>]) &#123;</span><br><span class="line">  description <span class="string">'Run unit tests for the domain layer.'</span></span><br><span class="line">&#125;</span><br><span class="line">task runDataUnitTests(<span class="string">dependsOn:</span> [<span class="string">':data:cleanTestDebugUnitTest'</span>, <span class="string">':data:testDebugUnitTest'</span>]) &#123;</span><br><span class="line">  description <span class="string">'Run unit tests for the data layer.'</span></span><br><span class="line">&#125;</span><br><span class="line">task runUnitTests(<span class="string">dependsOn:</span> [<span class="string">'runDomainUnitTests'</span>, <span class="string">'runDataUnitTests'</span>]) &#123;</span><br><span class="line">  description <span class="string">'Run unit tests for both domain and data layers.'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>其他内容：是否需要 <code>apply plugin: &#39;com.android.application&#39;</code>？这个例子中不可以，application插件一般放在app模块。</p>
+<blockquote>
+<p>有些特别的例子（比如eclipse转换成的as工程），根目录就是app模块，此时的app的build.gradle与根目录的build.gradle是一个文件，所有可以这么写。<a href="http://tools.android.com/tech-docs/new-build-system/user-guide#TOC-Basic-Project-Setup" target="_blank" rel="noopener">android gradle的官方demo</a>中，最简单的gradle工程也是用了一个<code>build.gradle</code>文件。</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="根目录的settings-gradle"><a href="#根目录的settings-gradle" class="headerlink" title="根目录的settings.gradle"></a>根目录的settings.gradle</h3><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">include <span class="string">':app'</span></span><br></pre></td></tr></table></figure>
+<p>这个文件最简单，含义是这个项目包括的<strong>所有</strong>模块的名字（位置），这里的含义是根目录下面的app模块，如果是子目录，需要写出目录</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">include <span class="string">':app'</span></span><br><span class="line"><span class="comment">// 子目录third_party下的android_support模块</span></span><br><span class="line">include <span class="string">'third_party:android_support'</span></span><br><span class="line"><span class="comment">// 也可以这样写</span></span><br><span class="line"><span class="comment">// include ':app', 'third_party:android_support'</span></span><br></pre></td></tr></table></figure>
+<p>注意：一个特例：当根目录就是app模块是不需要在<code>setting.gradle</code>中写出。</p>
+<h3 id="app模块build-gradle"><a href="#app模块build-gradle" class="headerlink" title="app模块build.gradle"></a>app模块build.gradle</h3><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">apply <span class="string">plugin:</span> <span class="string">'com.android.application'</span></span><br><span class="line"></span><br><span class="line">android &#123;</span><br><span class="line">    compileSdkVersion <span class="number">23</span></span><br><span class="line">    buildToolsVersion <span class="string">"23.0.2"</span></span><br><span class="line"></span><br><span class="line">    defaultConfig &#123;</span><br><span class="line">        applicationId <span class="string">"com.example.baidu.helloworld"</span></span><br><span class="line">        minSdkVersion <span class="number">14</span></span><br><span class="line">        targetSdkVersion <span class="number">23</span></span><br><span class="line">        versionCode <span class="number">1</span></span><br><span class="line">        versionName <span class="string">"1.0"</span></span><br><span class="line">    &#125;</span><br><span class="line">    buildTypes &#123;</span><br><span class="line">        release &#123;</span><br><span class="line">            minifyEnabled <span class="literal">false</span></span><br><span class="line">            proguardFiles getDefaultProguardFile(<span class="string">'proguard-android.txt'</span>), <span class="string">'proguard-rules.pro'</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    compile fileTree(<span class="string">dir:</span> <span class="string">'libs'</span>, <span class="string">include:</span> [<span class="string">'*.jar'</span>])</span><br><span class="line">    testCompile <span class="string">'junit:junit:4.12'</span></span><br><span class="line">    compile <span class="string">'com.android.support:appcompat-v7:23.2.1'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个是android app配置的主要内容，从顶层开始看：<code>apply plugin</code>,<code>android</code>,<code>dependencies</code>三大区块内容（除此此外还可以有<code>repositories</code>，<strong><code>configurations</code></strong>）。</p>
+<ul>
+<li><p><code>apply plugin: xxx</code>：插件就是之前引入的android gradle 1.5库导入的常用的有：</p>
+<ul>
+<li><code>&#39;com.android.application&#39;</code> 指示当前编译的是android app主模块，一个应用中有且仅有一个。</li>
+<li><code>&#39;com.android.library&#39;</code> 指示当前编译的是android 库模块，这种library可以包含android包和资源并且<strong>可以导出aar包</strong>，这是AS特有的功能，包含了资源文件。</li>
+<li><code>&#39;java&#39;</code> 指示当前编译的是纯的java库模块，注意这个plugin不是android gradle插件引入的，是gradle原生。如果某个库被定义成此类型，<strong>此模块不能引用其他Android模块！</strong>这种library能导出jar包，和eclipse的功能类似。<strong>疑问：可以只引用，不编译android.jar吗？</strong></li>
+</ul>
+</li>
+<li><p><code>dependencies</code>区块：该模块依赖的库。通常有下面这些写法：</p>
+<ul>
+<li><code>compile fileTree(dir: &#39;libs&#39;, include: [&#39;*.jar&#39;])</code> ：编译位于libs目录下的一下jar包。</li>
+<li><code>compile xxx</code> ：编译jcenter的某个库。最常用。</li>
+<li><p><code>compile project(&#39;:xxx&#39;)</code> ：编译其他模块，<strong>建立模块之间的依赖，十分重要</strong>，也可以在AS的项目配置中查看。</p>
+<p>除此之外，还可能包括：</p>
+</li>
+<li><p><code>provided xxx</code> ：<strong>还不了解，只引用，不编译？？？</strong></p>
+</li>
+<li><p><code>testCompile xxx</code> ：<strong>测试情况下编译?</strong></p>
+<p>当请入第三方gradle插件时，比如apt插件会引入：</p>
+</li>
+<li><p><code>apt xxx</code> ：引入第三方注解依赖，<strong>思考并理解与apt插件的关系</strong>：apt是编译工具，xxx是被编译的内容，比如dagger的注解。</p>
+</li>
+</ul>
+</li>
+<li><p><code>android</code>区块：这里android gradle插件引入的区块，可以定义所有android相关的配置，比如应用编译的签名，applicationId，版本，lint开关，编译选项(java版本)，设置源码目录，生成多个包等等，<strong>大部分的android编译的配置</strong>。<a href="ttp://tools.android.com/tech-docs/new-build-system/user-guide" target="_blank" rel="noopener">请阅读文档！</a></p>
+</li>
+<li>其他区块：还有一些区块是其他gradle插件引入的，比如微信的资源混淆插件就回加入一个自己的区块，可以配置资源混淆相关的选项。</li>
+</ul>
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><ul>
+<li><p><code>apply from: &quot;$rootDir/config/config.gradle&quot;</code>：这种样式可能有多个，表示引入配置文件。<code>build.gradle</code>可能很长，按照功能把build分为多个子build是不错的实践。</p>
+<blockquote>
+<p>在根目录新建文件夹<code>config</code>，在文件夹config中，写多个<code>xxx.gradle</code>文件，比如<code>quality.gradle</code>，它来为我的项目集成并配置所有的质量控制工具。然后通过<code>apply from</code>导入到对应的build.gradle文件。</p>
+</blockquote>
+</li>
+</ul>
+<h2 id="一些待理解的问题"><a href="#一些待理解的问题" class="headerlink" title="一些待理解的问题"></a>一些待理解的问题</h2><ul>
+<li><code>provided</code> 的具体含义的理解</li>
+<li><code>configurations</code> 区块</li>
+<li>测试相关的内容</li>
+</ul>
+<h2 id="工程实践"><a href="#工程实践" class="headerlink" title="工程实践"></a>工程实践</h2><p>参考<a href="https://github.com/android10/Android-CleanArchitecture" target="_blank" rel="noopener">clean构架的demo</a>，总结几点</p>
+<ul>
+<li><code>build.gradle</code>按功能分成多个<code>xxx.gradle</code>文件，即必须分块！</li>
+<li>将所有依赖的内容放入一个单独的文件中，如<code>config.gradle</code>。方便以后配置管理。（<code>ext</code>的使用！）</li>
+<li>细节：<ul>
+<li><code>compile project()</code> 模块间依赖的建立。 </li>
+</ul>
+</li>
+</ul>
+<h2 id="深入学习"><a href="#深入学习" class="headerlink" title="深入学习"></a>深入学习</h2><ul>
+<li><a href="http://blog.csdn.net/innost/article/details/48228651" target="_blank" rel="noopener">深入理解Android之Gradle</a></li>
+<li><a href="http://tools.android.com/tech-docs/new-build-system/user-guide" target="_blank" rel="noopener">android gradle 插件官方文档</a></li>
+<li><a href="https://docs.gradle.org/current/userguide/userguide_single.html" target="_blank" rel="noopener">gradle官方文档</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+            <div class="social-item">
+              <a target="_blank" class="social-link" href="https://t.me/mltalk">
+                <span class="icon">
+                  <i class="fa fa-telegram"></i>
+                </span>
+
+                <span class="label">机器学习碎碎念</span>
+              </a>
+            </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Android/" rel="tag"># Android</a>
+              <a href="/tags/主框架/" rel="tag"># 主框架</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/03/20/理财：量化分析平台，一个定投策略的实现/" rel="prev" title="理财：量化分析平台，一个定投策略的实现">
+      <i class="fa fa-chevron-left"></i> 理财：量化分析平台，一个定投策略的实现
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2016/04/04/Android构架系列之二-常见框架分析/" rel="next" title="Android构架系列之二--常见框架分析(一）">
+      Android构架系列之二--常见框架分析(一） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#从最基本结构说起"><span class="nav-number">1.</span> <span class="nav-text">从最基本结构说起</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#根目录build-gradle"><span class="nav-number">1.1.</span> <span class="nav-text">根目录build.gradle</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#根目录的settings-gradle"><span class="nav-number">1.2.</span> <span class="nav-text">根目录的settings.gradle</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#app模块build-gradle"><span class="nav-number">1.3.</span> <span class="nav-text">app模块build.gradle</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他"><span class="nav-number">1.4.</span> <span class="nav-text">其他</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一些待理解的问题"><span class="nav-number">2.</span> <span class="nav-text">一些待理解的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#工程实践"><span class="nav-number">3.</span> <span class="nav-text">工程实践</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#深入学习"><span class="nav-number">4.</span> <span class="nav-text">深入学习</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">limuzhi</p>
+  <div class="site-description" itemprop="description">something about tech, android etc...</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muzhi1991" title="GitHub → https://github.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:muzhi1991@gmail.com" title="E-Mail → mailto:muzhi1991@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/muzhi1991" title="Twitter → https://twitter.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.chenyupeng.com/" title="https://www.chenyupeng.com/" rel="noopener" target="_blank">陈玉鹏的个人空间</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://macshuo.com/" title="http://macshuo.com/" rel="noopener" target="_blank">MacTalk</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">limuzhi</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'G5HLDFmPsllxIjax4F2JTLnl-gzGzoHsz',
+      appKey     : 'A5PTgbvpJwjPlcBJ3Brl8rDs',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

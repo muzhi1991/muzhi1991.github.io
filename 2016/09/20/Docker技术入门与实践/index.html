@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="运维部署的第一篇文章，自上而下（从架构向下）的介绍一些常见概念。最后用docker部署一个简单的架构，可以应付小企业的常规需求。 基本知识Web架构的演变">
+<meta name="keywords" content="运维">
+<meta property="og:type" content="article">
+<meta property="og:title" content="常见Web架构与Docker部署实践">
+<meta property="og:url" content="http://limuzhi.com/2016/09/20/Docker技术入门与实践/index.html">
+<meta property="og:site_name" content="Night Piece">
+<meta property="og:description" content="运维部署的第一篇文章，自上而下（从架构向下）的介绍一些常见概念。最后用docker部署一个简单的架构，可以应付小企业的常规需求。 基本知识Web架构的演变">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://limuzhi.com/images/redis_master_slaver.png">
+<meta property="og:image" content="http://limuzhi.com/images/redis_multi_level_cache.png">
+<meta property="og:image" content="https://yeasy.gitbooks.io/docker_practice/content/_images/network.png">
+<meta property="og:updated_time" content="2020-02-25T09:44:15.450Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="常见Web架构与Docker部署实践">
+<meta name="twitter:description" content="运维部署的第一篇文章，自上而下（从架构向下）的介绍一些常见概念。最后用docker部署一个简单的架构，可以应付小企业的常规需求。 基本知识Web架构的演变">
+<meta name="twitter:image" content="http://limuzhi.com/images/redis_master_slaver.png">
+
+<link rel="canonical" href="http://limuzhi.com/2016/09/20/Docker技术入门与实践/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>常见Web架构与Docker部署实践 | Night Piece</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Night Piece</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">white && black</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tools">
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-wrench"></i>利器</a>
+
+  </li>
+        <li class="menu-item menu-item-read">
+
+    <a href="/read/" rel="section"><i class="fa fa-fw fa-book"></i>阅读</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://limuzhi.com/2016/09/20/Docker技术入门与实践/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="limuzhi">
+      <meta itemprop="description" content="something about tech, android etc...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Night Piece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          常见Web架构与Docker部署实践
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-09-20 16:00:12" itemprop="dateCreated datePublished" datetime="2016-09-20T16:00:12+08:00">2016-09-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-25 17:44:15" itemprop="dateModified" datetime="2020-02-25T17:44:15+08:00">2020-02-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/全栈/" itemprop="url" rel="index"><span itemprop="name">全栈</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2016/09/20/Docker技术入门与实践/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2016/09/20/Docker技术入门与实践/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>运维部署的第一篇文章，自上而下（从架构向下）的介绍一些常见概念。最后用docker部署一个简单的架构，可以应付小企业的常规需求。</p>
+<h2 id="基本知识"><a href="#基本知识" class="headerlink" title="基本知识"></a>基本知识</h2><h3 id="Web架构的演变"><a href="#Web架构的演变" class="headerlink" title="Web架构的演变"></a>Web架构的演变</h3><p>这里说的Web架构是指系统架构，不涉及代码层面。</p>
+<ul>
+<li>第零阶段：常见的开发状态，单点服务器、数据库。甚至服务器与数据库在同一个机器上，没有任何负载均衡。</li>
+<li>第一阶段：业务简单，流量小，没有专业运维。利用Nginx或HAProxy进行单点的负载均衡，在七层之上利用HTTP协议就可以。</li>
+<li>第二阶段：业务复杂，流量变大，这时单点的Nginx已经不能满足，这时使用开源LVS/商用负责均衡F5（Array），Nginx此时就作为LVS的节点来使用。<strong>形成LVS/F5—&gt; Nginx/HAProxy—&gt;AppServer</strong>。可能为了满足不同网络环境下<strong>静态资源</strong>响应速度还需要购买CDN服务。</li>
+<li>第三阶段：规模很大，需要<strong>降低成本</strong>，在上述构架上优化，负责均衡使用自定义开发的LVS代替商业方案。CDN自行部署使用Nginx或者 Squid/Varnish 方案部署缓存服务器。LVS — Nginx/Haproxy — Squid/Varnish — AppServer。</li>
+</ul>
+<p>一个典型结构：</p>
+<ul>
+<li>CDN服务缓存静态资源。</li>
+<li>第一层：LVS管理<strong>多个Nginx</strong>，LVS只负责<strong>TCP/IP层的转发</strong>，实现负载均衡，与业务无关。</li>
+<li>第二层：每个Nginx，下面都和所有的应用服务器相连接，实现业务相关的负载均衡（Nginx是http应用层的负载均衡，如根据访问目录动静分离）。同时，Nginx还可以提供静态文件的Web服务和部分的缓存功能。</li>
+<li>第三层：N个web服务器</li>
+<li>第四层：web服务器可能需要访问数据库MySQL集群，缓存redis集群。</li>
+</ul>
+<blockquote>
+<p>注意:</p>
+<ol>
+<li>lvs,ngnix都有单点问题，需要配合使用keepalive</li>
+<li>更一般情况，如果第一层不用lvs，单独用ngnix也可以</li>
+<li>lvs能力强一些，并发几百万，nginx弱一些，几万到几十</li>
+</ol>
+</blockquote>
+<p>这里缺个图😀</p>
+<h3 id="网络基础概念"><a href="#网络基础概念" class="headerlink" title="网络基础概念"></a>网络基础概念</h3><ul>
+<li>VIP：虚拟IP地址，LVS中的一个概念，即对外暴露的IP地址。</li>
+<li>虚拟主机：虚拟主机是使用特殊的软硬件技术，把一台真实的物理服务器主机分割成多个逻辑存储单元。每个逻辑单元都没有物理实体，但是每一个逻辑单元都能像真实的物理主机一样在网络上工作，具有单独的IP地址（或共享的IP地址）、独立的域名以及完整的Internet服务器（支持WWW、FTP、E-mail等）功能。虚拟主机的关键技术在于，即使在同一台硬件、同一个操作系统上，运行着为多个用户打开的不同的服务器程式，也互不干扰。而各个用户拥有自己的一部分系统资源（IP地址、文档存储空间、内存、CPU等）。各个虚拟主机之间完全独立，在外界看来，每一台虚拟主机和一台单独的主机的表现完全相同。所以这种被虚拟化的逻辑主机被形象地称为“虚拟主机”。<strong>这种技术适用于那种小型网站，毕竟大部分网站的所消耗的资源远远小于一台机器。</strong>参考Nginx的配置</li>
+</ul>
+<h3 id="LVS基础知识"><a href="#LVS基础知识" class="headerlink" title="LVS基础知识"></a>LVS基础知识</h3><p>LVS涉及较少，暂时用不到，可以参考<a href="http://liaoph.com/lvs/" target="_blank" rel="noopener">这篇文章</a>，其中有些错误。</p>
+<ul>
+<li>基本概念：LVS是一个实现可伸缩网络服务的Linux Virtual Server框架。虚拟的服务器集群系统，提供负载均衡的功能，工作在四层上（TCP/IP层）。</li>
+<li>VIP</li>
+</ul>
+<h3 id="Nginx基础知识"><a href="#Nginx基础知识" class="headerlink" title="Nginx基础知识"></a>Nginx基础知识</h3><h4 id="Nginx提供的功能"><a href="#Nginx提供的功能" class="headerlink" title="Nginx提供的功能"></a>Nginx提供的功能</h4><ul>
+<li>配置虚拟主机</li>
+<li>web http服务器，超强的静态文件性能</li>
+<li>负载均衡</li>
+<li>fastcgi</li>
+<li>缓存</li>
+</ul>
+<h4 id="配置说明"><a href="#配置说明" class="headerlink" title="配置说明"></a>配置说明</h4><p>配置文件：/etc/nginx/conf.d/目录下添加xxx.conf文件</p>
+<p>配置文件分为块和语句</p>
+<ul>
+<li>块<ul>
+<li>全局配置：配置一些通用设置，worker_processes数目。</li>
+<li>server块：一个虚拟主机，如果要一个nginx有多个虚拟主机，可以配置过个server块。<ul>
+<li>location块：在server内，表示一条网页匹配规则</li>
+</ul>
+</li>
+<li>upstream：一组上游服务器，即在nginx后面的web服务器。可以在里面配置轮询的策略。</li>
+</ul>
+</li>
+<li>语句，一般在块中<ul>
+<li>listen 监听端口</li>
+<li>proxy_pass 代理指向的位置</li>
+<li>proxy_set_header 设置http头<ul>
+<li>应用：后端ip获取client真是ip，吧client的ip放入header中。</li>
+</ul>
+</li>
+<li>root/alias 区分两者</li>
+</ul>
+</li>
+</ul>
+<p>虚拟主机的<a href="http://1567045.blog.51cto.com/1557045/809972" target="_blank" rel="noopener">配置</a>有三种方式：</p>
+<ul>
+<li>基于ip：一个网卡多个真实IP（ip别名的概念），非常费IP</li>
+<li>基于域名：一个IP多个域名，根据域名转发，<strong>用的最多</strong>。</li>
+<li>基于端口：一个IP依据不同端口区分主机，需要手动输入端口，体验不好。</li>
+</ul>
+<h4 id="基础教程"><a href="#基础教程" class="headerlink" title="基础教程"></a>基础教程</h4><ul>
+<li><a href="http://xxgblog.com/2015/05/17/nginx-start/" target="_blank" rel="noopener">简明教程</a></li>
+<li><a href="https://segmentfault.com/a/1190000002797601" target="_blank" rel="noopener">各种配置项说明</a></li>
+</ul>
+<h4 id="高级教程"><a href="#高级教程" class="headerlink" title="高级教程"></a>高级教程</h4><ul>
+<li><a href="http://tengine.taobao.org/book/chapter_02.html" target="_blank" rel="noopener">nginx进程与架构</a></li>
+</ul>
+<h4 id="配置实例"><a href="#配置实例" class="headerlink" title="配置实例"></a>配置实例</h4><p>负载均衡的例子：</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">upstream</span> backend &#123; </span><br><span class="line">    <span class="comment">#ip_hash; # 可以配置规则</span></span><br><span class="line">    <span class="comment"># 注意这里的web1，是在host中定义的，不用写http://！！</span></span><br><span class="line">    <span class="attribute">server</span>  web1:<span class="number">3000</span> max_fails=<span class="number">2</span> fail_timeout=<span class="number">30s</span>;  </span><br><span class="line">    <span class="attribute">server</span>  web2:<span class="number">3000</span> max_fails=<span class="number">2</span> fail_timeout=<span class="number">30s</span>;  </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line">  <span class="comment"># server_name example.org;</span></span><br><span class="line">  <span class="attribute">access_log</span> /var/log/nginx/nodejs_project.log;</span><br><span class="line">  <span class="attribute">charset</span> utf-<span class="number">8</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment"># public folder static file</span></span><br><span class="line">  <span class="comment"># 这种方式不行，因为很多请求是public/name.js?v=xxx</span></span><br><span class="line">  <span class="comment"># 会把name.js?v=xxx当做文件名，应该有其他办法处理</span></span><br><span class="line">  <span class="comment"># location /public &#123;</span></span><br><span class="line">  <span class="comment"># alias /src/nodeclub/public/;</span></span><br><span class="line">  <span class="comment"># root /src/nodeclub;</span></span><br><span class="line">  <span class="comment"># expires 1d;</span></span><br><span class="line">  <span class="comment"># &#125;</span></span><br><span class="line"></span><br><span class="line">  <span class="attribute">location</span> <span class="regexp">~ .*\.(gif|jpg|jpeg|bmp|png|ico|txt|js|css)$</span> &#123;   </span><br><span class="line">   <span class="attribute">root</span> /src/nodeclub;   </span><br><span class="line">   <span class="attribute">expires</span> <span class="number">7d</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="attribute">location</span> / &#123;</span><br><span class="line">    <span class="comment"># 一组服务器，注意写法</span></span><br><span class="line">    <span class="attribute">proxy_pass</span> http://backend;</span><br><span class="line">    <span class="comment"># 为了后面的web server能获取真实的clientIP</span></span><br><span class="line">    <span class="attribute">proxy_set_header</span> Host <span class="variable">$host</span>;</span><br><span class="line">    <span class="attribute">proxy_set_header</span> X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">    <span class="attribute">proxy_set_header</span> X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="缓存基础知识"><a href="#缓存基础知识" class="headerlink" title="缓存基础知识"></a>缓存基础知识</h3><h4 id="缓存的分类"><a href="#缓存的分类" class="headerlink" title="缓存的分类"></a>缓存的分类</h4><ul>
+<li>数据库缓存：数据库层的一些临时表或者索引，减少数据库联合查询等复杂操作，用空间换时间的思想。目的：提高数据库性能。</li>
+<li>应用缓存（server端后台分布式缓存）：对Web应用层做的缓存，一般使用Redis作为存储，对业务数据进行缓存（如缓存Top10列表等），下面重点说这个。</li>
+<li>前端缓存（cdn等）：客户端浏览器的缓存，CDN静态文件的缓存等外部缓存，参考<a href="http://bbs.qcloud.com/thread-3775-1-1.html" target="_blank" rel="noopener">这篇文章</a>。</li>
+<li>​</li>
+</ul>
+<h4 id="应用层缓存的几个阶段"><a href="#应用层缓存的几个阶段" class="headerlink" title="应用层缓存的几个阶段"></a>应用层缓存的几个阶段</h4><p>目的：应用逻辑首先从缓存获取数据，减少db流量，加快速度，提高qps。因此，对于缓存一个重要的指标是命中率。相对而言，对于<strong>缓存的暂时失败是可以容忍的</strong>，只是减少命中率，不会引起业务的失败。</p>
+<ul>
+<li>第一阶段：单机，单实例的Redis。所有key在一个实例中。</li>
+<li>第二阶段：分布式缓存，多个缓存实例 — 缓存按key做一致性hash分布。</li>
+<li>第三阶段：提高每个实例的可用性— master/slave模式备份</li>
+<li>第四阶段：提高每个实例的QPS — 多级缓存，实现负载均衡。</li>
+</ul>
+<h4 id="分布式缓存介绍"><a href="#分布式缓存介绍" class="headerlink" title="分布式缓存介绍"></a>分布式缓存介绍</h4><ul>
+<li><p>多个缓存实例，既<strong>把不同缓存内容按照Key分散存储在不同的Redis实例中</strong>。可以提高redis的性能和增大可用内存。同时，当某个实例挂掉，不影响其他缓存。</p>
+<ul>
+<li>key的分布方式：<ul>
+<li>取模：添加新实例会动荡</li>
+<li><strong>一致性hash</strong>（推荐）：添加新实例，影响小</li>
+</ul>
+</li>
+<li>不足：<ul>
+<li>某个实例挂了，它的含有的数据的所有请求都穿透到DB，DB负载可能突然升高。</li>
+<li>单个实例（某一个）承受QPS达到极限怎么办？对于某些热门数据有这种情况出现。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>master/slave模式备份：对单个实例设立master与slave两个实例之间缓存数据复制，从master读写，没有去slave，再没有去db，然后同步到m/s中，某个挂了影响很小。</p>
+<ul>
+<li>引入的问题：<ul>
+<li>一致性</li>
+<li>需要2倍机器—解决方案：两台机器互为Master-Slave复制</li>
+</ul>
+</li>
+</ul>
+<p><img src="/images/redis_master_slaver.png" alt="master-slave模式"></p>
+</li>
+<li><p>多级缓存：在master/slave模式上再加一层L1Cache。形成多级缓存，L1Cache有多个实例，实现负载均衡。</p>
+<ul>
+<li>过程：前端请求首先会随机请求到一组L1缓存，如果这个L1缓存命中则返回，否则再请求到主缓存，如果命中，返回，同时将key-value回种到这个L1缓存中。如果主缓存中没有中，则穿透到DB，返回并同时回种到主缓存及刚才那个L1缓存。L1缓存可以有多组，很好的分担了带宽的压力，并且可以线性扩展</li>
+<li>引入的问题：一致性</li>
+</ul>
+<p><img src="/images/redis_multi_level_cache.png" alt="带有L1的多级缓存"></p>
+</li>
+<li><p>数据一致性CAP问题：上面的所有情况都会面临数据一致性的问题，针对这个问题有一个理论，既CAP下面三条不可能同时满足：</p>
+<ul>
+<li>Consistency（一致性）也称作原子性或事务性，表示所有操作在同一时间不可分割。如写入缓存和DB。 对于一致性，在很多场景下<strong>只要达到最终一致性</strong>就可以了。</li>
+<li>Avaliability（可用性）<strong>必须满足</strong>。</li>
+<li>Partition tolerance（分区容忍性） 当有一台或几台实例挂掉后致使整个系统不可用，也就是分区容忍性必<strong>须得到满足</strong>。</li>
+</ul>
+<p>因此，针对互联网应用，策略是首先写入<strong>主缓存</strong>（既写入master中，同时使L1全部失效）和<strong>处理队列</strong>，队列写成功，后续的处理（比如同步salve，<strong>写DB</strong>）就可以异步执行。第一步成功后，数据可以被用户读取到，就可以认为写已经完成了。至于后面的存储到DB及容错问题，就交给后面的异步处理程序搞定了。这种不一致只允许在很短的一段时间内存在，最终需要保障缓存和DB达到最终的一致。</p>
+</li>
+</ul>
+<p>其他：<a href="http://www.imooc.com/article/3930" target="_blank" rel="noopener">http://www.imooc.com/article/3930</a></p>
+<h3 id="数据库基础知识"><a href="#数据库基础知识" class="headerlink" title="数据库基础知识"></a>数据库基础知识</h3><h2 id="Docker"><a href="#Docker" class="headerlink" title="Docker"></a>Docker</h2><h3 id="docker基础"><a href="#docker基础" class="headerlink" title="docker基础"></a>docker基础</h3><ul>
+<li>功能：提供隔离的环境，轻量虚拟机，方便运维部署</li>
+<li>原理：参考这一些列文章。<ul>
+<li>lxc（Linux Containers）技术<ul>
+<li><a href="http://coolshell.cn/articles/17010.html" target="_blank" rel="noopener">namespace</a>（环境隔离）：独立的进程空间，文件系统，网卡，权限等。</li>
+<li><a href="http://coolshell.cn/articles/17049.html" target="_blank" rel="noopener">cgroup</a>（资源隔离）：限制单个容器cpu，内存等的使用量。</li>
+</ul>
+</li>
+<li>分层文件系统（选择一个即可）：含有只读层，并可以在上面添加可以层。联合文件系统可以对每一层文件系统设置三种权限，只读（readonly）、读写（readwrite）和写出（whiteout-able）。<ul>
+<li><a href="http://coolshell.cn/articles/17061.html" target="_blank" rel="noopener">aufs</a></li>
+<li><a href="http://coolshell.cn/articles/17200.html" target="_blank" rel="noopener">DeviceMapper</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>应用：<ul>
+<li>私有paas云</li>
+<li>开发测试环境</li>
+<li>部署web应用</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>重要概念</p>
+<ul>
+<li>仓库</li>
+<li>镜像：<ul>
+<li>特点<ul>
+<li>分层的，是一个多层结构，一层层文件系统，叫做 Union FS，联合文件系统</li>
+<li>docker 镜像中每一层文件系统<strong>都是只读的</strong>。</li>
+<li><strong>挂载之后</strong>的修改会在新的一个writable层上，既每一层 layer 所保存的修改是增量式的。</li>
+<li>layer 在镜像间是<strong>共享的</strong>，不同镜像间，对于摘要一样的 layer 只会保存一份</li>
+</ul>
+</li>
+<li>创建方法<ul>
+<li>修改已有镜像：运行某个镜像(启动容器)，commit提交</li>
+<li><strong>使用Dockerfile</strong>，基于某个基础镜像创建</li>
+</ul>
+</li>
+<li>结构：参考<a href="http://blog.csdn.net/jcjc918/article/details/46500031" target="_blank" rel="noopener">这篇文章</a></li>
+</ul>
+</li>
+<li>容器：运行的镜像</li>
+<li>数据卷volume：容器外部的可供一个或多个容器使用的特殊目录，<strong>一般用来放数据库，日志，这些持久化的存储</strong>。<ul>
+<li>数据卷可以在容器之间共享和重用</li>
+<li><strong>对数据卷的修改会立马生效</strong></li>
+<li><strong>对数据卷的更新，不会影响镜像</strong></li>
+<li>数据卷默认会一直存在，即使容器被删除</li>
+</ul>
+</li>
+<li>docker中的init进程：与linux的init进程不同，<a href="https://yq.aliyun.com/articles/5545" target="_blank" rel="noopener">参考文章</a><ul>
+<li>鼓励：一个容器一个进程(one process per container)。非常适合以单进程为主的微服务架构的应用。</li>
+<li>一个容器也可以运行多个进程</li>
+<li>每个Container都是<strong>Docker Daemon的子进程</strong>，每个Container进程缺省都具有不同的PID名空间。</li>
+<li>当创建一个Docker容器的时候，就会新建一个PID名空间。容器启动进程在该名空间内PID为1。<strong>容器的生命周期和其PID1进程一致</strong></li>
+<li><code>docker exec</code>命令可以进入指定的容器内部执行命令。由它启动的进程属于容器的namespace和相应的cgroup。但是<strong>这些进程的父进程是Docker Daemon</strong>而非容器的PID1进程。</li>
+<li>PID1进程对于操作系统而言具有特殊意义。操作系统的PID1进程是init进程，以守护进程方式运行，是所有其他进程的祖先，具有完整的进程生命周期管理能力。在Docker容器中，PID1进程是启动进程，它也会负责容器内部进程管理的工作。而这也将导致进程管理在Docker容器内部和完整操作系统上的不同。</li>
+<li>利用<strong>Supervisor等工具作为PID1进程</strong>是在容器中支持多进程管理的主要实现方式</li>
+</ul>
+</li>
+<li><p>docker中的网络</p>
+<ul>
+<li><p>Docker 启动时</p>
+<ul>
+<li>会在主机上创建一个 <code>docker0</code> 虚拟网桥，实际上是 Linux 的一个 bridge，可以理解为一个软件交换机。</li>
+<li>Docker 随机分配一个本地未占用的私有网段给 <code>docker0</code>。比如典型的 <code>172.17.42.1</code>，掩码为 <code>255.255.0.0</code>。</li>
+</ul>
+</li>
+<li><p>创建一个 Docker 容器</p>
+<ul>
+<li>创建了一对 <code>veth pair</code> 接口（当数据包发送到一个接口时，另外一个接口也可以收到相同的数据包）</li>
+<li>这对接口一端在容器内，即 <code>eth0</code></li>
+<li>另一端在本地并被挂载到<code>docker0</code> 网桥，名称以 <code>veth</code> 开头（例如 <code>vethAQI2QT</code>）</li>
+</ul>
+</li>
+<li><p>特点：<strong>一个私有的网络，通过 nat 连接外网，如果要让外网连接到容器中，就需要做端口映射。</strong></p>
+</li>
+<li><p>结构图</p>
+<p><img src="https://yeasy.gitbooks.io/docker_practice/content/_images/network.png" alt></p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>基本操作：可以参考<a href="https://www.gitbook.com/book/yeasy/docker_practice" target="_blank" rel="noopener">这个指南</a><ul>
+<li><strong>查看所有镜像</strong>：<code>docker images</code></li>
+<li><strong>查看所有容器</strong>（运行的，停止的）：<code>docker ps</code></li>
+<li>创建镜像： <code>docker build .</code>使用<strong>当前目录</strong>下的Dockerfile文件创建，可选参数 -t 加tag。</li>
+<li><strong>运行容器</strong>：<code>docker run -p 80:80 -d [image ID or NAMES]</code><ul>
+<li><code>-d</code> 后台运行</li>
+<li><code>-p hostPort:containerPort</code> <strong>映射端口</strong>，指定映射到主机某个具体的ip也可以：<code>ip:hostPort:containerPort</code>，可以用多个-p来绑定多次。</li>
+<li><code>-v /local_dir:/containr_dir</code> 指定挂载的数据卷，可以挂载多个，指定权限</li>
+<li>—name 指定一个名字</li>
+<li><code>-t -i</code> 选项让Docker分配一个伪终端（pseudo-tty）并绑定到容器的标准输入上， <code>-i</code> 则让容器的标准输入保持打开。效果是打开终端。<ul>
+<li>—name xxxx 为容器自定义命名</li>
+</ul>
+</li>
+<li>CMD 后面可以接一个启动运行的命令</li>
+</ul>
+</li>
+<li>删除镜像：<code>docker rmi [image ID or NAMES]</code></li>
+<li><strong>删除容器</strong>：<code>docker rm [container ID or NAMES]</code></li>
+<li><strong>登录容器</strong>：<code>docker exec -i -t b0c5c63c4630 bash</code></li>
+<li>查看容器输出 <code>docker logs [container ID or NAMES]</code></li>
+<li>查看所有变量 <code>docker inspect</code></li>
+<li>数据卷容器：其实就是一个正常的容器，专门用来提供数据卷供其它容器挂载的。<ul>
+<li><code>docker run -d --volumes-from [image ID or NAMES]</code> 来挂载 dbdata 容器中的数据卷。</li>
+<li>所挂载数据卷的容器自己并不需要保持在运行状态</li>
+</ul>
+</li>
+<li>容器互联: 可以让容器之间安全的进行交互。<code>--link name:alias</code>，其中 <code>name</code> 是要链接的容器的名称，<code>alias</code> 是这个连接的别名。<strong>会写入到容器的host中，使用它可以访问到被连接的容器。</strong><ul>
+<li>docker run -d  —link db:db [image ID or NAMES]</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>网络配置与管理<ul>
+<li>容器有自己的内部网络和 ip 地址</li>
+<li><a href="https://yeasy.gitbooks.io/docker_practice/content/cases/container_connect.html" target="_blank" rel="noopener">如何多台主机的容器互联？</a></li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p><strong>区分镜像与容器</strong>：容器是镜像的实例</p>
+</blockquote>
+<h3 id="docker部署实践"><a href="#docker部署实践" class="headerlink" title="docker部署实践"></a>docker部署实践</h3><ul>
+<li><p>Dockerfile编写：Dockerfile包含构建镜像所需的信息</p>
+<ul>
+<li>基础镜像信息：第一行<code>FROM xxx</code> 基础镜像</li>
+<li>维护者信息 <code>MAINTAINER: docker_user &lt;docker_user at email.com&gt;</code></li>
+<li><code>ADD &lt;src&gt; &lt;dest&gt;</code>命令，复制复制指定的 <code>src</code> 到容器中的 <code>dest</code></li>
+<li>镜像操作指令<code>RUN  command</code>，每一个相当于commit一次</li>
+<li><strong>容器启动时执行指令</strong>: <code>CMD command</code></li>
+<li>CMD与ENTRYPOINT <a href="https://segmentfault.com/q/1010000000417103" target="_blank" rel="noopener">https://segmentfault.com/q/1010000000417103</a></li>
+</ul>
+</li>
+<li><p>docker-compose的使用</p>
+<ul>
+<li>什么是：可以方便的<strong>生成多个镜像</strong>和<strong>启动多个docker容器</strong>，并且<strong>组织（compose）他们的关系</strong></li>
+<li>概念<ul>
+<li>服务（service）：一个应用容器，实际上可以运行多个相同镜像的实例。</li>
+<li>项目(project)：由一组关联的应用容器组成的一个完整业务单元。</li>
+<li>一个项目可以由多个服务（容器）关联而成，Compose 面向项目进行管理。</li>
+</ul>
+</li>
+<li>docker-compose命令<ul>
+<li>docker-compose build . 编译所有的镜像</li>
+<li>docker-compose up 运行所有的容器（包含编译</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>实践：</p>
+<ul>
+<li>docker-compose.yml 文件</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"> <span class="attr">web1:</span> <span class="comment"># 第一个web容器</span></span><br><span class="line">    <span class="attr">build:</span> <span class="string">nodeclub/.</span> <span class="comment"># 编译该目录下的docker镜像</span></span><br><span class="line">    <span class="attr">volumes:</span> <span class="comment"># 挂载数据卷，里面是运行的程序源码</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">"./nodeclub:/src/nodeclub"</span></span><br><span class="line">    <span class="attr">ports:</span> <span class="comment"># 指定自身的暴露端口</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">"3000"</span></span><br><span class="line">    <span class="attr">links:</span> <span class="comment"># 容器互联</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">"redis:redis"</span> <span class="comment"># redis</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">"db:db"</span> <span class="comment">#数据库</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">nodemon</span> <span class="string">-L</span> <span class="string">nodeclub/app.js</span> <span class="comment"># 执行的启动命令</span></span><br><span class="line"></span><br><span class="line"><span class="attr">web2:</span> <span class="comment"># 第二个web容器</span></span><br><span class="line">    <span class="attr">build:</span> <span class="string">nodeclub/.</span> <span class="comment"># 编译该目录下的docker镜像</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">"./nodeclub:/src/nodeclub"</span></span><br><span class="line">    <span class="attr">ports:</span> </span><br><span class="line">      <span class="bullet">-</span> <span class="string">"3000"</span></span><br><span class="line">    <span class="attr">links:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">"redis:redis"</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">"db:db"</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">nodemon</span> <span class="string">-L</span> <span class="string">nodeclub/app.js</span></span><br><span class="line">    </span><br><span class="line"><span class="attr">nginx:</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">build:</span> <span class="string">nginx/.</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">"80:80"</span>  <span class="comment"># 端口映射</span></span><br><span class="line">    <span class="attr">volumes_from:</span> <span class="comment"># 挂载的数据容器</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">web1</span></span><br><span class="line">    <span class="attr">links:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">web1:web1</span> <span class="comment"># 容器互联</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">web2:web2</span></span><br><span class="line"></span><br><span class="line"><span class="attr">redis:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">redis</span> <span class="comment"># 直接使用这个名字的docker镜像</span></span><br><span class="line"></span><br><span class="line"><span class="attr">db:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">mongo:3.0.5</span></span><br><span class="line">    <span class="attr">volumes:</span> <span class="comment"># 数据库挂载的外部持久化目录</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">"./data/db:/data/db"</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>web容器Dockerfile文件：生成镜像</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> node</span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> mkdir /src</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装一些工具</span></span><br><span class="line"><span class="comment"># RUN npm install express-generator -g</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> npm install nodemon -g</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 拷贝package.json,安装依赖模块</span></span><br><span class="line"><span class="keyword">WORKDIR</span><span class="bash"> /src</span></span><br><span class="line"><span class="keyword">ADD</span><span class="bash"> package.json package.json</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> npm install --registry=https://registry.npm.taobao.org</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 端口</span></span><br><span class="line"><span class="keyword">EXPOSE</span> <span class="number">3000</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># CMD node app.js</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>ngnix容器的Dockerfile文件：拷贝配置文件（参考上文），生成nginx镜像</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> nginx</span><br><span class="line"><span class="comment"># 删除默认的配置</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> rm /etc/nginx/conf.d/default.conf</span></span><br><span class="line"><span class="comment"># 拷贝新配置</span></span><br><span class="line"><span class="keyword">ADD</span><span class="bash"> nodejs.conf /etc/nginx/conf.d/nodejs.conf</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>本地新建<code>data</code>目录作为volume目录，持久化存储数据，保持数据库.</p>
+</li>
+</ul>
+<h3 id="学习文章"><a href="#学习文章" class="headerlink" title="学习文章"></a>学习文章</h3><ul>
+<li><a href="http://dockone.io/article/291" target="_blank" rel="noopener">docker的node部署实例</a></li>
+<li><a href="https://github.com/b00giZm/docker-compose-nodejs-examples" target="_blank" rel="noopener">docker-compose一步步部署node实例项目</a></li>
+<li><a href="https://yq.aliyun.com/articles/5545" target="_blank" rel="noopener">docker中的多进程与init</a></li>
+<li><a href="https://www.gitbook.com/book/yeasy/docker_practice/details" target="_blank" rel="noopener">docker practice gitbook</a></li>
+<li><a href="http://blog.chinaunix.net/uid-18824385-id-107165.html" target="_blank" rel="noopener">理解网桥</a></li>
+</ul>
+<h2 id="遗留问题"><a href="#遗留问题" class="headerlink" title="遗留问题"></a>遗留问题</h2><ul>
+<li>docker在生产环境的使用，集群与监控 docker swarm</li>
+</ul>
+<h1 id><a href="#" class="headerlink" title="#"></a>#</h1>
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+            <div class="social-item">
+              <a target="_blank" class="social-link" href="https://t.me/mltalk">
+                <span class="icon">
+                  <i class="fa fa-telegram"></i>
+                </span>
+
+                <span class="label">机器学习碎碎念</span>
+              </a>
+            </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/运维/" rel="tag"># 运维</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/09/18/运维技术目录/" rel="prev" title="运维技术目录">
+      <i class="fa fa-chevron-left"></i> 运维技术目录
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2016/10/05/JavaWeb后台开发知识目录与结构/" rel="next" title="JavaWeb后台开发知识目录与结构">
+      JavaWeb后台开发知识目录与结构 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本知识"><span class="nav-number">1.</span> <span class="nav-text">基本知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Web架构的演变"><span class="nav-number">1.1.</span> <span class="nav-text">Web架构的演变</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#网络基础概念"><span class="nav-number">1.2.</span> <span class="nav-text">网络基础概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LVS基础知识"><span class="nav-number">1.3.</span> <span class="nav-text">LVS基础知识</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Nginx基础知识"><span class="nav-number">1.4.</span> <span class="nav-text">Nginx基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Nginx提供的功能"><span class="nav-number">1.4.1.</span> <span class="nav-text">Nginx提供的功能</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#配置说明"><span class="nav-number">1.4.2.</span> <span class="nav-text">配置说明</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#基础教程"><span class="nav-number">1.4.3.</span> <span class="nav-text">基础教程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#高级教程"><span class="nav-number">1.4.4.</span> <span class="nav-text">高级教程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#配置实例"><span class="nav-number">1.4.5.</span> <span class="nav-text">配置实例</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存基础知识"><span class="nav-number">1.5.</span> <span class="nav-text">缓存基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#缓存的分类"><span class="nav-number">1.5.1.</span> <span class="nav-text">缓存的分类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#应用层缓存的几个阶段"><span class="nav-number">1.5.2.</span> <span class="nav-text">应用层缓存的几个阶段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分布式缓存介绍"><span class="nav-number">1.5.3.</span> <span class="nav-text">分布式缓存介绍</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据库基础知识"><span class="nav-number">1.6.</span> <span class="nav-text">数据库基础知识</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Docker"><span class="nav-number">2.</span> <span class="nav-text">Docker</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#docker基础"><span class="nav-number">2.1.</span> <span class="nav-text">docker基础</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#docker部署实践"><span class="nav-number">2.2.</span> <span class="nav-text">docker部署实践</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#学习文章"><span class="nav-number">2.3.</span> <span class="nav-text">学习文章</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#遗留问题"><span class="nav-number">3.</span> <span class="nav-text">遗留问题</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#null"><span class="nav-number"></span> <span class="nav-text">#</span></a></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">limuzhi</p>
+  <div class="site-description" itemprop="description">something about tech, android etc...</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muzhi1991" title="GitHub → https://github.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:muzhi1991@gmail.com" title="E-Mail → mailto:muzhi1991@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/muzhi1991" title="Twitter → https://twitter.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.chenyupeng.com/" title="https://www.chenyupeng.com/" rel="noopener" target="_blank">陈玉鹏的个人空间</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://macshuo.com/" title="http://macshuo.com/" rel="noopener" target="_blank">MacTalk</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">limuzhi</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'G5HLDFmPsllxIjax4F2JTLnl-gzGzoHsz',
+      appKey     : 'A5PTgbvpJwjPlcBJ3Brl8rDs',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

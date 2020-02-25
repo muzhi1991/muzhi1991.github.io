@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="临近春节，群里的红包又多了（也许仅仅是群多了），由于流行了各种抢红包插件，红包基本是秒没的节奏。在好奇心的驱使下研究了一下抢红包插件的原理，发现既简单又很有意思。还能用来干些其他羞羞的事情😉。。  参考Github项目源码  微信抢红包插件  基本原理">
+<meta name="keywords" content="Android,其他">
+<meta property="og:type" content="article">
+<meta property="og:title" content="抢红包插件分析以及应用">
+<meta property="og:url" content="http://limuzhi.com/2016/01/17/抢红包插件分析以及应用/index.html">
+<meta property="og:site_name" content="Night Piece">
+<meta property="og:description" content="临近春节，群里的红包又多了（也许仅仅是群多了），由于流行了各种抢红包插件，红包基本是秒没的节奏。在好奇心的驱使下研究了一下抢红包插件的原理，发现既简单又很有意思。还能用来干些其他羞羞的事情😉。。  参考Github项目源码  微信抢红包插件  基本原理">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-02-25T09:44:15.415Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="抢红包插件分析以及应用">
+<meta name="twitter:description" content="临近春节，群里的红包又多了（也许仅仅是群多了），由于流行了各种抢红包插件，红包基本是秒没的节奏。在好奇心的驱使下研究了一下抢红包插件的原理，发现既简单又很有意思。还能用来干些其他羞羞的事情😉。。  参考Github项目源码  微信抢红包插件  基本原理">
+
+<link rel="canonical" href="http://limuzhi.com/2016/01/17/抢红包插件分析以及应用/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>抢红包插件分析以及应用 | Night Piece</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Night Piece</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">white && black</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tools">
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-wrench"></i>利器</a>
+
+  </li>
+        <li class="menu-item menu-item-read">
+
+    <a href="/read/" rel="section"><i class="fa fa-fw fa-book"></i>阅读</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://limuzhi.com/2016/01/17/抢红包插件分析以及应用/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="limuzhi">
+      <meta itemprop="description" content="something about tech, android etc...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Night Piece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          抢红包插件分析以及应用
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-01-17 16:07:44" itemprop="dateCreated datePublished" datetime="2016-01-17T16:07:44+08:00">2016-01-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-25 17:44:15" itemprop="dateModified" datetime="2020-02-25T17:44:15+08:00">2020-02-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2016/01/17/抢红包插件分析以及应用/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2016/01/17/抢红包插件分析以及应用/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>临近春节，群里的红包又多了（也许仅仅是群多了），由于流行了各种抢红包插件，红包基本是秒没的节奏。在好奇心的驱使下研究了一下抢红包插件的原理，发现既简单又很有意思。还能用来干些其他羞羞的事情😉。。</p>
+<blockquote>
+<p>参考Github项目源码  <a href="https://github.com/geeeeeeeeek/WeChatLuckyMoney" target="_blank" rel="noopener">微信抢红包插件</a></p>
+</blockquote>
+<h2 id="基本原理"><a href="#基本原理" class="headerlink" title="基本原理"></a>基本原理</h2><p>在没有看Github上的实现的时候，我天真地以为这种插件的原理类似于PC平台上的按键精灵（Android版也有），或者一些测试化工具。这一类软件实现起来应当比较复杂，Too Yang Too Simple。Android已经提供了完备的系统。</p>
+<blockquote>
+<p>AccessibilityService 服务（Service），初衷是用于辅助服务，总之它的<strong>功能是根据用户的一些操作给用户相应的提示</strong>，如给残疾人自动读出选择的文字。</p>
+</blockquote>
+<p>我们需要做的是</p>
+<ol>
+<li>继承AccessibilityService，写自定义的辅助服务</li>
+<li>当用户App的界面发送变化时，会触发Service的相关回调，在该回调中可以获取<strong>当前界面中的UI界面元素节点</strong>（不是view本身，是它的一个映射而且可能不是一一映射）。</li>
+<li>根据<strong>关键字/元素id</strong>查找需要的view，处理之,如模拟点击。</li>
+<li>done</li>
+</ol>
+<h2 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h2><h3 id="学习AccessibilityService"><a href="#学习AccessibilityService" class="headerlink" title="学习AccessibilityService"></a>学习AccessibilityService</h3><p>官方文档两篇文章通读之 <a href="http://developer.android.com/intl/zh-cn/training/accessibility/service.html" target="_blank" rel="noopener">Android Train</a> &amp;&amp; <a href="http://developer.android.com/intl/zh-cn/guide/topics/ui/accessibility/services.html" target="_blank" rel="noopener">Android API指南</a><br>中文可以学习的文章 <a href="http://blog.csdn.net/jiangwei0910410003/article/details/48895153" target="_blank" rel="noopener">Android中微信抢红包插件原理解析和开发实现</a></p>
+<h3 id="关键API"><a href="#关键API" class="headerlink" title="关键API"></a>关键API</h3><ul>
+<li>Service配置</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--自定义的服务和指定配置文件res/xml/accessible_service_config.xml--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">service</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:name</span>=<span class="string">".HongbaoService"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:permission</span>=<span class="string">"android.permission.BIND_ACCESSIBILITY_SERVICE"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">intent-filter</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">action</span> <span class="attr">android:name</span>=<span class="string">"android.accessibilityservice.AccessibilityService"</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">intent-filter</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">meta-data</span> <span class="attr">android:name</span>=<span class="string">"android.accessibilityservice"</span></span></span><br><span class="line"><span class="tag">                       <span class="attr">android:resource</span>=<span class="string">"@xml/accessible_service_config"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">service</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">accessibility-service</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:description</span>=<span class="string">"@string/app_name"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:accessibilityEventTypes</span>=<span class="string">"typeWindowStateChanged|typeWindowContentChanged"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:accessibilityFeedbackType</span>=<span class="string">"feedbackAllMask"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:packageNames</span>=<span class="string">"com.tencent.mm"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:notificationTimeout</span>=<span class="string">"10"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:accessibilityFlags</span>=<span class="string">""</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:canRetrieveWindowContent</span>=<span class="string">"true"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>android:packageNames=”com.tencent.mm” 指定要监听的程序的包名<br>android:canRetrieveWindowContent=”true” 可以获取具体的内容<br>android:accessibilityEventTypes 监听的事件<br>android:accessibilityFeedbackType=”feedbackAllMask” 设置反馈事件（如振动一下提示用户），这里是屏蔽所有反馈。</p>
+</blockquote>
+<ul>
+<li>Servive回调</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onAccessibilityEvent</span><span class="params">(AccessibilityEvent event)</span> </span>&#123;</span><br><span class="line"><span class="comment">// 回调</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>节点查找</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获取所有阶段</span></span><br><span class="line">AccessibilityNodeInfo nodeInfo = event.getSource();</span><br><span class="line"><span class="comment">// 查找所有有"领取红包"的View</span></span><br><span class="line">List&lt;AccessibilityNodeInfo&gt; node1 = nodeInfo.findAccessibilityNodeInfosByText(<span class="string">"领取红包"</span>);</span><br><span class="line"><span class="comment">// 查找所有id是com.tencent.mm:id/ar6</span></span><br><span class="line">List&lt;AccessibilityNodeInfo&gt; node2 = nodeInfo.findAccessibilityNodeInfosByViewId(<span class="string">"com.tencent.mm:id/ar6"</span>);</span><br></pre></td></tr></table></figure>
+<p>注：可以通过DDMS里的Dump View Hierarchy For UI Automator 分析UI结构来获取id</p>
+<ul>
+<li>出发操作</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 对某个节点操作</span></span><br><span class="line">cellNode.performAction(AccessibilityNodeInfo.ACTION_CLICK);</span><br><span class="line"><span class="comment">// 按下手机的后退键</span></span><br><span class="line">performGlobalAction(GLOBAL_ACTION_BACK);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>启动Accessibility的系统设置界面，需要用户手动打开服务</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Intent intent =</span><br><span class="line">            <span class="keyword">new</span> Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);</span><br><span class="line">startActivity(intent);</span><br></pre></td></tr></table></figure>
+<h3 id="几个注意点"><a href="#几个注意点" class="headerlink" title="几个注意点"></a>几个注意点</h3><ul>
+<li>AccessibilityService 建议在Android4.0以及以上版本中使用，也有support_v4 向下兼容。</li>
+<li>Services配置可以通过xml配置，也可以通过代码配置</li>
+<li><strong>不同系统的Api可能结果不同</strong>（如API16），如查找不到一些元素</li>
+</ul>
+<blockquote>
+<p>In Android 4.1 (API Level 16) and higher, the getSource() method, as well as AccessibilityNodeInfo.getChild() and getParent(), return only view objects that are considered important for accessibility (views that draw content or respond to user actions). If your service requires all views, it can request them by setting the flags member of the service’s AccessibilityServiceInfo instance to <strong>FLAG_INCLUDE_NOT_IMPORTANT_VIEWS</strong></p>
+</blockquote>
+<ul>
+<li>AccessibilityNode可能有一个实例池的设计。获取当前窗体节点树的时候，从一个可重用的实例池中获取一个辅助节点信息 (AccessibilityNodeInfo)实例。在接下来的获取时，仍然从实例池中获取节点实例，这时可能会重用之前的实例。这样的设计是有好处的，可以防止每次返回都创建大量的实例，影响性能。AccessibilityNodeProvider的源码表明了这样的设计。</li>
+</ul>
+<h3 id="抢红包"><a href="#抢红包" class="headerlink" title="抢红包"></a>抢红包</h3><p><a href="https://github.com/geeeeeeeeek/WeChatLuckyMoney" target="_blank" rel="noopener">微信抢红包插件</a>的dev分支的逻辑比较复杂（参考工程的README文件，致力于区分各种状态和不重复抢相同红包），实测不稳定，<strong>stable分支逻辑比较简单也较稳定</strong>。具体代码就不说了。</p>
+<h2 id="Do-Something"><a href="#Do-Something" class="headerlink" title="Do Something"></a>Do Something</h2><p>抢红包插件网上有很多实现，我所见的都是用AccessibilityService来做的。用这个Service的确可以做一些有趣的事情，打算在后续阶段用这个原理<strong>写一个微信自动聊天程序</strong>，当然是要建立在自己搭建的框架之上的。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+            <div class="social-item">
+              <a target="_blank" class="social-link" href="https://t.me/mltalk">
+                <span class="icon">
+                  <i class="fa fa-telegram"></i>
+                </span>
+
+                <span class="label">机器学习碎碎念</span>
+              </a>
+            </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Android/" rel="tag"># Android</a>
+              <a href="/tags/其他/" rel="tag"># 其他</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/01/10/始发站，将通往何处/" rel="prev" title="始发站，将通往何处">
+      <i class="fa fa-chevron-left"></i> 始发站，将通往何处
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2016/01/24/test/" rel="next" title="评论测试">
+      评论测试 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本原理"><span class="nav-number">1.</span> <span class="nav-text">基本原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#源码分析"><span class="nav-number">2.</span> <span class="nav-text">源码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#学习AccessibilityService"><span class="nav-number">2.1.</span> <span class="nav-text">学习AccessibilityService</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#关键API"><span class="nav-number">2.2.</span> <span class="nav-text">关键API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#几个注意点"><span class="nav-number">2.3.</span> <span class="nav-text">几个注意点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#抢红包"><span class="nav-number">2.4.</span> <span class="nav-text">抢红包</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Do-Something"><span class="nav-number">3.</span> <span class="nav-text">Do Something</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">limuzhi</p>
+  <div class="site-description" itemprop="description">something about tech, android etc...</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muzhi1991" title="GitHub → https://github.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:muzhi1991@gmail.com" title="E-Mail → mailto:muzhi1991@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/muzhi1991" title="Twitter → https://twitter.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.chenyupeng.com/" title="https://www.chenyupeng.com/" rel="noopener" target="_blank">陈玉鹏的个人空间</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://macshuo.com/" title="http://macshuo.com/" rel="noopener" target="_blank">MacTalk</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">limuzhi</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'G5HLDFmPsllxIjax4F2JTLnl-gzGzoHsz',
+      appKey     : 'A5PTgbvpJwjPlcBJ3Brl8rDs',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

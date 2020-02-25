@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Android框架系列之二持续了两个月，本文是这个系列的一个小结，解答开篇提出的一些问题的思考与结论。 MVP相关Clean与MVP的关系是什么？">
+<meta name="keywords" content="Android,主框架">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android构架系列之二--MVP&amp;&amp;Clean理解与实践之问题解答与总结">
+<meta property="og:url" content="http://limuzhi.com/2016/06/11/Android构架系列之二-MVP&&Clean理解与实践之问题解答与总结/index.html">
+<meta property="og:site_name" content="Night Piece">
+<meta property="og:description" content="Android框架系列之二持续了两个月，本文是这个系列的一个小结，解答开篇提出的一些问题的思考与结论。 MVP相关Clean与MVP的关系是什么？">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-02-25T09:44:15.461Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android构架系列之二--MVP&amp;&amp;Clean理解与实践之问题解答与总结">
+<meta name="twitter:description" content="Android框架系列之二持续了两个月，本文是这个系列的一个小结，解答开篇提出的一些问题的思考与结论。 MVP相关Clean与MVP的关系是什么？">
+
+<link rel="canonical" href="http://limuzhi.com/2016/06/11/Android构架系列之二-MVP&&Clean理解与实践之问题解答与总结/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>Android构架系列之二--MVP&&Clean理解与实践之问题解答与总结 | Night Piece</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Night Piece</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">white && black</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tools">
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-wrench"></i>利器</a>
+
+  </li>
+        <li class="menu-item menu-item-read">
+
+    <a href="/read/" rel="section"><i class="fa fa-fw fa-book"></i>阅读</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://limuzhi.com/2016/06/11/Android构架系列之二-MVP&&Clean理解与实践之问题解答与总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="limuzhi">
+      <meta itemprop="description" content="something about tech, android etc...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Night Piece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android构架系列之二--MVP&&Clean理解与实践之问题解答与总结
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-06-11 15:41:52" itemprop="dateCreated datePublished" datetime="2016-06-11T15:41:52+08:00">2016-06-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-25 17:44:15" itemprop="dateModified" datetime="2020-02-25T17:44:15+08:00">2020-02-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2016/06/11/Android构架系列之二-MVP&&Clean理解与实践之问题解答与总结/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2016/06/11/Android构架系列之二-MVP&&Clean理解与实践之问题解答与总结/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Android框架系列之二持续了两个月，本文是这个系列的一个小结，解答开篇提出的一些问题的思考与结论。</p>
+<h2 id="MVP相关"><a href="#MVP相关" class="headerlink" title="MVP相关"></a>MVP相关</h2><h3 id="Clean与MVP的关系是什么？"><a href="#Clean与MVP的关系是什么？" class="headerlink" title="Clean与MVP的关系是什么？"></a>Clean与MVP的关系是什么？</h3><p>区别：</p>
+<ul>
+<li>从概念上说：Clean是三层构架（一种系统构架）的一种具体表现形式，是一种设计原则。MVP则是一种设计模式，用来连接M与V的方式。</li>
+<li>从使用范围来说：Clean使用于整个系统，其业务层（Model）十分复杂。MVP倾向于<strong>薄Model的表现层</strong>构架（客户端，展示层）。</li>
+<li>从抽象层次上说：Clean更抽象一些，MVP更加具体。</li>
+</ul>
+<p>联系：Clean构架是在MVP上使用了三层构架！</p>
+<h3 id="MVP中V层接口的设计原则是什么？"><a href="#MVP中V层接口的设计原则是什么？" class="headerlink" title="MVP中V层接口的设计原则是什么？"></a>MVP中V层接口的设计原则是什么？</h3><p>首先，要明确接口设计的目的：</p>
+<ul>
+<li>复用</li>
+<li>测试</li>
+</ul>
+<p>对于MVP中V层接口，它的目的具体而言是：<strong>方便View的复用，方便Presentor的mock测试</strong>。总而言之，方便View的行为切换。<br>因此，很明显View接口的设计必须：</p>
+<ol>
+<li>如果View要被复用，思考View对外暴露的操作是否方便被不同的Presenter使用。PS：理解什么是View的复用，参考其他问题。</li>
+<li>原子操作 VS 组合操作？如果是是Passive View的模式则暴露的接口尽量是原子操作（如显示list的一个item），组合逻辑放入Presentor中。否则，还是按照功能暴露接口（如显示一个List的所有item）。<strong>推荐后者。</strong></li>
+<li>。。。。。参考 MVP中P需要主动去V中区数据吗？还是V主动把数据给P（PV？SoC?)</li>
+</ol>
+<h3 id="MVP中V与P的对应关系？1：1，n：1，1：n？？"><a href="#MVP中V与P的对应关系？1：1，n：1，1：n？？" class="headerlink" title="MVP中V与P的对应关系？1：1，n：1，1：n？？"></a>MVP中V与P的对应关系？1：1，n：1，1：n？？</h3><ul>
+<li>独立的View（不是一个组合，如ViewGroup）：原则上View：Presnter==1：1</li>
+<li>对于组合View（ViewGroup），如果ViewGroup内部控件比较简单，则View持有一个Presenter即可，如果内部是复杂的多个自定义控件，而且可以分块（分块原则是：每块之间关联尽量少，最好没有关联！），则View可以持有多个Presenter。</li>
+<li>不建议View：Presenter是n：1，既一个Presenter持有多个View接口。这种情况，可以重构View为一个暴露接口，如果View很复杂，可以参考上面一条。</li>
+</ul>
+<h3 id="MVP中V的所有操作都必须经过P吗？即使不涉及M的修改。"><a href="#MVP中V的所有操作都必须经过P吗？即使不涉及M的修改。" class="headerlink" title="MVP中V的所有操作都必须经过P吗？即使不涉及M的修改。"></a>MVP中V的所有操作都必须经过P吗？即使不涉及M的修改。</h3><ul>
+<li>一般而言，不是！View内部可以很复杂，但是对外接口要尽量简单。</li>
+<li>对于Passive View的MVP而言，对外接口可能是原子化的，View内部的逻辑这尽量简单</li>
+<li>对于Soc的MVP，即使有一些修改Model的操作都可以不经过Presenter。</li>
+</ul>
+<h3 id="MVP中P需要主动去V中区数据吗？还是V主动把数据给P（PV？SoC"><a href="#MVP中P需要主动去V中区数据吗？还是V主动把数据给P（PV？SoC" class="headerlink" title="MVP中P需要主动去V中区数据吗？还是V主动把数据给P（PV？SoC?)"></a>MVP中P需要主动去V中区数据吗？还是V主动把数据给P（PV？SoC?)</h3><p>这个问题本质上是View接口的设计问题，MVP中P需要主动去V中区数据会导致View接口中方法数过多，V主动把数据给P，导致Presenter的方法的参数过多。建议</p>
+<ul>
+<li>尽量是通过参数传递给Presenter，Presenter的逻辑比较简单</li>
+<li><p>但是一写View的通用状态（整体状态）可以暴露在View中作为接口</p>
+<blockquote>
+<p>在Google demo中，Fragment的View接口有isActive()表示是否UI可见。这个是有必要的，因为model返回后不用它来判断是否需要显示结果。</p>
+</blockquote>
+</li>
+<li><p>PassiveView中可能获取状态的接口比较多一些，待讨论。</p>
+</li>
+</ul>
+<h3 id="其他问题"><a href="#其他问题" class="headerlink" title="其他问题"></a>其他问题</h3><ol>
+<li><p>Presenter需要设计接口吗？<br> 核心：View是否要被复用，如<strong>一种常见的需求：相同的界面，加载不同的数据。</strong></p>
+<ul>
+<li>一般情况View不会被重用，Presenter接口没有必要，一个Presenter一般就用在一个地方，Presenter也不用mock来测试，直接测试Presenter本身就好。</li>
+<li><p>除非遇到这种情况：<strong>Presenter的行为需要切换</strong>，如有默认行为和自定义行为，或者相同的界面，加载不同的数据。</p>
+<blockquote>
+<p>但是Google demo中为Presenter设置了接口，和View集中在Contract类中，除了比较清晰以外，这个例子没有发现什么优势。</p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li><p>View怎么复用？<br> View可以绑定不同的Presenter。因为View与Presenter耦合（双向绑定），如果需要解耦Presenter，<strong>如果View需要被复用，Presenter必须使用接口，那么View可以被不同的Presenter使用</strong>。但是，<strong>一般情况下，我们没有View被复用的需要，更需要的是View可被测试（Mock）。</strong></p>
+</li>
+<li><p>Presenter怎么复用？<br> Presenter可以用绑定不同的View。因为MVP中View的接口是强制的，所以Presenter与View是解耦的。<strong>可以切换不同的View，这个对于测试Presenter时，View的Mock是必须的</strong>。至于其他的需求这没有什么了。</p>
+</li>
+</ol>
+<h2 id="Clean相关"><a href="#Clean相关" class="headerlink" title="Clean相关"></a>Clean相关</h2><h3 id="Clean中Presentation与Domain，Domain与Repository之间接口设计是必要的吗？"><a href="#Clean中Presentation与Domain，Domain与Repository之间接口设计是必要的吗？" class="headerlink" title="Clean中Presentation与Domain，Domain与Repository之间接口设计是必要的吗？"></a>Clean中Presentation与Domain，Domain与Repository之间接口设计是必要的吗？</h3><p>这些接口的目的是Domain层（具体是UseCase）可以被复用，且可以被测试。<br>因此，最简单的方式是UseCase必须持有Presentation接口与Repository接口。UseCase自身未必需要是接口。思考：UseCase自身是接口作用是什么？</p>
+<p>但是，参考Google Demo：</p>
+<ul>
+<li>UseCase没有持有Presentation，以给它返回值，而是通过命令模式，传递在Domain层定义好的实体(xxxResponse)，实现解耦。（解耦的另一种思路，同样Clean的RxJava版本也是）</li>
+<li>令人意外的是UseCase持有Repository，没有通过接口：<ul>
+<li>为了测试Domain，Repository内部有接口可以实现Mock。</li>
+<li>对于复用，猜测这样的原因是：把Domain和Repository看做一个整体的Model，我只要Model整体可以被复用即可。</li>
+</ul>
+</li>
+</ul>
+<h3 id="可否把Clean构架理解成一种AsyncTask？"><a href="#可否把Clean构架理解成一种AsyncTask？" class="headerlink" title="可否把Clean构架理解成一种AsyncTask？"></a>可否把Clean构架理解成一种AsyncTask？</h3><p>可以，相当于把AsyncTask分层了，doInBackground放入了Model(Domain+Repository)。但是不仅仅是AsyncTask，Clean的核心是Model的可测试性，UseCase可以测试。AsyncTask也是耦合很严重的。而且不推荐使用AsyncTask。</p>
+<h3 id="Domain中的UseCase是什么？它重吗？"><a href="#Domain中的UseCase是什么？它重吗？" class="headerlink" title="Domain中的UseCase是什么？它重吗？"></a>Domain中的UseCase是什么？它重吗？</h3><p>这个很难理解，Google认为对于移动应用Model很轻</p>
+<h3 id="一个UseCase应该做多少事情？一件？一组相关的？划分逻辑是什么？"><a href="#一个UseCase应该做多少事情？一件？一组相关的？划分逻辑是什么？" class="headerlink" title="一个UseCase应该做多少事情？一件？一组相关的？划分逻辑是什么？"></a>一个UseCase应该做多少事情？一件？一组相关的？划分逻辑是什么？</h3><p>一件事，一个execute，执行一个任务，一个request一个reponse。<br>必须是业务逻辑。</p>
+<p>我之前理解UseCase也叫Interactor，因此，一个用户操作触发的事情就是一个UseCase。实际中这不合适（Google Demo也不是这样干的，而是划分了更小，尽量复用UseCase来组合）</p>
+<h3 id="多个UseCase如何组合"><a href="#多个UseCase如何组合" class="headerlink" title="多个UseCase如何组合"></a>多个UseCase如何组合</h3><p>Goolge的Demo中是在Presentation的Presentor嵌套调用。<br>需要优化：</p>
+<ul>
+<li>Rxjava流式调用</li>
+<li>新的UseCase组合其他多个UseCase</li>
+</ul>
+<h3 id="后台线程的事件与UseCase如何通讯？"><a href="#后台线程的事件与UseCase如何通讯？" class="headerlink" title="后台线程的事件与UseCase如何通讯？"></a>后台线程的事件与UseCase如何通讯？</h3><p>由于Clean构架是MVP的改进，也存在同样的问题。这个问题是可解决的，使用EventBus通知Presention去调用Domain即可（为什么，参考MVP一文）</p>
+<h3 id="Domain的UseCase，需要默认在非UI线程中运行吗？"><a href="#Domain的UseCase，需要默认在非UI线程中运行吗？" class="headerlink" title="Domain的UseCase，需要默认在非UI线程中运行吗？"></a>Domain的UseCase，需要默认在非UI线程中运行吗？</h3><p>建议是：最好在非UI中运行，但是对外可配置。</p>
+<h3 id="MVP中Presenter是否能设计为单例？Domain不能设计为单例？Repository必须设计为单例？"><a href="#MVP中Presenter是否能设计为单例？Domain不能设计为单例？Repository必须设计为单例？" class="headerlink" title="MVP中Presenter是否能设计为单例？Domain不能设计为单例？Repository必须设计为单例？"></a>MVP中Presenter是否能设计为单例？Domain不能设计为单例？Repository必须设计为单例？</h3><ul>
+<li><p>理解什么是Presenter，就不会有这个问题了，除非View是单例。。</p>
+<blockquote>
+<p>如果有单例需求，思考是不是Presenter用错地方了，那是Controller，Helper那些干的事情。</p>
+</blockquote>
+</li>
+<li><p>Domain — 非单例，通过注入由外部构建加入到Presenter</p>
+<blockquote>
+<p>Domain层缓存问题</p>
+</blockquote>
+</li>
+<li>Repository — 单例</li>
+</ul>
+<h3 id="内存缓存放在哪一层？Repository还是Domain还是都需要？前者缓存原始数据（未处理计算），后者缓存处理后的数据。如果一个domain需要多个Repository然后计算，结果数据需要缓存吗？"><a href="#内存缓存放在哪一层？Repository还是Domain还是都需要？前者缓存原始数据（未处理计算），后者缓存处理后的数据。如果一个domain需要多个Repository然后计算，结果数据需要缓存吗？" class="headerlink" title="内存缓存放在哪一层？Repository还是Domain还是都需要？前者缓存原始数据（未处理计算），后者缓存处理后的数据。如果一个domain需要多个Repository然后计算，结果数据需要缓存吗？"></a><em>内存缓存放在哪一层？Repository还是Domain还是都需要？前者缓存原始数据（未处理计算），后者缓存处理后的数据。如果一个domain需要多个Repository然后计算，结果数据需要缓存吗？</em></h3><p>这个问题存疑，现在先解答一部分</p>
+<ul>
+<li>Repository的原始数据缓存在某些情况（为了性能，很多情况都必要）下是必要的。</li>
+<li>Domain层缓存在复杂计算的情况下也是需要的，但是设计是一个问题，我暂时使用的是一个UseCase引用了一个管理缓存的UseCase（管理缓存UseCase内部有个全局静态的缓存池）</li>
+</ul>
+<h3 id="Domain的UseCase是否需要缓存设计？"><a href="#Domain的UseCase是否需要缓存设计？" class="headerlink" title="Domain的UseCase是否需要缓存设计？"></a>Domain的UseCase是否需要缓存设计？</h3><p>我们应当设计薄Model的应用，<strong>如果需要Domain缓存，应当思考你的Model是不是有点厚了</strong></p>
+<h3 id="Presenter是否需要缓存的设计？还是仅仅是数据引用？"><a href="#Presenter是否需要缓存的设计？还是仅仅是数据引用？" class="headerlink" title="Presenter是否需要缓存的设计？还是仅仅是数据引用？"></a>Presenter是否需要缓存的设计？还是仅仅是数据引用？</h3><p>没有缓存设计，仅仅是数据引用，这个引用放在View中也没有问题。（如Adapter中）</p>
+<h3 id="Clean中Presentation层与Domain层的UseCase职责分别是什么？"><a href="#Clean中Presentation层与Domain层的UseCase职责分别是什么？" class="headerlink" title="Clean中Presentation层与Domain层的UseCase职责分别是什么？"></a>Clean中Presentation层与Domain层的UseCase职责分别是什么？</h3><p>还是理解Presentation的Presentor是展示器，负责展示相关的操作，而UseCase则是业务操作。一个例子：分页加载数据。</p>
+<ul>
+<li>UseCase中出数据加载，去重合并，根据传入的页码返回数据</li>
+<li>Presentor负责记录当前展示的页码和显示到了哪一条（一般是个id）</li>
+</ul>
+<h3 id="一些Presentation层的Adapter，如何优雅的与Presenter结合"><a href="#一些Presentation层的Adapter，如何优雅的与Presenter结合" class="headerlink" title="一些Presentation层的Adapter，如何优雅的与Presenter结合"></a><em>一些Presentation层的Adapter，如何优雅的与Presenter结合</em></h3><p>暂时的方法是，Adapter传入了Presentor的引用。<br>另一种思路，没有实践：<br>ViewHolder—-View<br>Adapter—- Presentor<br>在Adapter中调用UseCase</p>
+<h3 id="Data层的理解，什么才是data，图片是吗？"><a href="#Data层的理解，什么才是data，图片是吗？" class="headerlink" title="Data层的理解，什么才是data，图片是吗？"></a>Data层的理解，什么才是data，图片是吗？</h3><p>Data层属于Model，因此，Data是业务数据，不是没有业务含义的图片，文件。这些文件图片可以在工具类中直接使用即可。</p>
+<h3 id="DBFlow可以启用他的缓存实现原始数据的缓存吗？"><a href="#DBFlow可以启用他的缓存实现原始数据的缓存吗？" class="headerlink" title="DBFlow可以启用他的缓存实现原始数据的缓存吗？"></a>DBFlow可以启用他的缓存实现原始数据的缓存吗？</h3><p>理论上可以，没有实践。</p>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><h3 id="Model层，如何设计"><a href="#Model层，如何设计" class="headerlink" title="Model层，如何设计"></a><em>Model层，如何设计</em></h3><p>指的是MVP中的Model，或者Clean中的Domain+Data<br>这个问题需要专门的专题讨论，autoValue等思想是否可以借鉴。</p>
+<h3 id="Cache如何设计合适，如何与原始数据同步？是否有最佳实践？"><a href="#Cache如何设计合适，如何与原始数据同步？是否有最佳实践？" class="headerlink" title="Cache如何设计合适，如何与原始数据同步？是否有最佳实践？"></a><em>Cache如何设计合适，如何与原始数据同步？是否有最佳实践？</em></h3><p>这个问题很大，初步的探索类似于Google中HashMap+dirty处理的方式，是否有完善框架还没有调研。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>写这个专题真的很吃力，一方面自己的能力有限，实践也不多，对于设计 的驾驭能力显然还不够。其次，自己对于这方面的理解也比较肤浅，好的构建的也有限（甚至不能定义什么是足够好的构架）。这是一个要经常回头思考的问题。<br>这个系列都没有给出一个构架的实例，有这么几个原因：首先，构架必须是服务于业务的，不同业务选择的构架迥然不同，（例如Model层问题）。其次，自己的代码没有Google官方的示例优雅，尤其是参入了一些曲解之后可能会误导他人，从学习的角度还是入手原始资料较好，即使是开始一个新的项目，也建议以此为蓝本作修改来适应具体的需求。<br>后续，几个需要补充的问题，Model层设计和Cache设计会有专题来讲，希望在有深入的理解之后再继续讨论这个问题。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+            <div class="social-item">
+              <a target="_blank" class="social-link" href="https://t.me/mltalk">
+                <span class="icon">
+                  <i class="fa fa-telegram"></i>
+                </span>
+
+                <span class="label">机器学习碎碎念</span>
+              </a>
+            </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Android/" rel="tag"># Android</a>
+              <a href="/tags/主框架/" rel="tag"># 主框架</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/05/15/Android构架系列之二-MVP&&Clean理解与实践之实例分析/" rel="prev" title="Android构架系列之二--MVP&&Clean理解与实践之实例分析">
+      <i class="fa fa-chevron-left"></i> Android构架系列之二--MVP&&Clean理解与实践之实例分析
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2016/06/25/版本控制工具git入门实践/" rel="next" title="版本控制工具Git入门实践">
+      版本控制工具Git入门实践 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#MVP相关"><span class="nav-number">1.</span> <span class="nav-text">MVP相关</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Clean与MVP的关系是什么？"><span class="nav-number">1.1.</span> <span class="nav-text">Clean与MVP的关系是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MVP中V层接口的设计原则是什么？"><span class="nav-number">1.2.</span> <span class="nav-text">MVP中V层接口的设计原则是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MVP中V与P的对应关系？1：1，n：1，1：n？？"><span class="nav-number">1.3.</span> <span class="nav-text">MVP中V与P的对应关系？1：1，n：1，1：n？？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MVP中V的所有操作都必须经过P吗？即使不涉及M的修改。"><span class="nav-number">1.4.</span> <span class="nav-text">MVP中V的所有操作都必须经过P吗？即使不涉及M的修改。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MVP中P需要主动去V中区数据吗？还是V主动把数据给P（PV？SoC"><span class="nav-number">1.5.</span> <span class="nav-text">MVP中P需要主动去V中区数据吗？还是V主动把数据给P（PV？SoC?)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他问题"><span class="nav-number">1.6.</span> <span class="nav-text">其他问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Clean相关"><span class="nav-number">2.</span> <span class="nav-text">Clean相关</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Clean中Presentation与Domain，Domain与Repository之间接口设计是必要的吗？"><span class="nav-number">2.1.</span> <span class="nav-text">Clean中Presentation与Domain，Domain与Repository之间接口设计是必要的吗？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#可否把Clean构架理解成一种AsyncTask？"><span class="nav-number">2.2.</span> <span class="nav-text">可否把Clean构架理解成一种AsyncTask？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Domain中的UseCase是什么？它重吗？"><span class="nav-number">2.3.</span> <span class="nav-text">Domain中的UseCase是什么？它重吗？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一个UseCase应该做多少事情？一件？一组相关的？划分逻辑是什么？"><span class="nav-number">2.4.</span> <span class="nav-text">一个UseCase应该做多少事情？一件？一组相关的？划分逻辑是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多个UseCase如何组合"><span class="nav-number">2.5.</span> <span class="nav-text">多个UseCase如何组合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#后台线程的事件与UseCase如何通讯？"><span class="nav-number">2.6.</span> <span class="nav-text">后台线程的事件与UseCase如何通讯？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Domain的UseCase，需要默认在非UI线程中运行吗？"><span class="nav-number">2.7.</span> <span class="nav-text">Domain的UseCase，需要默认在非UI线程中运行吗？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MVP中Presenter是否能设计为单例？Domain不能设计为单例？Repository必须设计为单例？"><span class="nav-number">2.8.</span> <span class="nav-text">MVP中Presenter是否能设计为单例？Domain不能设计为单例？Repository必须设计为单例？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内存缓存放在哪一层？Repository还是Domain还是都需要？前者缓存原始数据（未处理计算），后者缓存处理后的数据。如果一个domain需要多个Repository然后计算，结果数据需要缓存吗？"><span class="nav-number">2.9.</span> <span class="nav-text">内存缓存放在哪一层？Repository还是Domain还是都需要？前者缓存原始数据（未处理计算），后者缓存处理后的数据。如果一个domain需要多个Repository然后计算，结果数据需要缓存吗？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Domain的UseCase是否需要缓存设计？"><span class="nav-number">2.10.</span> <span class="nav-text">Domain的UseCase是否需要缓存设计？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Presenter是否需要缓存的设计？还是仅仅是数据引用？"><span class="nav-number">2.11.</span> <span class="nav-text">Presenter是否需要缓存的设计？还是仅仅是数据引用？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Clean中Presentation层与Domain层的UseCase职责分别是什么？"><span class="nav-number">2.12.</span> <span class="nav-text">Clean中Presentation层与Domain层的UseCase职责分别是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一些Presentation层的Adapter，如何优雅的与Presenter结合"><span class="nav-number">2.13.</span> <span class="nav-text">一些Presentation层的Adapter，如何优雅的与Presenter结合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Data层的理解，什么才是data，图片是吗？"><span class="nav-number">2.14.</span> <span class="nav-text">Data层的理解，什么才是data，图片是吗？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DBFlow可以启用他的缓存实现原始数据的缓存吗？"><span class="nav-number">2.15.</span> <span class="nav-text">DBFlow可以启用他的缓存实现原始数据的缓存吗？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他"><span class="nav-number">3.</span> <span class="nav-text">其他</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Model层，如何设计"><span class="nav-number">3.1.</span> <span class="nav-text">Model层，如何设计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cache如何设计合适，如何与原始数据同步？是否有最佳实践？"><span class="nav-number">3.2.</span> <span class="nav-text">Cache如何设计合适，如何与原始数据同步？是否有最佳实践？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">limuzhi</p>
+  <div class="site-description" itemprop="description">something about tech, android etc...</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muzhi1991" title="GitHub → https://github.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:muzhi1991@gmail.com" title="E-Mail → mailto:muzhi1991@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/muzhi1991" title="Twitter → https://twitter.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.chenyupeng.com/" title="https://www.chenyupeng.com/" rel="noopener" target="_blank">陈玉鹏的个人空间</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://macshuo.com/" title="http://macshuo.com/" rel="noopener" target="_blank">MacTalk</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">limuzhi</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'G5HLDFmPsllxIjax4F2JTLnl-gzGzoHsz',
+      appKey     : 'A5PTgbvpJwjPlcBJ3Brl8rDs',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

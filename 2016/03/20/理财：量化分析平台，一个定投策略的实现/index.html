@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="不得不说理财是一项基本的能力，从工作开始有意识地买了很多理财产品，股票，基金，p2p。仅仅基金就买过股票型，指数型，还有比较复杂的分级基金A/B。之前的购买大部分是尝试性的，漫无目的，更没有任何仔细的思量。似乎这叫做赌博更加合适。经过这一年的尝试，渐渐确定了我的理财目标。几个原则：  作为非专业人员，不会花大量时间在这上面，如股票看盘 为自己风险可以偏大，为父母，风险可控。基本公式：  理财资产（">
+<meta name="keywords" content="理财">
+<meta property="og:type" content="article">
+<meta property="og:title" content="理财：量化分析平台，一个定投策略的实现">
+<meta property="og:url" content="http://limuzhi.com/2016/03/20/理财：量化分析平台，一个定投策略的实现/index.html">
+<meta property="og:site_name" content="Night Piece">
+<meta property="og:description" content="不得不说理财是一项基本的能力，从工作开始有意识地买了很多理财产品，股票，基金，p2p。仅仅基金就买过股票型，指数型，还有比较复杂的分级基金A/B。之前的购买大部分是尝试性的，漫无目的，更没有任何仔细的思量。似乎这叫做赌博更加合适。经过这一年的尝试，渐渐确定了我的理财目标。几个原则：  作为非专业人员，不会花大量时间在这上面，如股票看盘 为自己风险可以偏大，为父母，风险可控。基本公式：  理财资产（">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://limuzhi.com/images/financial_quant_analyse.jpg">
+<meta property="og:updated_time" content="2020-02-25T09:44:15.452Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="理财：量化分析平台，一个定投策略的实现">
+<meta name="twitter:description" content="不得不说理财是一项基本的能力，从工作开始有意识地买了很多理财产品，股票，基金，p2p。仅仅基金就买过股票型，指数型，还有比较复杂的分级基金A/B。之前的购买大部分是尝试性的，漫无目的，更没有任何仔细的思量。似乎这叫做赌博更加合适。经过这一年的尝试，渐渐确定了我的理财目标。几个原则：  作为非专业人员，不会花大量时间在这上面，如股票看盘 为自己风险可以偏大，为父母，风险可控。基本公式：  理财资产（">
+<meta name="twitter:image" content="http://limuzhi.com/images/financial_quant_analyse.jpg">
+
+<link rel="canonical" href="http://limuzhi.com/2016/03/20/理财：量化分析平台，一个定投策略的实现/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>理财：量化分析平台，一个定投策略的实现 | Night Piece</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Night Piece</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">white && black</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tools">
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-wrench"></i>利器</a>
+
+  </li>
+        <li class="menu-item menu-item-read">
+
+    <a href="/read/" rel="section"><i class="fa fa-fw fa-book"></i>阅读</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://limuzhi.com/2016/03/20/理财：量化分析平台，一个定投策略的实现/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="limuzhi">
+      <meta itemprop="description" content="something about tech, android etc...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Night Piece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          理财：量化分析平台，一个定投策略的实现
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-03-20 17:27:13" itemprop="dateCreated datePublished" datetime="2016-03-20T17:27:13+08:00">2016-03-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-25 17:44:15" itemprop="dateModified" datetime="2020-02-25T17:44:15+08:00">2020-02-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/杂谈/" itemprop="url" rel="index"><span itemprop="name">杂谈</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2016/03/20/理财：量化分析平台，一个定投策略的实现/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2016/03/20/理财：量化分析平台，一个定投策略的实现/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>不得不说理财是一项基本的能力，从工作开始有意识地买了很多理财产品，股票，基金，p2p。仅仅基金就买过股票型，指数型，还有比较复杂的分级基金A/B。之前的购买大部分是尝试性的，漫无目的，更没有任何仔细的思量。似乎这叫做<strong>赌博</strong>更加合适。<br>经过这一年的尝试，渐渐确定了我的理财目标。几个原则：</p>
+<ul>
+<li>作为非专业人员，不会花大量时间在这上面，如股票看盘</li>
+<li><p>为自己风险可以偏大，为父母，风险可控。基本公式：</p>
+<blockquote>
+<p>理财资产（非固定收益类）/总资产=100-年龄<br>在此基础上微调：</p>
+<ul>
+<li>自己:比例 &gt; 75% —&gt; 85%左右,40%回撤</li>
+<li>父母:比例 &lt; 45% —&gt; 40%，18%回撤</li>
+</ul>
+</blockquote>
+</li>
+<li><p>不投资不了解的产品，<strong>必须经过数据计算</strong>后投资</p>
+</li>
+</ul>
+<p>目标：</p>
+<ul>
+<li>追求 &gt; 10%的年化收益，目标为15%</li>
+</ul>
+<p>这篇文章讲讲最近了解的金融数据的<strong>回测</strong>平台。简单来说就是指定策略然后使用历史数据技术模拟投资，查看结果。</p>
+<h2 id="国内的量化平台"><a href="#国内的量化平台" class="headerlink" title="国内的量化平台"></a>国内的量化平台</h2><p>基本了解了一下国内的策略平台功能比较弱，但是由于数据原因也没有其他好的选择。基本是两个平台</p>
+<ul>
+<li>UQER-优矿</li>
+<li>聚宽</li>
+</ul>
+<p>这两个平台十分相似，我怀疑是互相抄袭的，或者抄的国外的某平台，可是。。。。他们的数据也不全，很多数据只有2013年以后。</p>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>这没什么可说的，其实就是Python语法+常用的数据处理lib+平台API，<br>对我而言，python使用的比较少，基本语法没有问题，但是一些输出处理的库就是否生疏了，比如numpy，spicy，panda等，这些库大大的方便我们进行数据运算和整合：</p>
+<h3 id="分析常用的lib"><a href="#分析常用的lib" class="headerlink" title="分析常用的lib"></a>分析常用的lib</h3><ul>
+<li><p><a href="https://uqer.io/community/share/54ca15f9f9f06c276f651a56" target="_blank" rel="noopener">numpy</a>:主要提供了array数据结构(多纬度)，与元组/列表最大的区别是，它约束数组内的数据类型要相同，一些细微的操作也不通</p>
+  <figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[4]*4 --&gt;  [4,4,4,4]</span><br><span class="line">np.array([4])*4 --&gt; array([16])</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><a href="https://uqer.io/community/share/54d83bb3f9f06c276f651a6e" target="_blank" rel="noopener">spicy</a>：向量和矩阵的相关操作，基本上算是一个高级的科学计算器,如计算逆矩阵，特征值等等功能,与线性代数相关。</p>
+</li>
+<li><a href="https://uqer.io/community/share/54ffd96ef9f06c276f651aac" target="_blank" rel="noopener">panda</a>:金融计算的高级库，提供了Series和DataFrame两种高级的数据结果，前者理解成列，后者理解成表（一个表是由n个列组成的）。</li>
+<li>高级的有：机器学习算法库等，这就不懂了</li>
+<li>其他的自定义绘图库matplotlib等</li>
+</ul>
+<h3 id="基本功能"><a href="#基本功能" class="headerlink" title="基本功能"></a>基本功能</h3><p>这两个平台都基于<strong>ipython</strong>提供了两种基本的功能：code和strategy。</p>
+<blockquote>
+<p>jupyter与ipython：这个东西很有用，jupyter是一个网页交互器，对于脚本语言可以即可写，即可得到结果。ipython是一个接口可以让jupyter支持python的编译执行，可以缓存其他的语言如ruby。这个东西是学习python这些语言的强力助手，提供自动不全的公共，适合边学习边实验。</p>
+</blockquote>
+<p>简单地说：</p>
+<ul>
+<li><p>code：纯洁的python运行环境，可以调用各种api，包括python自己的lib和金融平台提供的api。一个常见的流程是：使用平台api获取数据—&gt;用python的数据处理工具处理—&gt;写一下模板方法和变量（具体逻辑）—&gt;import平台提供的回测库，调用回测api（需要把刚才写的模板方法和变量作为参数传入）—&gt;拿到结果，用python的数据处理工具处理—&gt;用python的绘图工具如matplotlib画出结果。优点是自由度高，缺点，必须要自己各种处理数据画图。</p>
+  <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">bt, acct = quartz.backtest(start = start,end = end,\</span><br><span class="line">             benchmark = benchmark,\</span><br><span class="line">             universe = universe,\</span><br><span class="line">             capital_base = capital_base,\</span><br><span class="line">             initialize = initialize,\</span><br><span class="line">             handle_data = handle_data,\</span><br><span class="line">             refresh_rate = refresh_rate)</span><br><span class="line"><span class="comment"># 下面绘图</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>strategy：一个模板化的python环境，实现一下模板的方法和变量（与上面类似）：如在handle_data中判断然后下单，但是你不需要手动应用回测库开始回测，点击运行自动调研模板方法，绘制出图。</p>
+  <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">start = <span class="string">'2014-01-01'</span>                       <span class="comment"># 回测起始时间</span></span><br><span class="line">end = <span class="string">'2015-01-01'</span>                         <span class="comment"># 回测结束时间</span></span><br><span class="line">benchmark = <span class="string">'HS300'</span>                        <span class="comment"># 策略参考标准</span></span><br><span class="line">universe = [<span class="string">'000001.XSHE'</span>, <span class="string">'600000.XSHG'</span>]  <span class="comment"># 证券池，支持股票和基金</span></span><br><span class="line">capital_base = <span class="number">100000</span>                      <span class="comment"># 起始资金</span></span><br><span class="line">freq = <span class="string">'d'</span>                                 <span class="comment"># 策略类型，'d'表示日间策略使用日线回测，'m'表示日内策略使用分钟线回测</span></span><br><span class="line">refresh_rate = <span class="number">1</span>                           <span class="comment"># 调仓频率，表示执行handle_data的时间间隔，若freq = 'd'时间间隔的单位为交易日，若freq = 'm'时间间隔为分钟</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">initialize</span><span class="params">(account)</span>:</span>                   <span class="comment"># 初始化虚拟账户状态</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">handle_data</span><span class="params">(account)</span>:</span>                  <span class="comment"># 每个交易日的买入卖出指令</span></span><br><span class="line">    <span class="keyword">return</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>核心的概念，就是在某个时机下单。<br>时机：</p>
+<ul>
+<li>日间策略 — 函数每个交易日调用一次，注意，此时下单价格是开盘价格（优矿），框架一般认为必然<strong>成功</strong></li>
+<li>分钟策略 — 每一分钟调用一次，以市价（当前价格）/限价（限定某个）来下单，<strong>未必能买的到</strong></li>
+</ul>
+<p>下单：</p>
+<ul>
+<li>order(stk,100) 以当前价格买100股</li>
+<li>order_to(stk,100) 以当前价格买/卖，最后剩余100股</li>
+<li>其他，按比例什么的，有些平台可以用价格去下单，如买1000块的股票。（内部应该也处理了取整）</li>
+</ul>
+<h3 id="一些坑"><a href="#一些坑" class="headerlink" title="一些坑"></a>一些坑</h3><p>优矿平台：</p>
+<ul>
+<li>handle_data里下了单，但是账户信息不会离开变化（比如余额，持股），要下次调用handle_data的时候才变，注意理解！但是其他平台未必。</li>
+<li>account.universe中的股票的顺序个数都可能被修改！不是你传入的，他会过滤去重排序。</li>
+<li>无法增加cash，记追加投资，就是<strong>不好实现定投</strong>（用策略不行，用code可以自己来）</li>
+<li>只支持：股票，场内etf基金，一些场内债券，其他的如分级基金、普通的开放式基金都不支持。</li>
+<li>secID和ticker证券代码：前者是内部id，因为同一个证券号码可能有多个对应的东西</li>
+<li>下单失败努力找原因。。比如，cash太少买不了一手</li>
+</ul>
+<p>聚宽：<br>数据太少，比如etf，只有2014年12月的。。<br>优点是api比优矿完善的多！</p>
+<h2 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h2><p>我使用code模式，实现了<strong>按月定投</strong>逻辑和<strong>定期按比例重新分配</strong>资产。<a href="./codes/定投分析.py">这里下载</a>。这里面用到一个很有用的库dateutil，可以方便的<a href="http://www.andyvenet.com/using-dateutil-generate-recurring-dates/" target="_blank" rel="noopener">产生时间序列</a>，比如每个月的最后一天，每年第几天等<br>分析结果用图表的形式表现出来：<br><img src="/images/financial_quant_analyse.jpg" alt="分析结果"></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这些只是入门的内容，还有很多数据层面的东西要学习以及金融知识，比如那些指标是什么含义。今年有计划看一本金融类的入门书籍。理财是一个长期需要坚持的事情，从简单的策略做起，不断学习，优化，认识到不足，再优化。期望能脱离盲目，我相信，<strong>所谓坚持不懈，毫不动摇必须要有强大的学识基础。</strong></p>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+            <div class="social-item">
+              <a target="_blank" class="social-link" href="https://t.me/mltalk">
+                <span class="icon">
+                  <i class="fa fa-telegram"></i>
+                </span>
+
+                <span class="label">机器学习碎碎念</span>
+              </a>
+            </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/理财/" rel="tag"># 理财</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/03/13/一些感想-什么是重要的/" rel="prev" title="一些感想--什么是重要的？">
+      <i class="fa fa-chevron-left"></i> 一些感想--什么是重要的？
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2016/03/27/Android构架系列之一-工程结构与Gradle配置/" rel="next" title="Android构架系列之一--工程结构与Gradle配置">
+      Android构架系列之一--工程结构与Gradle配置 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#国内的量化平台"><span class="nav-number">1.</span> <span class="nav-text">国内的量化平台</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用"><span class="nav-number">2.</span> <span class="nav-text">使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#分析常用的lib"><span class="nav-number">2.1.</span> <span class="nav-text">分析常用的lib</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基本功能"><span class="nav-number">2.2.</span> <span class="nav-text">基本功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一些坑"><span class="nav-number">2.3.</span> <span class="nav-text">一些坑</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实践"><span class="nav-number">3.</span> <span class="nav-text">实践</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">limuzhi</p>
+  <div class="site-description" itemprop="description">something about tech, android etc...</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muzhi1991" title="GitHub → https://github.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:muzhi1991@gmail.com" title="E-Mail → mailto:muzhi1991@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/muzhi1991" title="Twitter → https://twitter.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.chenyupeng.com/" title="https://www.chenyupeng.com/" rel="noopener" target="_blank">陈玉鹏的个人空间</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://macshuo.com/" title="http://macshuo.com/" rel="noopener" target="_blank">MacTalk</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">limuzhi</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'G5HLDFmPsllxIjax4F2JTLnl-gzGzoHsz',
+      appKey     : 'A5PTgbvpJwjPlcBJ3Brl8rDs',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

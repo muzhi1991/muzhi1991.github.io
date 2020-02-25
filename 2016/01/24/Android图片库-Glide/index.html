@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Glide Wiki中文翻译。Glide是一个Android图片库，确切地说应当叫『媒体框架』。支持图片、Gif、原生视频的加载。使用简单，性能优异，Google推荐。">
+<meta name="keywords" content="Android,主框架">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android图片库--Glide Wiki中文翻译">
+<meta property="og:url" content="http://limuzhi.com/2016/01/24/Android图片库-Glide/index.html">
+<meta property="og:site_name" content="Night Piece">
+<meta property="og:description" content="Glide Wiki中文翻译。Glide是一个Android图片库，确切地说应当叫『媒体框架』。支持图片、Gif、原生视频的加载。使用简单，性能优异，Google推荐。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-02-25T09:44:15.401Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android图片库--Glide Wiki中文翻译">
+<meta name="twitter:description" content="Glide Wiki中文翻译。Glide是一个Android图片库，确切地说应当叫『媒体框架』。支持图片、Gif、原生视频的加载。使用简单，性能优异，Google推荐。">
+
+<link rel="canonical" href="http://limuzhi.com/2016/01/24/Android图片库-Glide/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>Android图片库--Glide Wiki中文翻译 | Night Piece</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Night Piece</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">white && black</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tools">
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-wrench"></i>利器</a>
+
+  </li>
+        <li class="menu-item menu-item-read">
+
+    <a href="/read/" rel="section"><i class="fa fa-fw fa-book"></i>阅读</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://limuzhi.com/2016/01/24/Android图片库-Glide/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="limuzhi">
+      <meta itemprop="description" content="something about tech, android etc...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Night Piece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android图片库--Glide Wiki中文翻译
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-01-24 10:32:54" itemprop="dateCreated datePublished" datetime="2016-01-24T10:32:54+08:00">2016-01-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-25 17:44:15" itemprop="dateModified" datetime="2020-02-25T17:44:15+08:00">2020-02-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2016/01/24/Android图片库-Glide/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2016/01/24/Android图片库-Glide/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <div class="post-description">Glide Wiki中文翻译。Glide是一个Android图片库，确切地说应当叫『媒体框架』。支持图片、Gif、原生视频的加载。使用简单，性能优异，Google推荐。</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="序"><a href="#序" class="headerlink" title="序"></a>序</h2><p>最近，一直在捣鼓Glide这个图片库，确切地说应当叫『媒体框架』。为了支持Gif播放，项目中使用Glide代替了Universal Image Loader。起初我们打算使用的是Fresco方案，最终因为Lib体积的问题放弃。万万没想到apk的size这么敏感，国外很多推广服务是根据apk体积收费的，3M一个门槛，5M一个门槛。fresco引入之后即使proguard、7zip，apk的大小也增加了1M+，多平台的os库是个大头，第三世界的应用市场还不支持按平台分发😓。。<br>Glide的使用还不深入，仅仅停留在Api的范畴，为了解决bug，跟踪了代码，也是云里雾里。不得不说，Glide源码的设计十分NB，面向接口的理念贯彻的很彻底，是一个学习设计的好demo。<br>GitHub的README作为最简单的入门足够了，但是遇到具体问题还是要理解一些设计思想的，GitHub上的Wiki有一份不错的文档，可惜木有中文，正好学习的过程中翻译一下。<br>在看wiki之前，可以先看这两篇中文入门，了解基本的用法。</p>
+<ul>
+<li><a href="http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0327/2650.html" target="_blank" rel="noopener">Google推荐的图片加载库Glide介绍</a></li>
+<li><a href="http://www.jianshu.com/p/4a3177b57949" target="_blank" rel="noopener">Glide 一个专注于平滑滚动的图片加载和缓存库</a></li>
+</ul>
+<p>本文是基于<strong>Glide 3.x</strong>正式版的<a href="https://github.com/bumptech/glide/wiki" target="_blank" rel="noopener">Wiki文档</a>的翻译（原文编辑日期：2015-2-9,18 revision，当时Glide release的版本号3.6.1）。</p>
+<p>翻译Version：1.1 简单校对</p>
+<h3 id="名词解释"><a href="#名词解释" class="headerlink" title="名词解释"></a>名词解释</h3><p>Glide中有一部分单词，我不知道用什么中文可以确切的表达出含义，用英文单词可能在行文中更加合适，还有一些词在Glide中有特别的含义，我理解的可能也不深入，这里先记录一下。</p>
+<ul>
+<li>View： 一般情况下，指Android中的View及其子类控件（包括自定义的），尤其指ImageView。这些控件可在上面绘制Drawable</li>
+<li>Target： Glide中重要的概念，目标。它即可以指封装了一个View的Target（ViewTarget），也可以不包含View（SimpleTarget）。</li>
+<li>Drawable： 指Android中的Drawable类或者它的子类，如BitmapDrawable等。或者Glide中基础Drawable实现的自定义Drawable（如GifDrawable等）</li>
+<li>Request - 加载请求，可以是网络请求或者其他任何下载图片的请求，也是Glide中的一个类。</li>
+<li>Model：数据源的提供者，如Url，文件路径等，可以从model中获取InputStream。</li>
+<li>Signature：签名，可以唯一地标识一个对象。</li>
+<li>recycle()：Glide中Resource类有此方法，表示该资源不被引用，可以放入池中（此时并没有释放空间）。Android中Bitmap也有此方法，表示释放Bitmap占用的内存。</li>
+</ul>
+<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><ul>
+<li>主目录</li>
+<li>缓存机制与缓存失效</li>
+<li>Glide配置</li>
+<li>自定义Target</li>
+<li>调试与错误处理</li>
+<li>使用Glide下载自定义大小图片</li>
+<li>集成库-与其他库相整合</li>
+<li>在后台线程中加载与缓存数据</li>
+<li>Glide中的资源复用</li>
+<li>快照（Snapshots）</li>
+<li>图形变换（Transformations）</li>
+</ul>
+<hr>
+<h2 id="主目录"><a href="#主目录" class="headerlink" title="主目录"></a>主目录</h2><h3 id="报告问题"><a href="#报告问题" class="headerlink" title="报告问题"></a>报告问题</h3><p>如果你有任何问题，可以在<a href="https://github.com/bumptech/glide/issues/" target="_blank" rel="noopener">Github上提出</a>或者发送e-mail到我们的<a href="https://groups.google.com/forum/#!forum/glidelibrary" target="_blank" rel="noopener">邮件列表</a>，也可以在IRC(Internet Relay Chat 网络中继聊天？)频道上联系我们：<a href="http://webchat.freenode.net/?channels=glide-library" target="_blank" rel="noopener">irc.freenode.net#glide-library</a>。</p>
+<h3 id="3-0版本的新特性"><a href="#3-0版本的新特性" class="headerlink" title="3.0版本的新特性"></a>3.0版本的新特性</h3><ul>
+<li><p>支持Gif动画的解码 - 与加载图片相同，只要调用Glide.with(…).load(…)，如果你加载的图片是一个可以播放的Gif，Glide会自动加载它并显示在一个自定义的Drawable上（注：GifDrawable）。此外，你还可以控制的更多，比如</p>
+  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 你想加载Gif为一张静态图片</span></span><br><span class="line">Glide.with(context).load(...).asBitmap()。</span><br><span class="line"><span class="comment">// 或者你想只有加载对象是Gif时才能加载成功</span></span><br><span class="line">Glide.with(context).load(...).asGif()。</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>本地视频播放技术 - 除了解码Gif，Glide也能解码你设备上的视频（video）。使用方法和加载gif相同，Glide支持所有Android可以直接解码的视频。</p>
+</li>
+<li><p>支持缩略图加载 - 有时我们希望减少用户等待的时间又不想牺牲图片的质量，我们可以同时加载多张图片到一个View中，先加载缩略图（只有view的1/10大小），然后再加载一个完整的图像覆盖在上面。使用下面的代码</p>
+  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Glide.with(yourFragment).load(yourUrl).thumbnail(<span class="number">0.1f</span>).into(yourView)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>当然，你也可以传入一个Request到<code>.thumbnail()</code>函数中作为参数。</p>
+<ul>
+<li>与生命周期集成 - 加载请求现在会自动在onStop中暂停在，onStart中重新开始。为了节约电量，Gif动画也会在onStop中自动暂停。此外，当设备的连接状态改变时，所有失败的请求会自动重试，确保Glide不会因为临时性的连接问题，导致请求永远失败。</li>
+<li><p>转码 - 除了解码资源，Glide的<code>.toBytes()</code>和<code>.transcode()</code>方法允许你在后台正常地获取、解码、变换一张图片。你还可以在这些调用中把图片转码成更有用的格式，比如，上传一张大小为250*250像素的用户头像的图片bytes数据，代码如下</p>
+  <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Glide.with(context)</span><br><span class="line">    .load(“/user/profile/photo/path”)</span><br><span class="line">    .asBitmap()</span><br><span class="line">    .toBytes()</span><br><span class="line">    .centerCrop()</span><br><span class="line">    .into(<span class="keyword">new</span> SimpleTarget&lt;<span class="keyword">byte</span>[]&gt;(<span class="number">250</span>, <span class="number">250</span>) &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onResourceReady</span><span class="params">(<span class="keyword">byte</span>[] data, GlideAnimation anim)</span> </span>&#123;</span><br><span class="line">            <span class="comment">// 在此处，将bytes数据传入后台线程，再上传他们</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>动画 - Glide3.X支持『淡入淡出』动画（<code>.crossFade()</code>）和view的属性动画(<code>.animate(ViewPropertyAnimation.Animator)</code>)。此外，还有Glide2.0就支持的android view动画。</p>
+</li>
+<li>支持 OkHttp 和 Volley - 现在你可以选择用OkHttp、Volley或者默认的HttpUrlConnection作为网络栈。OkHttp和Volley可以通过添加对应的集成库(integration library)和注册相应的<code>ModelLoaderFactory</code>来引入。具体查看ReadMe文件。</li>
+<li>其他 - 可以使用Drawable对象作为加载中的占位图、请求优先级、覆盖自定义宽和高、可以缓存变换后的缩略图或者缓存原始文件</li>
+</ul>
+<h3 id="从2-0迁移到3-0"><a href="#从2-0迁移到3-0" class="headerlink" title="从2.0迁移到3.0"></a>从2.0迁移到3.0</h3><ul>
+<li>将所有的<code>Glide.load()</code>替换为<code>Glide.with([fragment/activity/context]).load()</code>。</li>
+<li>将所有的自定义的加载调用<code>Glide.load(url).into(new SimpleTarget(){ ... }).with(context)</code>替换成<code>Glide.with(context).load(url).into(new SimpleTarget(width, height) { ... })</code>。</li>
+</ul>
+<h3 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h3><p>除了3.0引入的新功能，Glide继承了2.0的所有功能：</p>
+<ul>
+<li>后台图片加载</li>
+<li>如果你使用了listview的复用机制，那么Glide会自动取消作业（job）</li>
+<li>内存和磁盘缓存</li>
+<li>Bitmap和资源池来减少内存抖动</li>
+<li>支持任意的图像变换</li>
+</ul>
+<hr>
+<h2 id="缓存机制与缓存失效"><a href="#缓存机制与缓存失效" class="headerlink" title="缓存机制与缓存失效"></a>缓存机制与缓存失效</h2><p>缓存失效是一个比较复杂的话题，理想情况下，你尽可能不要考虑这个问题。这一节主要是让你粗略的了解一下Glide中cache的key是如何生成，以及提供一些关于如何合理利用缓存的提示。</p>
+<h3 id="缓存的key"><a href="#缓存的key" class="headerlink" title="缓存的key"></a>缓存的key</h3><p><code>DiskCacheStrategy.RESULT</code>磁盘缓存策略（注：我们配置的一种磁盘缓存策略）使用的key由以下四个主要部分组成：</p>
+<ul>
+<li>DataFetcher的方法<code>getId()</code>返回的字符。典型地，DataFetcher仅仅返回由数据Model的<code>toString()</code>方法得到的值。所以，如果Model是一个<strong>URL</strong>，那么会返回URL的字符串，如果Model是是一个文件，那么会返回文件的<strong>路径</strong>。。。</li>
+<li>宽和高。如果你调用过override(width,height)方法，那么就是是它传入的值。没有调用过，默认是通过<strong>Target</strong>的<code>getSize()</code>方法获得这个值。</li>
+<li>各种编码器、解码器的<code>getId()</code>方法返回的字符串。这些编码器、解码器用于加载和缓存你的图片。仅有哪些堆bytes数据有影响的编码器、解码器才会有这些<code>id</code>值。比如，你只有一个将bytes数据写入磁盘的编码器，那么它就没有id值，因为不管怎样它都不会修改数据。</li>
+<li>可选地，你可以为图片加载提供签名(Signature)，请看下面的缓存失效部分。</li>
+</ul>
+<p>所有的这些key，以特定的顺序计算出hash值，并将这个值作为保存图片到磁盘上的唯一且安全的文件名。</p>
+<h3 id="缓存失效"><a href="#缓存失效" class="headerlink" title="缓存失效"></a>缓存失效</h3><p>由于文件名是hash值，没有简便的方式删除磁盘上某个特定url或者文件路径的所有缓存文件。如果仅仅缓存原文件，问题可能还比较简单，但是Glide会缓存缩略图，各种变换后的图片，所有这些缓存都会产生新文件。跟踪和删除所有文件是十分困难的。</p>
+<h3 id="自定义缓存失效"><a href="#自定义缓存失效" class="headerlink" title="自定义缓存失效"></a>自定义缓存失效</h3><p>通常情况下改变缓存的标志（key）是困难的。Glide提供了<code>signature()</code>API来混入其他数据，帮助你控制缓存的key。签名（Signature）对于多媒体或者有版本信息的内容来说都很有用。</p>
+<ul>
+<li>媒体库内容 - 对于媒体库内容，你可以使用Glide的<code>MediaStoreSignature</code>类作为签名， MediaStoreSignature类允许你混入文件修改时间、mime类型、媒体库的方向(orientation?)这些值作为缓存的key，这三个值足以让你可靠的捕捉到任何修改和更新，使你可以缓存媒体库的缩略图.?</li>
+<li>文件 - 你可以使用<code>StringSignature</code>混入文件修改时间</li>
+<li>url - 虽然使url失效最好的方式是当内容变化时，服务器修改url并更新客户端，但是你也可以用<code>StringSignature</code>混入任意的元数据（如版本号）来使缓存失效。</li>
+</ul>
+<p>使用String Signature加载数据很简单：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Glide.with(yourFragment)</span><br><span class="line">    .load(yourFileDataModel)</span><br><span class="line">    .signature(<span class="keyword">new</span> StringSignature(yourVersionMetadata))</span><br><span class="line">    .into(yourImageView);</span><br></pre></td></tr></table></figure>
+<p>媒体库Signature可以直接使用从MeidaStore(注：一个android api）获得的数据</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Glide.with(fragment)</span><br><span class="line">    .load(mediaStoreUri)</span><br><span class="line">    .signature(<span class="keyword">new</span> MediaStoreSignature(mimeType, dateModified, orientation))</span><br><span class="line">    .into(view);</span><br></pre></td></tr></table></figure>
+<p>你还可以通过实现<code>key</code>接口来自定义签名，确保实现了<code>equals()</code>, <code>hashCode()</code>和<code>updateDiskCacheKey()</code>这几个方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IntegerVersionSignature</span> <span class="keyword">implements</span> <span class="title">Key</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> currentVersion;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">IntegerVersionSignature</span><span class="params">(<span class="keyword">int</span> currentVersion)</span> </span>&#123;</span><br><span class="line">         <span class="keyword">this</span>.currentVersion = currentVersion;</span><br><span class="line">    &#125; </span><br><span class="line"> </span><br><span class="line">    <span class="meta">@Override</span> </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object o)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (o <span class="keyword">instanceof</span> IntegerVersionSignature) &#123;</span><br><span class="line">            IntegerVersionSignature other = (IntegerVersionSignature) o;</span><br><span class="line">            <span class="keyword">return</span> currentVersion = other.currentVersion;</span><br><span class="line">        &#125; </span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>; </span><br><span class="line">    &#125; </span><br><span class="line"> </span><br><span class="line">    <span class="meta">@Override</span> </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">hashCode</span><span class="params">()</span> </span>&#123; </span><br><span class="line">        <span class="keyword">return</span> currentVersion;</span><br><span class="line">    &#125; </span><br><span class="line"> </span><br><span class="line">    <span class="meta">@Override</span> </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">updateDiskCacheKey</span><span class="params">(MessageDigest md)</span> </span>&#123;</span><br><span class="line">        messageDigest.update(ByteBuffer.allocate(Integer.SIZE).putInt(signature).array());</span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>请牢记：为了避免性能下降，请在后台线程中批量加载版本元数据(metaData，注：一般查询数据库获得)，只有这样，才能确保当你想加载图片的时候，这些值是可用的。</p>
+<p>如果这些方法都失败了，比如，你不能改变标识符，也不能跟踪一个合理的版本号。你还可以使用<code>diskCacheStrategy()</code>和<code>DiskCacheStrategy.NONE.</code>来完全关闭磁盘缓存。</p>
+<hr>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><h3 id="懒加载配置"><a href="#懒加载配置" class="headerlink" title="懒加载配置"></a>懒加载配置</h3><p>从Glide3.5开始，你可以使用<code>GlideModule</code>接口来懒加载配置Glide以及注册组件（如<code>ModelLoaders</code>)，这些配置将会在第一个Glide请求发起的时候被调用。</p>
+<h3 id="创建一个GlideModule"><a href="#创建一个GlideModule" class="headerlink" title="创建一个GlideModule"></a>创建一个GlideModule</h3><p>为了使用和注册GlideModule，首先需要实现该接口，加入你的配置和组件。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.mypackage; </span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyGlideModule</span> <span class="keyword">implements</span> <span class="title">GlideModule</span> </span>&#123; </span><br><span class="line">    <span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">applyOptions</span><span class="params">(Context context, GlideBuilder builder)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// Apply options to the builder here. </span></span><br><span class="line">    &#125; </span><br><span class="line"> </span><br><span class="line">    <span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">registerComponents</span><span class="params">(Context context, Glide glide)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// register ModelLoaders here. </span></span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后，添加你的实现类到<code>proguard.cfg</code>文件中，让你的module可以被反射调用到。这个性能开支很少，因为每个module只会在Glide第一次请求的时候实例化一次。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">-keepnames class com.mypackage.MyGlideModule</span><br><span class="line"># or more generally:</span><br><span class="line">#-keep public class * implements com.bumptech.glide.module.GlideModule</span><br></pre></td></tr></table></figure>
+<p>最后，添加meta-data标记到<code>AndroidManifest.xml</code>，那样Glide才能找到它。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">manifest</span> <span class="attr">...</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- ... permissions --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">application</span> <span class="attr">...</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">meta-data</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:name</span>=<span class="string">"com.mypackage.MyGlideModule"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">android:value</span>=<span class="string">"GlideModule"</span> /&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- ... activities and other components --&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">application</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">manifest</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>你可以实现任意个<code>GlideModule</code>，但是每一个都要添加到<code>proguard.cfg</code>，而且每一个GlideModule都要在manifest有自己的meta-data标记。</p>
+<h3 id="Library工程"><a href="#Library工程" class="headerlink" title="Library工程"></a>Library工程</h3><p>Library工程可能含有一个或多个<code>GlideModule</code>。当我们使用Gradle（或者任何支持manifest合并的构建工具）构建app时，如果我们所依赖的Library工程的manifest中含有module，那么这些module会自动并入到app中。如果构建工具不支持manifest合并，那么这些library工程中的module必须手动添加到你app的manifest中。</p>
+<h3 id="GlideModule冲突"><a href="#GlideModule冲突" class="headerlink" title="GlideModule冲突"></a>GlideModule冲突</h3><p>虽然Glide允许每个app注册多个<code>Glidemodule</code>，但是不会以某种特定的顺序调用这些module。所以，如果你的app中多个<code>GlideModules</code>或者依赖的library工程中有多个<code>GlideModules</code>，你必须负责避免他们之间的冲突。<br>如果冲突不可避免，app应该定义自己的默认module，这个module需要手动解决这些冲突，提供所有Library工程所需要的依赖。使用Gradle的开发者，或者使用manifest合并的开发者，可以通过下面的标签来排除冲突的module。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">meta-data</span> <span class="attr">android:name</span>=<span class="string">”com.mypackage.MyGlideModule”</span> <span class="attr">tools:node</span>=<span class="string">”remove”</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="全局配置"><a href="#全局配置" class="headerlink" title="全局配置"></a>全局配置</h3><p>你可以配置一些作用于所有请求的全局性配置项。请使用<code>GlideModule#applyOptions</code>方法中（注：作为参数）提供给你的<code>GlideBuilder</code>来配置。本节代码示例中的<code>builder</code>就是一个GlideModule对象。</p>
+<h3 id="磁盘缓存"><a href="#磁盘缓存" class="headerlink" title="磁盘缓存"></a>磁盘缓存</h3><p>你可以使用<code>GlideBuilder</code>的<code>setDiskCache()</code>方法设置磁盘缓存的位置、大小（最大值）。你也可以使用<code>DiskCacheAdapter</code>彻底关闭缓存，或者自己实现<code>DiskCache</code>接口来换掉默认实现。磁盘缓存由<code>DiskCache.Factory</code>接口的实例在后台线程中创建，使用后台线程可以避免在严格模式中出现问题。<br>Glide默认使用<code>InternalCacheDiskCacheFactory</code>类建立磁盘缓存。这个内部缓存工厂（internal cache factory）会把磁盘缓存放到应用程序的内部缓存目录中，并且设置最大空间是250MB，使用内部缓存的目录而不是SD卡的外部目录意味着其他应用程序无法访问到你下载的图片。具体请查看Android的<a href="http://developer.android.com/intl/zh-cn/guide/topics/data/data-storage.html#filesInternal" target="_blank" rel="noopener">存储选项相关文档</a>。</p>
+<h4 id="大小"><a href="#大小" class="headerlink" title="大小"></a>大小</h4><p>使用<code>InternalCacheDiskCacheFactory</code>设置磁盘缓存大小</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">builder.setDiskCache(</span><br><span class="line">  <span class="keyword">new</span> InternalCacheDiskCacheFactory(context, yourSizeInBytes));</span><br></pre></td></tr></table></figure>
+<h4 id="位置"><a href="#位置" class="headerlink" title="位置"></a>位置</h4><p>也可以设置磁盘缓存位置<br>你可以使用<code>InternalCacheDiskCacheFactory</code>来把你的磁盘缓存放到应用程序私有的内部存储目录中：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">builder.setDiskCache(</span><br><span class="line">  <span class="keyword">new</span> InternalCacheDiskCacheFactory(context, cacheDirectoryName, yourSizeInBytes));</span><br></pre></td></tr></table></figure>
+<p>还可以用<code>ExternalCacheDiskCacheFactory</code>来把你的磁盘缓存放到sd卡的公共缓存目录上。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">builder.setDiskCache(</span><br><span class="line">  <span class="keyword">new</span> ExternalCacheDiskCacheFactory(context, cacheDirectoryName, yourSizeInBytes));</span><br></pre></td></tr></table></figure>
+<p>如果你想用其他自定义的路径，可以用<code>DiskLruCacheFactory</code>类的构造函数来实现。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// If you can figure out the folder without I/O: </span></span><br><span class="line"><span class="comment">// Calling Context and Environment class methods usually do I/O. </span></span><br><span class="line">builder.setDiskCache( </span><br><span class="line">  <span class="keyword">new</span> DiskLruCacheFactory(getMyCacheLocationWithoutIO(), yourSizeInBytes)); </span><br><span class="line"> </span><br><span class="line"><span class="comment">// In case you want to specify a cache folder ("glide"): </span></span><br><span class="line">builder.setDiskCache( </span><br><span class="line">  <span class="keyword">new</span> DiskLruCacheFactory(getMyCacheLocationWithoutIO(), <span class="string">"glide"</span>, yourSizeInBytes)); </span><br><span class="line"> </span><br><span class="line"><span class="comment">// In case you need to query the file system while determining the folder: </span></span><br><span class="line">builder.setDiskCache(<span class="keyword">new</span> DiskLruCacheFactory(<span class="keyword">new</span> CacheDirectoryGetter() &#123; </span><br><span class="line">    <span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> File <span class="title">getCacheDirectory</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> getMyCacheLocationBlockingIO(); </span><br><span class="line">    &#125; </span><br><span class="line">&#125;), yourSizeInBytes);</span><br></pre></td></tr></table></figure>
+<p>注意：请牢记，写死任何值都不是个好主意，尤其是目录的路径，因为自Android4.2开始，支持单设备多用户。</p>
+<p>如果你想完全控制缓存的创建，可以自己实现<code>DiskCache.Factory</code>接口，使用<code>DiskLruCacheWrapper</code>可以在你想要的位置创建一个新的缓存。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">builder.setDiskCache(<span class="keyword">new</span> DiskCache.Factory() &#123; </span><br><span class="line">    <span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> DiskCache <span class="title">build</span><span class="params">()</span> </span>&#123; </span><br><span class="line">        File cacheLocation = getMyCacheLocationBlockingIO();</span><br><span class="line">        cacheLocation.mkdirs();</span><br><span class="line">        <span class="keyword">return</span> DiskLruCacheWrapper.get(cacheLocation, yourSizeInBytes);</span><br><span class="line">    &#125; </span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h3 id="内存缓存和缓存池"><a href="#内存缓存和缓存池" class="headerlink" title="内存缓存和缓存池"></a>内存缓存和缓存池</h3><p><code>GlideBuilder</code>类允许你设置内存缓存大小，而且可以实现自定义的<code>MemoryCache</code>和<code>BitmapPool</code>。</p>
+<h4 id="大小-1"><a href="#大小-1" class="headerlink" title="大小"></a>大小</h4><p>默认大小是由<code>MemorySizeCalculator</code>类决定的。MemorySizeCalculator类会考虑该设备的屏幕大小、可用内存来计算出一个合理的默认值。如果你想调整这个默认值，请构建自己的实例。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MemorySizeCalculator calculator = <span class="keyword">new</span> MemorySizeCalculator(context);</span><br><span class="line"><span class="keyword">int</span> defaultMemoryCacheSize = calculator.getMemoryCacheSize();</span><br><span class="line"><span class="keyword">int</span> defaultBitmapPoolSize = calculator.getBitmapPoolSize();</span><br></pre></td></tr></table></figure>
+<p>如果你想在应用的某个阶段动态调整Glide的内存占用，你可以选择一个<code>MemoryCategory</code>并使用<code>setMemoryCategory()</code>方法传入Glide中：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Glide.get(context).setMemoryCategory(MemoryCategory.HIGH);</span><br></pre></td></tr></table></figure>
+<h4 id="内存缓存"><a href="#内存缓存" class="headerlink" title="内存缓存"></a>内存缓存</h4><p>Glide的内存缓存会在内存中持有资源，它的作用是，我们可以不进行IO操作而快速获得可用资源。<br>你可以使用<code>GlideBuilder</code>的<code>setMemoryCache()</code>方法设置大小，或者设置你关于内存缓存的自定义实现（自定义类）。<code>LruResourceCache</code>类是Glide的默认实现。你可以通过<code>LruResourceCache</code>的构造函数来配置内存占用的bytes的最大值。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">builder.setMemoryCache(<span class="keyword">new</span> LruResourceCache(yourSizeInBytes));</span><br></pre></td></tr></table></figure>
+<h4 id="Bitmap池"><a href="#Bitmap池" class="headerlink" title="Bitmap池"></a>Bitmap池</h4><p>Glide的Bitmap池主要作用是，可以让各种尺寸的Bitmap被复用，可以可观地减少由垃圾回收引起的内存抖动。在解码图片时，需要给像素数组分配空间，这会触发垃圾回收。<br>你可以使用<code>GlideBuilder</code>的<code>setBitmapPool()</code>方法设置大小，或者设置你关于Bitmap池的自定义实现，<code>LruBitmapPool</code>类是Glide的默认实现。LruBitmapPool类使用了LRU算法维护最近最常使用的Bitmap的尺寸。你可以通过<code>LruBitmapPool</code>的构造函数配置内存占用的bytes的最大值。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">builder.setBitmapPool(<span class="keyword">new</span> LruBitmapPool(sizeInBytes));</span><br></pre></td></tr></table></figure>
+<h3 id="Bitmap格式"><a href="#Bitmap格式" class="headerlink" title="Bitmap格式"></a>Bitmap格式</h3><p><code>GlideBuilder</code> 类也允许你配置一个App全局使用的Bitmap的Config属性。<br>Glide默认使用RGB_565，因为它每个像素只需要2bytes（16bit）的空间，它仅需要高质量图片（既系统默认的<code>ARGB_8888</code>）一半的内存空间。但是，这对于某些图片这可能会出现『条带』的问题，而且它也不支持透明度。<br>如果在你的应用中『条带』是一个重要的问题，或者你需要尽可能好的图片质量，你可以使用<code>GlideBuilder</code>的<code>setDecodeFormat</code>方法设置DecodeFormat.ALWAYS_ARGB_8888作为首选配置。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">builder.setDecodeFormat(DecodeFormat.ALWAYS_ARGB_8888);</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="自定义目标（Targets）"><a href="#自定义目标（Targets）" class="headerlink" title="自定义目标（Targets）"></a>自定义目标（Targets）</h2><p>除了可以加载图像，视频剧照，gif动画到View中，你还可以加载他们到实现了Target接口的自定义目标中。</p>
+<h3 id="SimpleTarget"><a href="#SimpleTarget" class="headerlink" title="SimpleTarget"></a>SimpleTarget</h3><p>如果你只是想加载一个Bitmap，并不想直接展示给用户而是有一些特殊用途，比如在通知栏中显示或者作为头像上传。<br>Glide也可以做到。<br>SimpleTarget为Target接口提供了大部分的默认实现。你可以专注于处理加载的结果。<br>为了使用SimpleTarget，你需要在它的构造函数中提供你要加载的资源的宽和高（单位像素），你还需要实现<code>onResourceReady(T resource, GlideAnimation animation)</code>方法。<br>一个典型的使用SimpleTarget的例子如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> myWidth = <span class="number">512</span>;</span><br><span class="line"><span class="keyword">int</span> myHeight = <span class="number">384</span>;</span><br><span class="line"> </span><br><span class="line">Glide.with(yourApplicationContext)) </span><br><span class="line">    .load(youUrl) </span><br><span class="line">    .asBitmap() </span><br><span class="line">    .into(<span class="keyword">new</span> SimpleTarget&lt;Bitmap&gt;(myWidth, myHeight) &#123;</span><br><span class="line">        <span class="meta">@Override</span> </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onResourceReady</span><span class="params">(Bitmap bitmap, GlideAnimation anim)</span> </span>&#123;</span><br><span class="line">            <span class="comment">// Do something with bitmap here. </span></span><br><span class="line">        &#125; </span><br><span class="line">    &#125;;</span><br></pre></td></tr></table></figure>
+<h4 id="一些警告"><a href="#一些警告" class="headerlink" title="一些警告"></a>一些警告</h4><p>正常情况下，你加载一个资源会把他们放到view中。当你的Activity或者Fragment被pause或者destroy时，Glide会暂停或取消加载，确保你不会加载那些根本不会显示的资源。<br>可是当我们使用SimpleTarget的时候，这可能并不是我们希望的行为。所以，当你调用<code>Glide.with(context)</code>的时候，你可以传入Application的context，而不是传入Activity或者Fragment。<br>此外，考虑到长时间的加载操作可能导致内存泄漏，请考虑使用静态内部类，而不是匿名内部类。</p>
+<h3 id="ViewTarget"><a href="#ViewTarget" class="headerlink" title="ViewTarget"></a>ViewTarget</h3><p>如果你想加载一个图片到View中，但是你想观察或者覆盖Glide的默认行为。你可以覆盖ViewTarget或者它的子类。<br>当你想让Glide来获取view的的大小，但是由自己来启动动画和设置资源到view中，ViewTarget是个不错的选择。如果你要加载一个图片到ImageView之外的自定义view中，那么ImageViewTarget或者它的子类就不能满足你的要求，此时继承ViewTarget就特别合适。<br>你可以静态的定义一个ViewTarget的子类，或者传递一个匿名内部类到你的加载调用里：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Glide.with(yourFragment)</span><br><span class="line">    .load(yourUrl)</span><br><span class="line">    .into(<span class="keyword">new</span> ViewTarget&lt;YourViewClass, GlideDrawable&gt;(yourViewObject) &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onResourceReady</span><span class="params">(GlideDrawable resource, GlideAnimation anim)</span> </span>&#123;</span><br><span class="line">            YourViewClass myView = <span class="keyword">this</span>.view;</span><br><span class="line">            <span class="comment">// Set your resource on myView and/or start your animation here.</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br></pre></td></tr></table></figure>
+<p>注意，如果你想指定加载Bitmap还是GifDrawable，请在<code>.load(yourUrl)</code>调用后面直接添加<code>.asBitmap()</code>或者<code>.asGif()</code>，同时将ViewTarget的类型参数<code>GlideDrawable</code>换成对应加载的类型。<br>为了更多控制，你也可以在Target实现<code>LifecycleListener</code>回调，<code>onStart()</code>、<code>onStop()</code>或者<code>onDestroy()</code>会和你view所在的fragment的生命周期保持同步。</p>
+<h3 id="覆盖默认行为"><a href="#覆盖默认行为" class="headerlink" title="覆盖默认行为"></a>覆盖默认行为</h3><p>如果你只想观察不想修改Glide的默认行为，你可以继承任何一个Glide对ImageViewTargets的默认实现。</p>
+<ul>
+<li>GlideDrawableImageViewTarget - 默认的Target，用于正常的加载和<code>asGif()</code>。</li>
+<li>BitmapImageViewTarget - 当使用<code>asBitmap()</code>加载时，使用的默认Target。</li>
+</ul>
+<p>只有你在每个方法里面调用<code>super()</code>，将会保留默认的行为，同时还可以添加一些你希望的功能。</p>
+<p>例如，想要生成一个<a href="http://chris.banes.me/2014/07/04/palette-preview/" target="_blank" rel="noopener">调色板</a>，你可以这样做。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Glide.with(yourFragment) </span><br><span class="line">    .load(yourUrl) </span><br><span class="line">    .asBitmap() </span><br><span class="line">    .into(<span class="keyword">new</span> BitmapImageViewTarget(yourImageView)) &#123; </span><br><span class="line">        <span class="meta">@Override</span> </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onResourceReady</span><span class="params">(Bitmap bitmap, GlideAnimation anim)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">super</span>.onResourceReady(bitmap, anim);</span><br><span class="line">            Palette.generateAsync(bitmap, <span class="keyword">new</span> Palette.PaletteAsyncListener() &#123;  </span><br><span class="line">                <span class="meta">@Override</span> </span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onGenerated</span><span class="params">(Palette palette)</span> </span>&#123;</span><br><span class="line">                    <span class="comment">// Here's your generated palette </span></span><br><span class="line">                &#125; </span><br><span class="line">            &#125;); </span><br><span class="line">        &#125; </span><br><span class="line">    &#125;);</span><br></pre></td></tr></table></figure>
+<p>虽然这个例子还不错，但是，通常情况下，我不推荐用这个方式生成调色板。请查看Glide的 <code>ResourceTranscoder</code> 接口和<code>.transcode()</code>方法，考虑返回一个包含Bitmap和调色板的自定义资源。调色板可在在后台线程生成。？？？？？更多内容会在以后推出。。。</p>
+<hr>
+<h2 id="调试和错误处理"><a href="#调试和错误处理" class="headerlink" title="调试和错误处理"></a>调试和错误处理</h2><p>Glide在加载过程中出现异常默认情况下不会打日志。Glide为你提供了两种方式查看和处理这些异常。</p>
+<h3 id="调试"><a href="#调试" class="headerlink" title="调试"></a>调试</h3><p>仅仅为了查看异常的话，你可以为<code>GenericRequest</code>类打开Debug日志。这个类处理所有媒体资源的加载响应（response）。你可以在命令行里运行：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb shell setprop log.tag.GenericRequest DEBUG</span><br></pre></td></tr></table></figure>
+<p>想要包括详细的请求时序信息，你可以把<code>DEBUG</code>缓存<code>VERBOSE</code>。</p>
+<p>关闭日志使用：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">adb shell setprop log.tag.GenericRequest ERROR</span><br></pre></td></tr></table></figure>
+<h3 id="调试工作流"><a href="#调试工作流" class="headerlink" title="调试工作流"></a>调试<a href="https://docs.google.com/drawings/d/1KyOJkNd5Dlm8_awZpftzW7KtqgNR6GURvuF6RfB210g/edit" target="_blank" rel="noopener">工作流</a></h3><p>为了查看内部引擎（engine）如何以及何时查找到资源，你可以打开日志：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">adb shell setprop log.tag.Engine VERBOSE</span><br><span class="line">adb shell setprop log.tag.EngineJob VERBOSE</span><br><span class="line">adb shell setprop log.tag.DecodeJob VERBOSE</span><br></pre></td></tr></table></figure>
+<p>打开这个有助于你找出为什么某个资源没有从内存缓存中加载，为什么请求再次从外部的url下载数据。这也可以帮助你了解：如果想命中磁盘缓存，什么样的参数需要匹配。启用<code>DecodeJob</code>日志也可以帮助你去定位自定义transformation/decoder/encoder相关的问题。</p>
+<h3 id="监听请求-RequestListener"><a href="#监听请求-RequestListener" class="headerlink" title="监听请求-RequestListener"></a>监听请求-RequestListener</h3><p>虽然启用debug日志很简单，但是只有在你可以连接到设备时才能这样干。为了把Glide集成到已有的更专业的错误日志系统。你可以使用<code>RequestListener</code>类的<code>onException()</code>。当请求失败时，该方法会告知你导致失败的<code>异常</code>(Exception)，如果解码器（Decoder）不能从数据中解析出任何有用的信息，Exception也可能传<code>null</code>。你可以使用<code>listener()</code>API传一个你的监听器（listener）到每一个请求中。<br>请确保<code>onException()</code>返回<code>false</code>，以免覆盖了Glide的默认错误处理行为（例如，它默认会通知<code>Target</code>这个error）。<br>这是一个快速调试的例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// example usage: .listener(new LoggingListener&lt;String, GlideDrawable&gt;()) </span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LoggingListener</span>&lt;<span class="title">T</span>, <span class="title">R</span>&gt; <span class="keyword">implements</span> <span class="title">RequestListener</span>&lt;<span class="title">T</span>, <span class="title">R</span>&gt; </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onException</span><span class="params">(Exception e, Object model, Target target, <span class="keyword">boolean</span> isFirstResource)</span> </span>&#123;</span><br><span class="line">        android.util.Log.d(<span class="string">"GLIDE"</span>, String.format(Locale.ROOT,</span><br><span class="line">                <span class="string">"onException(%s, %s, %s, %s)"</span>, e, model, target, isFirstResource), e);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>; </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onResourceReady</span><span class="params">(Object resource, Object model, Target target, <span class="keyword">boolean</span> isFromMemoryCache, <span class="keyword">boolean</span> isFirstResource)</span> </span>&#123;</span><br><span class="line">        android.util.Log.d(<span class="string">"GLIDE"</span>, String.format(Locale.ROOT,</span><br><span class="line">                <span class="string">"onResourceReady(%s, %s, %s, %s, %s)"</span>, resource, model, target, isFromMemoryCache, isFirstResource));</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>; </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>确保发版前移除相关代码</strong></p>
+<h3 id="更多日志"><a href="#更多日志" class="headerlink" title="更多日志"></a>更多日志</h3><p>这个列表是给3.6.0版本用的，可能不完整。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">cd .../android-sdk/platform-tools</span><br><span class="line">adb shell setprop log.tag.AnimatedGifEncoder VERBOSE</span><br><span class="line">adb shell setprop log.tag.AssetUriFetcher VERBOSE</span><br><span class="line">adb shell setprop log.tag.BitmapEncoder VERBOSE</span><br><span class="line">adb shell setprop log.tag.BufferedIs VERBOSE</span><br><span class="line">adb shell setprop log.tag.ByteArrayPool VERBOSE</span><br><span class="line">adb shell setprop log.tag.CacheLoader VERBOSE</span><br><span class="line">adb shell setprop log.tag.ContentLengthStream VERBOSE</span><br><span class="line">adb shell setprop log.tag.DecodeJob VERBOSE</span><br><span class="line">adb shell setprop log.tag.DiskLruCacheWrapper VERBOSE</span><br><span class="line">adb shell setprop log.tag.Downsampler VERBOSE</span><br><span class="line">adb shell setprop log.tag.Engine VERBOSE</span><br><span class="line">adb shell setprop log.tag.EngineRunnable VERBOSE</span><br><span class="line">adb shell setprop log.tag.GenericRequest VERBOSE</span><br><span class="line">adb shell setprop log.tag.GifDecoder VERBOSE</span><br><span class="line">adb shell setprop log.tag.GifEncoder VERBOSE</span><br><span class="line">adb shell setprop log.tag.GifHeaderParser VERBOSE</span><br><span class="line">adb shell setprop log.tag.GifResourceDecoder VERBOSE</span><br><span class="line">adb shell setprop log.tag.Glide VERBOSE</span><br><span class="line">adb shell setprop log.tag.ImageHeaderParser VERBOSE</span><br><span class="line">adb shell setprop log.tag.ImageVideoDecoder VERBOSE</span><br><span class="line">adb shell setprop log.tag.IVML VERBOSE</span><br><span class="line">adb shell setprop log.tag.LocalUriFetcher VERBOSE</span><br><span class="line">adb shell setprop log.tag.LruBitmapPool VERBOSE</span><br><span class="line">adb shell setprop log.tag.MediaStoreThumbFetcher VERBOSE</span><br><span class="line">adb shell setprop log.tag.MemorySizeCalculator VERBOSE</span><br><span class="line">adb shell setprop log.tag.PreFillRunner VERBOSE</span><br><span class="line">adb shell setprop log.tag.ResourceLoader VERBOSE</span><br><span class="line">adb shell setprop log.tag.RMRetriever VERBOSE</span><br><span class="line">adb shell setprop log.tag.StreamEncoder VERBOSE</span><br><span class="line">adb shell setprop log.tag.TransformationUtils VERBOSE</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="使用Glide下载自定义大小的图片"><a href="#使用Glide下载自定义大小的图片" class="headerlink" title="使用Glide下载自定义大小的图片"></a>使用Glide下载自定义大小的图片</h2><p>开发者可以通过Glide的ModelLoader接口获得图片大小，并根据这个大小来加载一个合适尺寸的图片url。<br>使用合适尺寸的图片可以节约带宽，设备的存储空间，还可以提升app性能。<br>2014年的Google I/O app团队写了一篇关于如何使用ModelLoader接口调整加载的图片大小的文章。请在GitHub上查看 <a href="https://github.com/google/iosched/blob/master/doc/IMAGES.md" target="_blank" rel="noopener">I/O app的源码</a>。<br>为了实现自定义的ModelLoader来通过http/https下载图片，可以继承BaseGlideUrlLoader这个类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">MyDataModel</span> </span>&#123; </span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">buildUrl</span><span class="params">(<span class="keyword">int</span> width, <span class="keyword">int</span> height)</span></span>;</span><br><span class="line">&#125;  </span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyUrlLoader</span> <span class="keyword">extends</span> <span class="title">BaseGlideUrlLoader</span>&lt;<span class="title">MyDataModel</span>&gt; </span>&#123; </span><br><span class="line">    <span class="meta">@Override</span> </span><br><span class="line">    <span class="function"><span class="keyword">protected</span> String <span class="title">getUrl</span><span class="params">(MyDataModel model, <span class="keyword">int</span> width, <span class="keyword">int</span> height)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// Construct the url for the correct size here. </span></span><br><span class="line">        <span class="keyword">return</span> model.buildUrl(width, height);</span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后，你就可以使用自定义的ModelLoader来加载图片了，其他的事情会自动完成：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Glide.with(yourFragment)</span><br><span class="line">    .using(<span class="keyword">new</span> MyUrlLoader())</span><br><span class="line">    .load(yourModel)</span><br><span class="line">    .into(yourView);</span><br></pre></td></tr></table></figure>
+<p>如果你想避免调用<code>.using(new  MyUrlLoader())</code>，你可以实现一个自定义的<code>ModelLoaderFactory</code>，并在<code>GlideModule</code>中注册它。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyGlideModule</span> <span class="keyword">implements</span> <span class="title">GlideModule</span> </span>&#123; </span><br><span class="line">    ... </span><br><span class="line">    <span class="meta">@Override</span> </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">registerComponents</span><span class="params">(Context context, Glide glide)</span> </span>&#123;</span><br><span class="line">        glide.register(MyDataModel<span class="class">.<span class="keyword">class</span>, <span class="title">InputStream</span>.<span class="title">class</span>, </span></span><br><span class="line"><span class="class">            <span class="title">new</span> <span class="title">MyUrlLoader</span>.<span class="title">Factory</span>())</span>; </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注册ModelLoaderFactory之后，你就不用调用<code>.using()</code>了：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Glide.with(yourFragment)</span><br><span class="line">    .load(yourModel)</span><br><span class="line">    .into(yourView);</span><br></pre></td></tr></table></figure>
+<p>其他的例子，关于如何使用自定义ModelLoader加载各种尺寸的图片，请查看<a href="https://github.com/bumptech/glide/blob/master/samples/flickr/src/main/java/com/bumptech/glide/samples/flickr/FlickrModelLoader.java" target="_blank" rel="noopener">Flicker示例应用</a>，和<a href="https://github.com/bumptech/glide/blob/master/samples/giphy/src/main/java/com/bumptech/glide/samples/giphy/GiphyModelLoader.java" target="_blank" rel="noopener">Giphy示例应用</a>。</p>
+<hr>
+<h2 id="集成（Integration）库-Glide与其他库整合"><a href="#集成（Integration）库-Glide与其他库整合" class="headerlink" title="集成（Integration）库-Glide与其他库整合"></a>集成（Integration）库-Glide与其他库整合</h2><h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><h4 id="什么是集成库（Integration-Library）"><a href="#什么是集成库（Integration-Library）" class="headerlink" title="什么是集成库（Integration Library）"></a>什么是集成库（Integration Library）</h4><p>Glide包括一系列小巧可配置的集成库，这些库可以让Glide与外部的库相结合。现在集成库可以使Glide支持Volley和OkHttp的http/https请求。</p>
+<p>我们坚信，您所选择的客户端媒体库既不应该决定你在你的应用程序中使用的网络库，也不需要你仅仅为了加载图像额外添加网络库。集成库和Glide的ModelLoader系统，允许开发人员对所有网络请求使用统一的网络库。</p>
+<h4 id="为什么没有XXX库的实现"><a href="#为什么没有XXX库的实现" class="headerlink" title="为什么没有XXX库的实现"></a>为什么没有XXX库的实现</h4><p>因为我们还没有为这个库写集成库。OkHttp和Volley是十分流行的库，许多开发者都使用，但是，我们不是排斥其他库，如果你写了其他库的<code>ModelLoader</code>并且打算开源，我们很乐意看到这样的提交请求（pull request）。</p>
+<h4 id="我如何依赖一个集成库呢？"><a href="#我如何依赖一个集成库呢？" class="headerlink" title="我如何依赖一个集成库呢？"></a>我如何依赖一个集成库呢？</h4><p>依赖任何的集成库需要两g个步骤。</p>
+<ol>
+<li>添加相应的继承库的Maven/Gradle/jar依赖，因为作为可选项的集成库并不包含在glide的jar依赖中。</li>
+<li>确保app包含了集成库的GlideModule，具体内容看<a href="https://github.com/bumptech/glide/wiki/Configuration" target="_blank" rel="noopener">配置wiki</a>部分。对于Glide集成库的具体说明见下面。</li>
+</ol>
+<h4 id="我应当选择哪个版本？"><a href="#我应当选择哪个版本？" class="headerlink" title="我应当选择哪个版本？"></a>我应当选择哪个版本？</h4><p>集成库的版本跟随着Glide的release版本。但是多了一个不同的数字。确保选择与所依赖的Glide对应的集成库。在<a href="https://github.com/bumptech/glide/releases" target="_blank" rel="noopener">release页</a>查看.<br>网络库有自己的版本号。继承库会依赖的库就是你在Maven/Gradle中指定的库。你可以通过版本号来指定具体依赖的网络库。？？</p>
+<h3 id="Volley"><a href="#Volley" class="headerlink" title="Volley"></a>Volley</h3><p>Volley是一个Http库，可以使Android上的网络请求更简单，更快速。</p>
+<h4 id="Gradle中使用Volley"><a href="#Gradle中使用Volley" class="headerlink" title="Gradle中使用Volley"></a>Gradle中使用Volley</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    compile <span class="string">'com.github.bumptech.glide:volley-integration:1.3.1@aar'</span></span><br><span class="line">    <span class="comment">//compile 'com.mcxiaoke.volley:library:1.0.8'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>集成库的<code>GlideModule</code>会自动合并到你app的manifest中。</p>
+<h4 id="Maven中是Volley"><a href="#Maven中是Volley" class="headerlink" title="Maven中是Volley"></a>Maven中是Volley</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.github.bumptech.glide<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>volley-integration<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.3.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">type</span>&gt;</span>aar<span class="tag">&lt;/<span class="name">type</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.mcxiaoke.volley<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>library<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0.8<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">type</span>&gt;</span>aar<span class="tag">&lt;/<span class="name">type</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>请查看对应的manifest章节，了解如何添加对应的GlideModule。</p>
+<h4 id="手动添加Volley"><a href="#手动添加Volley" class="headerlink" title="手动添加Volley"></a>手动添加Volley</h4><p>从<a href="https://github.com/bumptech/glide/releases" target="_blank" rel="noopener">release页</a>下载<a href="https://github.com/bumptech/glide/releases/download/v3.6.1/glide-volley-integration-1.3.1.jar" target="_blank" rel="noopener">glide-volley-integration-<version>.jar </version></a>。并添加到你app的编译路径中(compile classpath)。</p>
+<p>请查看对应的manifest章节，了解如何添加对应的GlideModule。</p>
+<h4 id="Volley的Manifest"><a href="#Volley的Manifest" class="headerlink" title="Volley的Manifest"></a>Volley的Manifest</h4><p>如果你使用那些不支持manifest合并的编译系统（如Maven，Ant），你必须手动添加<code>GlideModule</code>的metadata标签到<code>AndroidManifest.xml</code>中。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">meta-data</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:name</span>=<span class="string">"com.bumptech.glide.integration.volley.VolleyGlideModule"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:value</span>=<span class="string">"GlideModule"</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="Volley的混淆设置"><a href="#Volley的混淆设置" class="headerlink" title="Volley的混淆设置"></a>Volley的混淆设置</h4><p>无论使用什么编译系统，不要混淆<code>VolleyGlideModule</code>类，它需要被反射来实例化。添加下面的代码到<code>proguard.cfg</code>文件（或者查看“通用部分”）。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-keep <span class="class"><span class="keyword">class</span> <span class="title">com</span>.<span class="title">bumptech</span>.<span class="title">glide</span>.<span class="title">integration</span>.<span class="title">volley</span>.<span class="title">VolleyGlideModule</span></span></span><br></pre></td></tr></table></figure>
+<h3 id="OkHttp"><a href="#OkHttp" class="headerlink" title="OkHttp"></a>OkHttp</h3><p>OKHttp是一个高效且易于使用的Http客户端。</p>
+<h4 id="Gradle中使用OkHttp"><a href="#Gradle中使用OkHttp" class="headerlink" title="Gradle中使用OkHttp"></a>Gradle中使用OkHttp</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    compile <span class="string">'com.github.bumptech.glide:okhttp-integration:1.3.1@aar'</span></span><br><span class="line">    <span class="comment">//compile 'com.squareup.okhttp:okhttp:2.2.0'</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>集成库的<code>GlideModule</code>会自动合并到你app的manifest中。</p>
+<h4 id="Maven中是OkHttp"><a href="#Maven中是OkHttp" class="headerlink" title="Maven中是OkHttp"></a>Maven中是OkHttp</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.github.bumptech.glide<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>okhttp-integration<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.3.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">type</span>&gt;</span>aar<span class="tag">&lt;/<span class="name">type</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">&lt;dependency&gt;</span></span><br><span class="line"><span class="comment">    &lt;groupId&gt;com.squareup.okhttp&lt;/groupId&gt;</span></span><br><span class="line"><span class="comment">    &lt;artifactId&gt;okhttp&lt;/artifactId&gt;</span></span><br><span class="line"><span class="comment">    &lt;version&gt;2.2.0&lt;/version&gt;</span></span><br><span class="line"><span class="comment">    &lt;type&gt;jar&lt;/type&gt;</span></span><br><span class="line"><span class="comment">&lt;/dependency&gt;</span></span><br><span class="line"><span class="comment">--&gt;</span></span><br></pre></td></tr></table></figure>
+<p>请查看对应的manifest章节，了解如何添加对应的GlideModule。</p>
+<h4 id="手动添加OkHttp"><a href="#手动添加OkHttp" class="headerlink" title="手动添加OkHttp"></a>手动添加OkHttp</h4><p>从<a href="https://github.com/bumptech/glide/releases" target="_blank" rel="noopener">release页</a>下载<a href="https://github.com/bumptech/glide/releases/download/v3.6.1/glide-okhttp-integration-1.3.1.jar" target="_blank" rel="noopener">glide-okhttp-integration-<version>.jar </version></a>。并添加到你app的编译路径中(compile classpath)。</p>
+<p>请查看对应的manifest章节，了解如何添加对应的GlideModule。</p>
+<h4 id="OkHttp的Manifest"><a href="#OkHttp的Manifest" class="headerlink" title="OkHttp的Manifest"></a>OkHttp的Manifest</h4><p>如果你使用那些不支持manifest合并的编译系统（如Maven，Ant），你必须手动添加<code>GlideModule</code>的metadata标签到<code>AndroidManifest.xml</code>中。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">meta-data</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:name</span>=<span class="string">"com.bumptech.glide.integration.okhttp.OkHttpGlideModule"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:value</span>=<span class="string">"GlideModule"</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="OkHttp的混淆设置"><a href="#OkHttp的混淆设置" class="headerlink" title="OkHttp的混淆设置"></a>OkHttp的混淆设置</h4><p>无论使用什么编译系统，不要混淆<code>OkHttpGlideModule</code>类，它需要被反射来实例化。添加下面的代码到<code>proguard.cfg</code>文件（或者查看“通用部分”）。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-keep <span class="class"><span class="keyword">class</span> <span class="title">com</span>.<span class="title">bumptech</span>.<span class="title">glide</span>.<span class="title">integration</span>.<span class="title">okhttp</span>.<span class="title">OkHttpGlideModule</span></span></span><br></pre></td></tr></table></figure>
+<h3 id="更多选项"><a href="#更多选项" class="headerlink" title="更多选项"></a>更多选项</h3><h4 id="通用的混淆配置"><a href="#通用的混淆配置" class="headerlink" title="通用的混淆配置"></a>通用的混淆配置</h4><p>你也可以使用下面的配置来避免混淆所有的<code>GlideModule</code>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-keep <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> * <span class="keyword">implements</span> <span class="title">com</span>.<span class="title">bumptech</span>.<span class="title">glide</span>.<span class="title">module</span>.<span class="title">GlideModule</span></span></span><br></pre></td></tr></table></figure>
+<p>这种方式有其他的好处，当修改集成库或者自定义集成库的行为时，不需要修改。当你添加或者移动其他module的时候，也不需要修改什么。</p>
+<h4 id="覆盖默认的行为"><a href="#覆盖默认的行为" class="headerlink" title="覆盖默认的行为"></a>覆盖默认的行为</h4><p>如果默认配置无法满足你，所有的集成库还有一些额外的选项。比如添加重试行为，请查看集成库的<code>GlideModule</code>的源码（位于<a href="https://github.com/bumptech/glide/tree/3.0/integration" target="_blank" rel="noopener">/integration/<lib>/src/main/java/<package></package></lib></a>）了解默认的注册做了些什么。你可以通过在自定义的<code>GlideModule</code>中修改参数为<code>UrlLoader.Factory</code>类来改变默认行为。<br>当你要覆盖默认行为时，请确保自定义的<code>GlideModule</code>被注册，且默认的GlideModule被排除在外。排除GlideModule可能是从manifest中移除相应的的metadata，或者使用jar包依赖代替aar依赖。关于<code>GlideModule</code>的更多信息请查看<a href="https://github.com/bumptech/glide/wiki/Configuration" target="_blank" rel="noopener">配置的wiki页</a>\</p>
+<hr>
+<h2 id="在后台线程中加载和缓存"><a href="#在后台线程中加载和缓存" class="headerlink" title="在后台线程中加载和缓存"></a>在后台线程中加载和缓存</h2><p>为了使后台加载资源和与媒体交互更加容易，除了<code>Glide.with(fragment).load(url).into(view)</code>这个API外，Glide还提供了额外两个API。</p>
+<ul>
+<li><code>downloadOnly(int, int)</code></li>
+<li><code>into(int, int)</code></li>
+</ul>
+<h3 id="downloadOnly方法"><a href="#downloadOnly方法" class="headerlink" title="downloadOnly方法"></a>downloadOnly方法</h3><p>Glide的<code>downloadOnly(int, int)</code>方法允许你把图片bytes下载到磁盘缓存中，以便以后获取使用。你可以在UI线程异步地调用<code>downloadOnly()</code>，也可以在后台线程同步的使用。但是，注意他们的参数有些不同，异步API的参数是<code>Target</code>，同步api的参数是宽和高的整数值。<br>为了在后台线程下载图片，你必须使用同步方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">FutureTarget&lt;File&gt; future = Glide.with(applicationContext)</span><br><span class="line">    .load(yourUrl)</span><br><span class="line">    .downloadOnly(<span class="number">500</span>, <span class="number">500</span>);</span><br><span class="line">File cacheFile = future.get();</span><br></pre></td></tr></table></figure>
+<p>当future返回时，图片的bytes数据就在缓存中可用了。一种典型的情况是，你使用<code>downloadOnly()</code>API只是为了确保数据下载到了磁盘上。一般情况下，虽然你有权访问底层的缓存文件，但是你不需要直接和它交互。<br>而是，当你想要获取这个图片时，你只要像平常加载图片时那样调用就行，<strong>只有一点不同</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Glide.with(yourFragment)</span><br><span class="line">    .load(yourUrl)</span><br><span class="line">    .diskCacheStrategy(DiskCacheStrategy.ALL)</span><br><span class="line">    .into(yourView);</span><br></pre></td></tr></table></figure>
+<p>通过传入 <code>DiskCacheStrategy.ALL</code>或者<code>DiskCacheStrategy.SOURCE</code>，确保Glide可以使用你通过<code>downloadOnly()</code>下载的数据。</p>
+<h3 id="into方法"><a href="#into方法" class="headerlink" title="into方法"></a>into方法</h3><p>如果你想在一个<strong>后台线程</strong>与一张已经解码的图片交互。你可以使用这个版本的<code>into()</code>方法来返回一个<code>FutureTarget</code>。例如，获取一张中心剪裁后的500*500像素的图片：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Bitmap myBitmap = Glide.with(applicationContext)</span><br><span class="line">    .load(yourUrl)</span><br><span class="line">    .asBitmap()</span><br><span class="line">    .centerCrop()</span><br><span class="line">    .into(<span class="number">500</span>, <span class="number">500</span>)</span><br><span class="line">    .get()</span><br></pre></td></tr></table></figure>
+<p>虽然<code>into(int, int)</code>方法在后台线程中很有效，但是，你不能把它用在主线程中。即使这个同步方法在你的主线程中不会抛出异常，调用get()也会阻塞主线程。会使你的APP性能变差，反应迟钝。</p>
+<hr>
+<h2 id="Glide中的资源复用"><a href="#Glide中的资源复用" class="headerlink" title="Glide中的资源复用"></a>Glide中的资源复用</h2><h3 id="为什么-资源复用的作用"><a href="#为什么-资源复用的作用" class="headerlink" title="为什么 - 资源复用的作用"></a>为什么 - 资源复用的作用</h3><p>Glide通过复用资源避免不必要的内存分配。Dalvik虚拟机（在Lollipop之前）有两种基本的垃圾回收方式，<code>GC_CONCURRENT</code> 和<code>GC_FOR_ALLOC</code>。每次<code>GC_CONCURRENT</code>会阻塞主线程5ms。由于每次操作的时间少于16ms（1帧的时间），<code>GC_CONCURRENT</code>并不会引起掉帧。相反的是<code>GC_FOR_ALLOC</code>，他会停止所有操作，阻塞主线程125+ms，事实上，GC_FOR_ALLOC总是会让你的app掉很多帧。尤其是在滑动时，导致明显的卡顿。<br>很不幸，即使只是分配适当的空间（比如16kb的buffer）Dalvik表现的也很糟糕。不断的小内存分配，或者一次大的内存分配（比如说bitmap），将会引起GC_FOR_ALLOC。因此，你分配内存的越多，你会遇到垃圾回收器阻塞应用的情况就越多，应用掉帧就越严重。<br>通过适度复用大块资源，Glide可以避免内存抖动，减少垃圾回收器阻塞app的次数。</p>
+<h3 id="怎么做-Glide是如何复用资源"><a href="#怎么做-Glide是如何复用资源" class="headerlink" title="怎么做 - Glide是如何复用资源"></a>怎么做 - Glide是如何复用资源</h3><p>Glide的资源复用策略比较宽松。这意味着，当Glide认为该资源可以被安全的复用时，才有几率去复用它，并不需要开发者在每个request后面去手动释放资源。</p>
+<h4 id="标志-哪些资源可复用"><a href="#标志-哪些资源可复用" class="headerlink" title="标志-哪些资源可复用"></a>标志-哪些资源可复用</h4><p>Glide有两个简单的标志来识别可复用的资源。</p>
+<ol>
+<li><p><code>Glide.clear()</code> </p>
+<p> 在<code>View</code>或者<code>Target</code>上调用<code>clear()</code>方法都表示，Glide要取消加载，可以安全地把Target占用的所有资源（Bitmap，bytes数组等）放入资源池中（pool）。用户可以在任何时候安全地手动调用<code>clear()</code>方法，但是典型情况下，我们不需要这样做，看第二条。</p>
+</li>
+<li><p>View或者Target的复用 </p>
+<p> 当用户把图片加载到一个已经存在的View或者Target上时（注：确切的说是调用<code>into(xxx)</code>方法之后），Glide会先调用<code>clear()</code>清空该View/Target上的加载请求并复用已经显示过的资源。因此，如果你的ListView或者RecyclerView中的view使用了复用机制（注：如ViewHolder），那么Glide会自动为他们缓存资源和管理加载请求。</p>
+</li>
+</ol>
+<h4 id="引用计数"><a href="#引用计数" class="headerlink" title="引用计数"></a>引用计数</h4><p>如果两个请求指向同一个资源，为了避免额外的工作，Glide会把单个资源分配给他们。这就导致一个问题，当Glide得知某个资源不被某个调用者使用，这并不表示它不会被其他调用者使用。为了避免回收调依旧被使用的资源，Glide使用引用计数来跟踪资源。<br>当把资源提供给View/Target时，该资源的引用计数加1，当清空View/Target时，引用计数减1。当引用计数为0时，Glide会回收资源，并把它的内容放回可用内存池中。</p>
+<h4 id="放入缓存池"><a href="#放入缓存池" class="headerlink" title="放入缓存池"></a>放入缓存池</h4><p>Glide的Resource API有一个<code>recycle()</code>方法，当Glide认为资源不再被引用时，会调用该方法，资源会放入缓存池中。</p>
+<p>Glide提供的BitmapPool接口可以让Resource获取<code>Bitmap</code>和复用Bitmap对象。Glide的BitmapPool可以通过Glide单例获得：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Glide.get(context).getBitmapPool();</span><br></pre></td></tr></table></figure>
+<p>ResourceDecoder可以返回Resource的任何实现。所有，开发者可以实现他们自己的Resource和ResourceDecoder来自定义地缓存一些特有类型的数据。<br>同样地，开发者如果想更多地控制Bitmap缓存，可以实现自己的BitmapPool，然后通过GlideModule配置到Glide中。</p>
+<h3 id="常见的错误"><a href="#常见的错误" class="headerlink" title="常见的错误"></a>常见的错误</h3><p>不幸的是，缓存池设计使我们很难判断开发者是否误用了资源或者bitmap。但是，在Glide中有两个主要的现象会暗示你某些地方可能出了问题。</p>
+<h4 id="现象"><a href="#现象" class="headerlink" title="现象"></a>现象</h4><ol>
+<li><p><code>Cannot draw a recycled Bitmap</code></p>
+<p> Glide有个固定大小的Bitmap池。当Bitmap不再被复用（注：不是使用，区分使用和复用），会从池中移走。Glide会调用<a href="http://developer.android.com/reference/android/graphics/Bitmap.html#recycle(" target="_blank" rel="noopener"><code>recycle()</code></a>)（注：指的是Bitmap真正的recycle，不是Resource类的recycle）。你告诉Glide放心地回收某个Bitmap，但是，你的应用不小心还持有这个Bitmap的引用，应用程序可能会绘制这个Bitmap，导致崩溃。</p>
+</li>
+<li><p>View在多张图片之间闪烁，或者同样的图片出现在多个View中</p>
+<p> 如果一张图片被放入BitmapPool中多次。或者虽然一张图片被放入了pool中，但是某个View依然持有这个图的引用，与此同时，另一张图片被解析成了Bitmap（注：此Bitmap正好用了刚才那张图片的控件来存放解析后的数据）。如果发生这种事情，Bitmap的内容就会被换成了新的图片内容。此时，View依然尝试着绘制Bitmap，导致原来的View中显示了一张新的图片！</p>
+</li>
+</ol>
+<h4 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h4><p>这些问题主要有两个原因：</p>
+<ol>
+<li><p>尝试加载两个不同的资源到同一Target中</p>
+<p> 在Glide中，没有安全的方法来加载多个资源到单一的Target中。开发者可以使用<code>thumbnail()</code>来加载一系列资源到到某个Target中，但是对于每一个加载的资源来说，只有在下一个<code>onResourceReady()</code>被调用前，它的引用才是安全的。<br>开发者如果想加载多个资源到同一个View中，可以使用两个独立的Target。为了确保加载过程不相互取消，开发者要么不使用ViewTarget的子类，要么在继承ViewTarget时，复写<code>setRequest()</code> 和 <code>getRequest()</code>，不要使用tag来存储Request。（注：需要一个demo)</p>
+<p> <strong>译者注：对于同一个view，调用两次Glide.xxx.into(view)，第二次调用会先清空第一个加载的图片（出现空白），再去下载新的图片，如果想要在第二张图片下载下来之前依旧显示之前的，需要一些技巧</strong></p>
+</li>
+<li><p>加载一个资源放入到Target，然后清空或者复用了Target，但是依然引用这这个资源。</p>
+<p> 最简单的避免这个错误的方法是在<code>onLoadCleared()</code>方法中把所有对资源对象的引用置null。一般情况下，加载一个Bitmap，然后引用它的Target是安全的。不安全的是，你清空了这个Target，却依然引用着这个Bitmap。</p>
+</li>
+</ol>
+<hr>
+<h2 id="使用快照"><a href="#使用快照" class="headerlink" title="使用快照"></a>使用快照</h2><h3 id="关于快照"><a href="#关于快照" class="headerlink" title="关于快照"></a>关于快照</h3><p>对于那些不想等待Glide下个正式版本而愿意尝鲜的用户，我们在<a href="https://travis-ci.org/bumptech/glide" target="_blank" rel="noopener">Sonatype</a>上部署了这个库的快照。<br>每一次我们push代码待GitHub的master分支，<a href="https://oss.sonatype.org/content/repositories/snapshots/" target="_blank" rel="noopener">travis-ci</a>会构建Glide.如果构建成功，会自动部署最新版本的库到Sonatype上。<br>和Glide主库一样，每个Intergration库也有自己的快照，如果你使用快照版本的Glide库，请使用快照版本的Intergration库，反之依然。</p>
+<h3 id="获取快照"><a href="#获取快照" class="headerlink" title="获取快照"></a>获取快照</h3><p>Sonatype的快照库和其他的maven库一样，提供jar，maven，gradle等版本。</p>
+<h4 id="Jar"><a href="#Jar" class="headerlink" title="Jar"></a>Jar</h4><p>Jar包可以直接从Sonatype上下载，再次检查一下日期，确保使用最新版本</p>
+<h4 id="Gradle"><a href="#Gradle" class="headerlink" title="Gradle"></a>Gradle</h4><p>在仓库列表中添加快照仓库</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">repositories &#123;</span><br><span class="line">  jcenter()</span><br><span class="line">  maven &#123;</span><br><span class="line">    url 'http://oss.sonatype.org/content/repositories/snapshots'</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后修改依赖为快照版本</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">  compile "com.github.bumptech.glide:glide:3.6.0-SNAPSHOT"</span><br><span class="line">  compile "com.github.bumptech.glide:okhttp-integration:1.3.0-SNAPSHOT"</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="Maven"><a href="#Maven" class="headerlink" title="Maven"></a>Maven</h4><p>这种方式没有测试，直接从<a href="http://stackoverflow.com/questions/7715321/how-to-download-snapshot-version-from-maven-snapshot-repository" target="_blank" rel="noopener">StackOverflow</a>拷过来的。欢迎改进下面的内容。<br>添加下面的代码到<code>~/.m2/settings.xml</code>中：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">profiles</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">profile</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">id</span>&gt;</span>allow-snapshots<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">activation</span>&gt;</span><span class="tag">&lt;<span class="name">activeByDefault</span>&gt;</span>true<span class="tag">&lt;/<span class="name">activeByDefault</span>&gt;</span><span class="tag">&lt;/<span class="name">activation</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">repositories</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;<span class="name">repository</span>&gt;</span></span><br><span class="line">         <span class="tag">&lt;<span class="name">id</span>&gt;</span>snapshots-repo<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">         <span class="tag">&lt;<span class="name">url</span>&gt;</span>https://oss.sonatype.org/content/repositories/snapshots<span class="tag">&lt;/<span class="name">url</span>&gt;</span></span><br><span class="line">         <span class="tag">&lt;<span class="name">releases</span>&gt;</span><span class="tag">&lt;<span class="name">enabled</span>&gt;</span>false<span class="tag">&lt;/<span class="name">enabled</span>&gt;</span><span class="tag">&lt;/<span class="name">releases</span>&gt;</span></span><br><span class="line">         <span class="tag">&lt;<span class="name">snapshots</span>&gt;</span><span class="tag">&lt;<span class="name">enabled</span>&gt;</span>true<span class="tag">&lt;/<span class="name">enabled</span>&gt;</span><span class="tag">&lt;/<span class="name">snapshots</span>&gt;</span></span><br><span class="line">       <span class="tag">&lt;/<span class="name">repository</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;/<span class="name">repositories</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;/<span class="name">profile</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">profiles</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>修改依赖为快照版本</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.github.bumptech.glide<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>glide<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.6.0-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.github.bumptech.glide<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>okhttp-integration<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.3.0-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="图形变换"><a href="#图形变换" class="headerlink" title="图形变换"></a>图形变换</h2><h3 id="默认的变换"><a href="#默认的变换" class="headerlink" title="默认的变换"></a>默认的变换</h3><p>Glide包含两种默认的图像变换方式，fitCenter和centerCrop。如果开发者需要其他类型的变换，可以考虑使用这个独立的<a href="https://github.com/wasabeef/glide-transformations" target="_blank" rel="noopener">变换库</a>。</p>
+<h4 id="Fit-center"><a href="#Fit-center" class="headerlink" title="Fit center"></a>Fit center</h4><p>FitCenter会按原始比例缩小图像，使图像可以在放在给定的区域内。FitCenter会尽可能少地缩小图片，使宽或者高的一边等于给定的值。另外一边会等于或者小于给定值。<br>FitCenter和Android中的ScaleType.FIT_CENTER效果相同。</p>
+<h4 id="CenterCrop"><a href="#CenterCrop" class="headerlink" title="CenterCrop"></a>CenterCrop</h4><p>CenterCrop会按原始比例缩小图像，使宽或者高的一边等于给定的值，另外一边会等于或者大于给定值。CenterCrop会裁剪掉多余部分。<br>CenterCrop和Android中的ScaleType.CENTER_CROP效果相同。</p>
+<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><p>fit center效果使用<code>.fitCenter()</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Glide.with(yourFragment)</span><br><span class="line">    .load(yourUrl)</span><br><span class="line">    .fitCenter()</span><br><span class="line">    .into(yourView);</span><br></pre></td></tr></table></figure>
+<p>center crop效果使用<code>.centerCrop()</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Glide.with(yourFragment)</span><br><span class="line">    .load(yourUrl)</span><br><span class="line">    . centerCrop()</span><br><span class="line">    .into(yourView);</span><br></pre></td></tr></table></figure>
+<p>如果你只加载Bitmap或者Gif，也可以使用这个变换：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// For Bitmaps:</span></span><br><span class="line">Glide.with(yourFragment)</span><br><span class="line">    .load(yourUrl)</span><br><span class="line">    .asBitmap()</span><br><span class="line">    .centerCrop()</span><br><span class="line">    .into(yourView);</span><br><span class="line"></span><br><span class="line"><span class="comment">// For gifs:</span></span><br><span class="line">Glide.with(yourFragment)</span><br><span class="line">    .load(yourUrl)</span><br><span class="line">    .asGif()</span><br><span class="line">    .fitCenter()</span><br><span class="line">    .into(yourView);</span><br></pre></td></tr></table></figure>
+<p>当在类型间转码时，也可以使用这些变换。例如，获取一个变形后的jpeg图片的bytes数据：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Glide.with(yourFragment)</span><br><span class="line">    .load(yourUrl)</span><br><span class="line">    .asBitmap()</span><br><span class="line">    .toBytes()</span><br><span class="line">    .centerCrop()</span><br><span class="line">    .into(<span class="keyword">new</span> SimpleTarget&lt;<span class="keyword">byte</span>[]&gt;(...) &#123; ... &#125;);</span><br></pre></td></tr></table></figure>
+<p>自定义变换<br>除了两个内置的变换，你还可以自定义变换。<br>最简单的方式是继承BitmapTransformation。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">MyTransformation</span> <span class="keyword">extends</span> <span class="title">BitmapTransformation</span> </span>&#123; </span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyTransformation</span><span class="params">(Context context)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">super</span>(context);</span><br><span class="line">    &#125; </span><br><span class="line"> </span><br><span class="line">    <span class="meta">@Override</span> </span><br><span class="line">    <span class="function"><span class="keyword">protected</span> Bitmap <span class="title">transform</span><span class="params">(BitmapPool pool, Bitmap toTransform, </span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="keyword">int</span> outWidth, <span class="keyword">int</span> outHeight)</span> </span>&#123;</span><br><span class="line">       Bitmap myTransformedBitmap = ... <span class="comment">// apply some transformation here. </span></span><br><span class="line">       <span class="keyword">return</span> myTransformedBitmap; </span><br><span class="line">    &#125; </span><br><span class="line"> </span><br><span class="line">    <span class="meta">@Override</span> </span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getId</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// Return some id that uniquely identifies your transformation. </span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">"com.example.myapp.MyTransformation"</span>; </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>之后一就可以用同样的方式使用它。使用<code>.transform(...)</code>代替<code>.fitCenter()</code>/<code>.centerCrop()</code>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// For the default drawable type:</span></span><br><span class="line">Glide.with(yourFragment)</span><br><span class="line">    .load(yourUrl)</span><br><span class="line">    .transform(<span class="keyword">new</span> MyTransformation(context))</span><br><span class="line">    .into(yourView);</span><br><span class="line"></span><br><span class="line"><span class="comment">// For Bitmaps:</span></span><br><span class="line">Glide.with(yourFragment)</span><br><span class="line">    .load(yourUrl)</span><br><span class="line">    .asBitmap()</span><br><span class="line">    .transform(<span class="keyword">new</span> MyTransformation(context))</span><br><span class="line">    .into(yourView);</span><br><span class="line"></span><br><span class="line"><span class="comment">// For Gifs:</span></span><br><span class="line">Glide.with(yourFragment)</span><br><span class="line">    .load(yourUrl)</span><br><span class="line">    .asGif()</span><br><span class="line">    .transform(<span class="keyword">new</span> MyTransformation(context))</span><br><span class="line">    .into(yourView);</span><br></pre></td></tr></table></figure>
+<h4 id="调整大小"><a href="#调整大小" class="headerlink" title="调整大小"></a>调整大小</h4><p>你可能注意到上面的例子没有传入具体的尺寸，那么，Transformation中的尺寸是如何获得的呢？<br>Transformation中的尺寸就是View或者Target的大小。Glide会根据布局文件中的weight，match_parent或者具体值算出View的大小。，当你拥有View/Target的具体大小，又拥有原始图片的大小时，就可以通过图像变换生成一个正确大小的图片。<br>如果你想指定View/Target的自定义大小，可以使用<code>.override(int, int)</code>方法，如果你想加载一个图片有其他用途，而不是显示在View中，请查看『自定义Target』章节。</p>
+<h4 id="Bitmap-复用"><a href="#Bitmap-复用" class="headerlink" title="Bitmap 复用"></a>Bitmap 复用</h4><p>为了减少垃圾回收，你可以说使用<code>BitmapPool</code>接口来释放不想要的Bitmap或者复用存在的Bitmap。一个在Transformation中复用Bitmap典型的例子：从pool中获取Bitmap，使用该Bitmap创建一个<code>Canvas</code>，然后使用Matrix/Paint/Shader来变换图像并绘制到Canvas上。为了正确有效地在Transformation中复用Bitmap中，遵守下面的规则：</p>
+<ol>
+<li>在<code>transform()</code>不要回收资源或者把Bitmap放入Bitmap池中，这些步骤会自动完成。</li>
+<li>如果你从Bitmap池中获取了多个Bitmap，或者没有使用从pool中获取到的Bitmap，确保把多余的Bitmap放回pool中。</li>
+<li>如果你的Trasformation并没有替换调原始图片（比如，图片已经满足你要求的大小，直接返回了），请在<code>transform()</code>方法中返回原始的资源或者Bitmap。</li>
+</ol>
+<p>一个典型的用法如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> Bitmap <span class="title">transform</span><span class="params">(BitmapPool bitmapPool, Bitmap original, <span class="keyword">int</span> width, <span class="keyword">int</span> height)</span> </span>&#123;</span><br><span class="line">    Bitmap result = bitmapPool.get(width, height, Bitmap.Config.ARGB_8888);</span><br><span class="line">    <span class="comment">// If no matching Bitmap is in the pool, get will return null, so we should allocate. </span></span><br><span class="line">    <span class="keyword">if</span> (result == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="comment">// Use ARGB_8888 since we're going to add alpha to the image. </span></span><br><span class="line">        result = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);</span><br><span class="line">    &#125; </span><br><span class="line">    <span class="comment">// Create a Canvas backed by the result Bitmap. </span></span><br><span class="line">    Canvas canvas = <span class="keyword">new</span> Canvas(result);</span><br><span class="line">    Paint paint = <span class="keyword">new</span> Paint();</span><br><span class="line">    paint.setAlpha(<span class="number">128</span>);</span><br><span class="line">    <span class="comment">// Draw the original Bitmap onto the result Bitmap with a transformation. </span></span><br><span class="line">    canvas.drawBitmap(original, <span class="number">0</span>, <span class="number">0</span>, paint);</span><br><span class="line">    <span class="comment">// Since we've replaced our original Bitmap, we return our new Bitmap here. Glide will </span></span><br><span class="line">    <span class="comment">// will take care of returning our original Bitmap to the BitmapPool for us.  </span></span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+            <div class="social-item">
+              <a target="_blank" class="social-link" href="https://t.me/mltalk">
+                <span class="icon">
+                  <i class="fa fa-telegram"></i>
+                </span>
+
+                <span class="label">机器学习碎碎念</span>
+              </a>
+            </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Android/" rel="tag"># Android</a>
+              <a href="/tags/主框架/" rel="tag"># 主框架</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/01/24/test/" rel="prev" title="评论测试">
+      <i class="fa fa-chevron-left"></i> 评论测试
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2016/01/31/Google推荐的Android应用框架之demo/" rel="next" title="Google推荐的Android应用框架之demo">
+      Google推荐的Android应用框架之demo <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#序"><span class="nav-number">1.</span> <span class="nav-text">序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#名词解释"><span class="nav-number">1.1.</span> <span class="nav-text">名词解释</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#目录"><span class="nav-number">2.</span> <span class="nav-text">目录</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#主目录"><span class="nav-number">3.</span> <span class="nav-text">主目录</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#报告问题"><span class="nav-number">3.1.</span> <span class="nav-text">报告问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-0版本的新特性"><span class="nav-number">3.2.</span> <span class="nav-text">3.0版本的新特性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#从2-0迁移到3-0"><span class="nav-number">3.3.</span> <span class="nav-text">从2.0迁移到3.0</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#特性"><span class="nav-number">3.4.</span> <span class="nav-text">特性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#缓存机制与缓存失效"><span class="nav-number">4.</span> <span class="nav-text">缓存机制与缓存失效</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存的key"><span class="nav-number">4.1.</span> <span class="nav-text">缓存的key</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存失效"><span class="nav-number">4.2.</span> <span class="nav-text">缓存失效</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自定义缓存失效"><span class="nav-number">4.3.</span> <span class="nav-text">自定义缓存失效</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置"><span class="nav-number">5.</span> <span class="nav-text">配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#懒加载配置"><span class="nav-number">5.1.</span> <span class="nav-text">懒加载配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建一个GlideModule"><span class="nav-number">5.2.</span> <span class="nav-text">创建一个GlideModule</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Library工程"><span class="nav-number">5.3.</span> <span class="nav-text">Library工程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GlideModule冲突"><span class="nav-number">5.4.</span> <span class="nav-text">GlideModule冲突</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#全局配置"><span class="nav-number">5.5.</span> <span class="nav-text">全局配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#磁盘缓存"><span class="nav-number">5.6.</span> <span class="nav-text">磁盘缓存</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#大小"><span class="nav-number">5.6.1.</span> <span class="nav-text">大小</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#位置"><span class="nav-number">5.6.2.</span> <span class="nav-text">位置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内存缓存和缓存池"><span class="nav-number">5.7.</span> <span class="nav-text">内存缓存和缓存池</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#大小-1"><span class="nav-number">5.7.1.</span> <span class="nav-text">大小</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#内存缓存"><span class="nav-number">5.7.2.</span> <span class="nav-text">内存缓存</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Bitmap池"><span class="nav-number">5.7.3.</span> <span class="nav-text">Bitmap池</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Bitmap格式"><span class="nav-number">5.8.</span> <span class="nav-text">Bitmap格式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自定义目标（Targets）"><span class="nav-number">6.</span> <span class="nav-text">自定义目标（Targets）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SimpleTarget"><span class="nav-number">6.1.</span> <span class="nav-text">SimpleTarget</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#一些警告"><span class="nav-number">6.1.1.</span> <span class="nav-text">一些警告</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ViewTarget"><span class="nav-number">6.2.</span> <span class="nav-text">ViewTarget</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#覆盖默认行为"><span class="nav-number">6.3.</span> <span class="nav-text">覆盖默认行为</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#调试和错误处理"><span class="nav-number">7.</span> <span class="nav-text">调试和错误处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#调试"><span class="nav-number">7.1.</span> <span class="nav-text">调试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#调试工作流"><span class="nav-number">7.2.</span> <span class="nav-text">调试工作流</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#监听请求-RequestListener"><span class="nav-number">7.3.</span> <span class="nav-text">监听请求-RequestListener</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#更多日志"><span class="nav-number">7.4.</span> <span class="nav-text">更多日志</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用Glide下载自定义大小的图片"><span class="nav-number">8.</span> <span class="nav-text">使用Glide下载自定义大小的图片</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#集成（Integration）库-Glide与其他库整合"><span class="nav-number">9.</span> <span class="nav-text">集成（Integration）库-Glide与其他库整合</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#介绍"><span class="nav-number">9.1.</span> <span class="nav-text">介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#什么是集成库（Integration-Library）"><span class="nav-number">9.1.1.</span> <span class="nav-text">什么是集成库（Integration Library）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#为什么没有XXX库的实现"><span class="nav-number">9.1.2.</span> <span class="nav-text">为什么没有XXX库的实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#我如何依赖一个集成库呢？"><span class="nav-number">9.1.3.</span> <span class="nav-text">我如何依赖一个集成库呢？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#我应当选择哪个版本？"><span class="nav-number">9.1.4.</span> <span class="nav-text">我应当选择哪个版本？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Volley"><span class="nav-number">9.2.</span> <span class="nav-text">Volley</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Gradle中使用Volley"><span class="nav-number">9.2.1.</span> <span class="nav-text">Gradle中使用Volley</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Maven中是Volley"><span class="nav-number">9.2.2.</span> <span class="nav-text">Maven中是Volley</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#手动添加Volley"><span class="nav-number">9.2.3.</span> <span class="nav-text">手动添加Volley</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Volley的Manifest"><span class="nav-number">9.2.4.</span> <span class="nav-text">Volley的Manifest</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Volley的混淆设置"><span class="nav-number">9.2.5.</span> <span class="nav-text">Volley的混淆设置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#OkHttp"><span class="nav-number">9.3.</span> <span class="nav-text">OkHttp</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Gradle中使用OkHttp"><span class="nav-number">9.3.1.</span> <span class="nav-text">Gradle中使用OkHttp</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Maven中是OkHttp"><span class="nav-number">9.3.2.</span> <span class="nav-text">Maven中是OkHttp</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#手动添加OkHttp"><span class="nav-number">9.3.3.</span> <span class="nav-text">手动添加OkHttp</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#OkHttp的Manifest"><span class="nav-number">9.3.4.</span> <span class="nav-text">OkHttp的Manifest</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#OkHttp的混淆设置"><span class="nav-number">9.3.5.</span> <span class="nav-text">OkHttp的混淆设置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#更多选项"><span class="nav-number">9.4.</span> <span class="nav-text">更多选项</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#通用的混淆配置"><span class="nav-number">9.4.1.</span> <span class="nav-text">通用的混淆配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#覆盖默认的行为"><span class="nav-number">9.4.2.</span> <span class="nav-text">覆盖默认的行为</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#在后台线程中加载和缓存"><span class="nav-number">10.</span> <span class="nav-text">在后台线程中加载和缓存</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#downloadOnly方法"><span class="nav-number">10.1.</span> <span class="nav-text">downloadOnly方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#into方法"><span class="nav-number">10.2.</span> <span class="nav-text">into方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Glide中的资源复用"><span class="nav-number">11.</span> <span class="nav-text">Glide中的资源复用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么-资源复用的作用"><span class="nav-number">11.1.</span> <span class="nav-text">为什么 - 资源复用的作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#怎么做-Glide是如何复用资源"><span class="nav-number">11.2.</span> <span class="nav-text">怎么做 - Glide是如何复用资源</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#标志-哪些资源可复用"><span class="nav-number">11.2.1.</span> <span class="nav-text">标志-哪些资源可复用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#引用计数"><span class="nav-number">11.2.2.</span> <span class="nav-text">引用计数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#放入缓存池"><span class="nav-number">11.2.3.</span> <span class="nav-text">放入缓存池</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#常见的错误"><span class="nav-number">11.3.</span> <span class="nav-text">常见的错误</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#现象"><span class="nav-number">11.3.1.</span> <span class="nav-text">现象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#原因"><span class="nav-number">11.3.2.</span> <span class="nav-text">原因</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用快照"><span class="nav-number">12.</span> <span class="nav-text">使用快照</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#关于快照"><span class="nav-number">12.1.</span> <span class="nav-text">关于快照</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#获取快照"><span class="nav-number">12.2.</span> <span class="nav-text">获取快照</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Jar"><span class="nav-number">12.2.1.</span> <span class="nav-text">Jar</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Gradle"><span class="nav-number">12.2.2.</span> <span class="nav-text">Gradle</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Maven"><span class="nav-number">12.2.3.</span> <span class="nav-text">Maven</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#图形变换"><span class="nav-number">13.</span> <span class="nav-text">图形变换</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#默认的变换"><span class="nav-number">13.1.</span> <span class="nav-text">默认的变换</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Fit-center"><span class="nav-number">13.1.1.</span> <span class="nav-text">Fit center</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CenterCrop"><span class="nav-number">13.1.2.</span> <span class="nav-text">CenterCrop</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用"><span class="nav-number">13.2.</span> <span class="nav-text">使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#调整大小"><span class="nav-number">13.2.1.</span> <span class="nav-text">调整大小</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Bitmap-复用"><span class="nav-number">13.2.2.</span> <span class="nav-text">Bitmap 复用</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">limuzhi</p>
+  <div class="site-description" itemprop="description">something about tech, android etc...</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muzhi1991" title="GitHub → https://github.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:muzhi1991@gmail.com" title="E-Mail → mailto:muzhi1991@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/muzhi1991" title="Twitter → https://twitter.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.chenyupeng.com/" title="https://www.chenyupeng.com/" rel="noopener" target="_blank">陈玉鹏的个人空间</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://macshuo.com/" title="http://macshuo.com/" rel="noopener" target="_blank">MacTalk</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">limuzhi</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'G5HLDFmPsllxIjax4F2JTLnl-gzGzoHsz',
+      appKey     : 'A5PTgbvpJwjPlcBJ3Brl8rDs',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

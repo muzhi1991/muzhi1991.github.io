@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="效率是一个合格程序员逃不过去的话题。最近一周我被开发环境所累，所以痛下决心解决这个问题。粗略的估计了一下环境问题可以占用到一半的工作时间，这是十分低效的，浪费了青春而且消磨了耐心。 解决效率问题的关键就是工具。使用既有的工具和创造合适的工具。很多人忽视工具的力量，尤其是一些”勤快”的人，他们不厌其烦的做一些重复的操作，过着”充实”的生活，用加班和努力来振奋自己。唉。。我毕竟还是个懒人。在做前端开发">
+<meta name="keywords" content="Tools">
+<meta property="og:type" content="article">
+<meta property="og:title" content="工具与效率">
+<meta property="og:url" content="http://limuzhi.com/2016/12/18/工具与效率/index.html">
+<meta property="og:site_name" content="Night Piece">
+<meta property="og:description" content="效率是一个合格程序员逃不过去的话题。最近一周我被开发环境所累，所以痛下决心解决这个问题。粗略的估计了一下环境问题可以占用到一半的工作时间，这是十分低效的，浪费了青春而且消磨了耐心。 解决效率问题的关键就是工具。使用既有的工具和创造合适的工具。很多人忽视工具的力量，尤其是一些”勤快”的人，他们不厌其烦的做一些重复的操作，过着”充实”的生活，用加班和努力来振奋自己。唉。。我毕竟还是个懒人。在做前端开发">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://tva1.sinaimg.cn/mw690/57427cf8gw1fb37ahou2qj20k20wmwku.jpg">
+<meta property="og:updated_time" content="2020-02-25T09:44:15.437Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="工具与效率">
+<meta name="twitter:description" content="效率是一个合格程序员逃不过去的话题。最近一周我被开发环境所累，所以痛下决心解决这个问题。粗略的估计了一下环境问题可以占用到一半的工作时间，这是十分低效的，浪费了青春而且消磨了耐心。 解决效率问题的关键就是工具。使用既有的工具和创造合适的工具。很多人忽视工具的力量，尤其是一些”勤快”的人，他们不厌其烦的做一些重复的操作，过着”充实”的生活，用加班和努力来振奋自己。唉。。我毕竟还是个懒人。在做前端开发">
+<meta name="twitter:image" content="https://tva1.sinaimg.cn/mw690/57427cf8gw1fb37ahou2qj20k20wmwku.jpg">
+
+<link rel="canonical" href="http://limuzhi.com/2016/12/18/工具与效率/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>工具与效率 | Night Piece</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Night Piece</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">white && black</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tools">
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-wrench"></i>利器</a>
+
+  </li>
+        <li class="menu-item menu-item-read">
+
+    <a href="/read/" rel="section"><i class="fa fa-fw fa-book"></i>阅读</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://limuzhi.com/2016/12/18/工具与效率/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="limuzhi">
+      <meta itemprop="description" content="something about tech, android etc...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Night Piece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          工具与效率
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-12-18 15:39:53" itemprop="dateCreated datePublished" datetime="2016-12-18T15:39:53+08:00">2016-12-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-25 17:44:15" itemprop="dateModified" datetime="2020-02-25T17:44:15+08:00">2020-02-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2016/12/18/工具与效率/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2016/12/18/工具与效率/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>效率是一个合格程序员逃不过去的话题。最近一周我被开发环境所累，所以痛下决心解决这个问题。粗略的估计了一下环境问题可以占用到一半的工作时间，这是十分低效的，浪费了青春而且消磨了耐心。</p>
+<p>解决效率问题的关键就是工具。<strong>使用既有的工具和创造合适的工具</strong>。很多人忽视工具的力量，尤其是一些”勤快”的人，他们不厌其烦的做一些重复的操作，过着”充实”的生活，用加班和努力来振奋自己。唉。。我毕竟还是个懒人。在做前端开发时，对工具的需求不强烈，还没有到影响效率的程度：一个好用顺手的IDE，一个不错的notebook，That’s all。然而，最近接触的后台开发，尤其是一些<strong>运维</strong>的工作（坑爹的自运维！）让我认识到是时候鸟枪换炮。</p>
+<h2 id="终端配置"><a href="#终端配置" class="headerlink" title="终端配置"></a>终端配置</h2><p>后台开发最最频繁的操作就是：打开终端，ssh，输入密码，传文件，断网，重新连接，again。更可能需要打开N个终端同时操作，于是整个过程重复N次。更可恶的是，由于公司的安全机制，期间要输入N个密码（先连接relay，在登录开发机），这些密码还有动态Pin，需要1分钟一更新。。。于是，不小心断个网，痛苦开始了。</p>
+<h3 id="配置SSH复用"><a href="#配置SSH复用" class="headerlink" title="配置SSH复用"></a>配置SSH复用</h3><p>第一步是纠结打开多个终端，需要重新连接多次的问题。没想到有这种黑科技：SHH会话复用。简单的原理是，第一次连接ssh时会自动生成一个本地socket文件（位于~/.ssh目录下），下次ssh连接同样的地址时（有时间限制，好像是4个小时），直接使用这个socket，复用之前的ssh连接。<strong>成功解决打开多个终端要重复输入多次pin码问题</strong>。</p>
+<p>配置，修改.ssh/config文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">host *</span><br><span class="line">ControlMaster auto</span><br><span class="line">ControlPath ~/.ssh/master-%r@%h:%p</span><br><span class="line">ControlPersist yes</span><br></pre></td></tr></table></figure>
+<h3 id="终端工具iTerm2"><a href="#终端工具iTerm2" class="headerlink" title="终端工具iTerm2"></a>终端工具iTerm2</h3><p>终端工具，我一直使用的是iterm，这个是Mac上比较成熟的方案，然而并没有认真配置过。很多时候我们从中继relay连接开发机，需要输入静态密码，这种情况下，我们往往会不厌其烦，尤其是有多台开发机时，往往很麻烦。在公司内网看到SecureCRT有类似的配置，可以实现</p>
+<ul>
+<li>打开终端时，自动SSH某个地址。</li>
+<li>终端出现某个字符时（Expect），自动输入一些内容。</li>
+</ul>
+<p>于是有同学把它配置成自动连接中继，再自动连接开发机，自动输入密码。于是我开始寻求Iterm上面的方案，得知了Iterm的Profile，以及它的Triggers的功能。我们可以给每个开发机配置对应的Profile并设置快捷键。于是我们只要按下快捷键，iterm会自动调用相应的profile打开终端，按照我们的配置一步步连接服务器。参考下图的配置</p>
+<p><img src="https://tva1.sinaimg.cn/mw690/57427cf8gw1fb37ahou2qj20k20wmwku.jpg" alt></p>
+<p>同时，iTerm的<strong>选择复制</strong>特性和一些<strong>常用快捷键</strong>对于开发效率的提升也有很大帮助。如：光标快速移动，清除单行等。</p>
+<h3 id="选择Shell：ZSH"><a href="#选择Shell：ZSH" class="headerlink" title="选择Shell：ZSH"></a>选择Shell：ZSH</h3><p>这个zsh，是很久以前被<a href="http://macshuo.com/?p=676" target="_blank" rel="noopener">池老师安利</a>的，用来代替shell。由于zsh本身的配置十分复杂，因此结合最佳实践<strong>oh-my-zsh</strong>这个项目来提供一个默认的配置。它的<strong>命令行自动补全</strong>用起来很爽，还支持强大插件功能。由于它没有成为我的瓶颈，整体的认识还很肤浅，还没想去折腾它。当然它还有一些坑，比如：<strong>通配符<code>*</code>的处理问题</strong>。可以说ZSH是终端用户的标配。</p>
+<h3 id="神器：Tmux"><a href="#神器：Tmux" class="headerlink" title="神器：Tmux"></a>神器：Tmux</h3><p>久闻Tmux大名，遗憾的是以前一直没有场景使用它。现在终于有了用武之地：<strong>终端分屏</strong>与<strong>后台会话保持</strong>。让我们来体验一下没有Tmux的场景：</p>
+<ul>
+<li>终端分屏：其实这个问题还好，iTerm自带分屏的功能（支持左右，上下，保存分屏），但是它的本质是打开多个终端，连接多个ssh。如果配置了上面的SSH复用，维持多个连接还不是很麻烦。</li>
+<li>后台会话保持：这个功能对于本地开发而言意义不大，但是对于连接远程服务器却很重要。我们经常遇到在远程服务器上运行一个cmd需要很长时间，此时如果连接断开/终端关闭，命令则自动的终止。下次执行又得从头开始。我们自然而然会思考这个问题：Server依然在运行，为什么终端执行的任务会因为终端断开而自动结束呢？其实本质上是job收到了hangup信号而结束了。因此常用的解决方案是：<code>nohup cmd &amp;</code> 来吧命令放后台并且忽略hangup信号（当然也有<a href="https://www.ibm.com/developerworks/cn/linux/l-cn-nohup/" target="_blank" rel="noopener">其他方案</a>）。由此一个痛点是，这样子太麻烦的，我们还经常忘记使用nohup，多么希望他是shell的默认设置。</li>
+</ul>
+<p>Tmux可以用很优雅的解决上面提到的来两个基本问题：</p>
+<ul>
+<li>终端复用分屏：正如Tmux的名字的含义 terminal multiplexer。它是一个终端的复用分屏工具。所谓复用是指在一个终端中（常常是一个ssh连接）打开多个可输入的shell。并且<strong>支持多种粒度的分屏</strong>（Session、Window、Panel）。此外，我们还可以<strong>配合快捷键使用</strong>，大大提高了操作的效率。</li>
+<li>会话自动保持：Tmux本质上是一个Linux后台服务，运行在远程主机上。因此在Tmux中启动的所有job，即使终端退出也不会有任何问题。同时下次重新登录Tmux可以attach所有你在运行的job的标准输出到屏幕上，实现会话的完美恢复。此外，Tmux会记住每个Session中你打开的Window和Panel，实现他们的自动恢复。真正地做到了<strong>一个命令恢复所有现场</strong>的特性。</li>
+</ul>
+<p>Tmux的具体使用可以参考网络上很多优秀文章（详解参考文章），学习曲线的难点在于熟练使用它定义的快捷键和形成自己的使用习惯。Tmux的配置也有很大的学问（类似于Vim，ZSH之流），同样建议使用Tmux的配置的最佳实践:<strong>oh my tmux</strong>，漂亮的主题与良好的配置是居家旅行必备。这里提几个注意点：</p>
+<ul>
+<li>tmux有自己的剪切板缓冲区，因此需要一些配置才能实现剪切板互通，oh my tmux中有方案。</li>
+<li>tmux支持鼠标操作：鼠标选择复制（与iTerm的选择复制冲突，一个小技巧是按下option键再拖动鼠标是使用iTerm的选择复制功能）。此外，还可以用鼠标调整Panel的大小、切换Window。注意：<u>oh my tmux中默认没有开启此配置</u>。</li>
+<li>tmux默认的绑定前缀是C+b，oh my tmux加入了C+a，与iTerm的光标移动冲突，可以根据自己的需求调整。</li>
+<li>oh my tmux 的炫酷主题需要终端（本地，不是远程主机）安装字体并在配置文件中开启。请根据需求考虑（强烈推荐！）。</li>
+</ul>
+<h3 id="Vim-Tmux-iTerm2-剪贴板互通"><a href="#Vim-Tmux-iTerm2-剪贴板互通" class="headerlink" title="Vim Tmux iTerm2 剪贴板互通"></a>Vim Tmux iTerm2 剪贴板互通</h3><p>由于Vim、Tmux与外部iTerm2(操作系统的剪贴板)有各自的/at剪贴板Buffer。我们实际使用中有大量的复制粘贴操作。他们之间的互通就很有必要。</p>
+<ul>
+<li>参考<a href="http://www.rushiagr.com/blog/2016/06/16/everything-you-need-to-know-about-tmux-copy-pasting/" target="_blank" rel="noopener">这篇文章</a>，可以简单地实现Tmux与iTerm（Mac）剪贴板的互通。使用的是iTerm2的最新特性。足以解决大部分需求。</li>
+<li>远程服务器的Vim的剪贴板与似乎无法直接与本地剪切板互通。可能也有办法实现</li>
+<li>远程服务器vim与tmux之间的剪贴板怎么互通呢？似乎没有简单方案，知道的同学，希望告诉我。</li>
+</ul>
+<h2 id="代码片段管理"><a href="#代码片段管理" class="headerlink" title="代码片段管理"></a>代码片段管理</h2><p>代码片段管理是知识管理的一个分支，他们的基本思想相同，但是，写代码作为工作的主要内容，值得把它拿出来单独一说。代码碎片化是我在后台运维开发中遇到问题之一。在前端开发中往往忽视代码片段的管理，理由很简单：当我们需要一个功能时，往往能回忆起来在某个界面中用到相关的逻辑，于是按图索骥便能很快定位，最多需要在多个工程中切换寻找。然而在后台开发中很多代码是分散在各个角落中的，例如：在某个维护的脚本中使用了数据遍历的功能，在某个工程中也使用。由于没有很强的场景感，下次使用时往往很难回忆出什么时候用过。</p>
+<p>代码片段管理的目的是常用功能形成积累，以后可以快速复用之前的成果。它需要两个东西：<strong>习惯</strong>与<strong>工具</strong>。务虚上，习惯要求我们对常用的代码有收集与整理的意识，这似乎是最艰难的一步。首先是收集，将常用的代码放置到一个固定的地方（比如Note或者Stickies上）。然后最重要的是整理，把这些片段抽象成一个具有逻辑的关系，方便以后使用。谨记：<strong>代码片段管理的核心目的是复用</strong>，收而不用毫无意义。在实际的执行中，我一直在寻找一款好用的工具，在Mac端我找到了<strong><a href="https://www.renfei.org/snippets-lab/" target="_blank" rel="noopener">SnippetLab</a></strong>这个软件。它是一个类似Quiver的知识管理软件，加上了代码片段特殊的功能，如代码高亮，快速查询，快捷复制粘贴。基本满足代码片段管理的需求。</p>
+<h2 id="知识管理"><a href="#知识管理" class="headerlink" title="知识管理"></a>知识管理</h2><p>知识管理本质上是一种抽象的能力。这方面我<u>一直在路上</u>，简单谈谈我对知识管理的几个阶段。</p>
+<ul>
+<li>初级阶段：知识收集。最简单的表现是浏览器的<strong>收藏夹</strong>，对不错的文章保存下来，对遇到的，学习的知识一股脑地放入笔记软件（如为知笔记）。</li>
+<li>反思阶段：大量的收集本质上没有<strong>提高知识连接与运用能力</strong>，这种收集停留在简单粗暴的收藏与浏览。这个阶段加强了对知识的整理，特点是形成<strong>各种笔记</strong>。对某个方面的只是形成一些笔记，记录学习过程。</li>
+<li>当前阶段：各种笔记的特点是质量不高，作为自己学习的副产物，甚至在记录后很少去看一下。这让我思考记录的目的是什么？提高自己，温故而知新。于是我<strong>开始写博客</strong>，作为一种总结的手段，希望能每一篇言之有物，不是自己学习的简单记录，而是在总结的过程中发现新的知识，有提升，以后细细品来会有改进的想法。而以前笔记的功能用<strong>思维导图（推荐MindNode）</strong>代替，往往会附在博客中。</li>
+<li>以后：遵循知识管理的目的<strong>提高知识连接与运用能力</strong>，希望改进一些方式。第一步使用类似Pocket的软件作为ReaderAfter工具，做<strong>初步收藏</strong>，避免<em>藏而不读的窘境</em>。第二步对<strong>阅读记录</strong>，使用Diigo做网页笔记，用简洁的笔记软件Quiver做粗略笔记。第三步是<strong>总结成思维导图与博客</strong>。最后希望定期有<strong>博客的回顾与优化</strong>，形成知识的贯通。</li>
+</ul>
+<h2 id="开发工具"><a href="#开发工具" class="headerlink" title="开发工具"></a>开发工具</h2><p>开发工具上，不得不提文本编辑器与IDE。毕竟，我们80%的时间是和他们渡过的😂。他们是最基本的工具，大家应该都知道，可以直接跳过。</p>
+<h3 id="文本编辑器"><a href="#文本编辑器" class="headerlink" title="文本编辑器"></a>文本编辑器</h3><h4 id="Vim"><a href="#Vim" class="headerlink" title="Vim"></a>Vim</h4><p>神之编辑器，完美地在终端环境中使用，可以配置成IDE（结合各种插件和Tmux，很久以前折腾过）。但是我这边只是把它当做最简单的终端文本编辑器使用，通过简单的配置支持代码高亮。方便在终端上临时修改代码。基本要求是熟练使用常用的几个Mode和快捷键。其他高级功能我是作为瞻仰用的。</p>
+<h4 id="Sublime-Text"><a href="#Sublime-Text" class="headerlink" title="Sublime Text"></a>Sublime Text</h4><p>这个是在UI环境中使用最多的编辑器。作为神器之一，同样支持各种插件、代码高亮基本功能。通过这些插件满足一些常见的需求：如代码格式化，Json美化等。作为工具，我还是按需使用的，当某种功能影响到效率时，会寻求插件来解决，不会刻意追求酷炫。</p>
+<h3 id="IDE"><a href="#IDE" class="headerlink" title="IDE"></a>IDE</h3><h4 id="Eclipse"><a href="#Eclipse" class="headerlink" title="Eclipse"></a>Eclipse</h4><p>已经放弃，放入回收站。曾经的主力编辑器，现在被intellij idea全面代替。</p>
+<h4 id="Jetbrains-全家桶（Intellij家族）"><a href="#Jetbrains-全家桶（Intellij家族）" class="headerlink" title="Jetbrains 全家桶（Intellij家族）"></a>Jetbrains 全家桶（Intellij家族）</h4><p>强烈建议直接使用这个系列的产品（看到很多同学还在用Eclipse），包括Intellij Idea、PyCharm、Android Studio、WebStrom。他们具有相同的快捷键和逻辑方式，最智能的代码补全，极大的提高生产率。其中intellij idea可以安装各种插件满足（相对）小众需求（如Node插件，Scala插件），依然能良好的工作。当然，它们都具有强大的Plugin商店，满足各种奇葩需求。总之。。。没有他，感觉没法写代码了。几个要点提一下：</p>
+<ul>
+<li>熟练掌握快捷键，形成肌肉记忆。可以统计自己最常用的操作，尤其是代码补全，代码快速查找定位，重构相关快捷键。</li>
+<li>了解强大的Live  Template功能，有事半功倍的效果。</li>
+<li>善用重构功能，提升代码质量</li>
+<li>使用插件提高效率</li>
+</ul>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><h3 id="数据传输工具"><a href="#数据传输工具" class="headerlink" title="数据传输工具"></a>数据传输工具</h3><ul>
+<li>samba：这个是最常用的文件夹共享方式，可以<strong>远程访问/挂载文件夹</strong>，以非常直观的方式共享文件。缺点是在网络环境不好的情况下，速度较慢，同步是一件很痛苦的事情。</li>
+<li>rsync：文件夹同步工具，使用rsync算法比较diff，减少数据传输，推荐用来<strong>同步代码目录</strong>。</li>
+<li>http服务器：使用python -m SimpleHTTPServer 来启动一个http服务器，是<strong>远程传输文件最简单的方式</strong>。接收方使用<code>wget addr:port/file</code> 来获取文件。如果要传输目录，加上一些参数<code>wget -r -nH -np -R index.html* addr:port/dir</code>，避免产生index.html文件。</li>
+<li>ftp服务器：最传统，也是最常用的方案。需要搭建ftp服务器，然后使用wget获取文件。</li>
+</ul>
+<h3 id="如果没有，请创造工具"><a href="#如果没有，请创造工具" class="headerlink" title="如果没有，请创造工具"></a>如果没有，请创造工具</h3><p>创造工具是对问题的抽象。当我们遇到那些重复性或例行性工作，尝试着把问题总结提炼，找到共性，创造工具，把自己从机械性的工作中解放出来。即使是抢个月饼，会创造并使用工具的人如同在降维攻击—你们这些凡人。于是，务必熟练掌握至少一种自己创造工具的方法（我<strong>选择了Python</strong>），在不断尝试中磨砺自己创造的技能。</p>
+<h2 id="工具栈"><a href="#工具栈" class="headerlink" title="工具栈"></a>工具栈</h2><p>由思到行，我们会形成自己的工具栈。找出那些顺手的工具，形成一直习惯，渐渐养成一种思维方式，甚至是直觉。把那些好用的东西放入自己的工具箱，并不限于计算机中的程序。推而广之，它可能是一个思维的定式，一套分析问题的方法论，也有可能是一个好用的算法（像机器学习）亦或是对一类问题的最佳实践。我们不断尝试用工具解决问题，与此同时，迭代升级<a href="http://limuzhi.com/tools/">自己的工具栈</a>，这似乎是一种无法轻易复制的资本。</p>
+<p>参考文章</p>
+<ul>
+<li><a href="http://cenalulu.github.io/linux/tmux/" target="_blank" rel="noopener">Tmux - Linux从业者必备利器</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+            <div class="social-item">
+              <a target="_blank" class="social-link" href="https://t.me/mltalk">
+                <span class="icon">
+                  <i class="fa fa-telegram"></i>
+                </span>
+
+                <span class="label">机器学习碎碎念</span>
+              </a>
+            </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Tools/" rel="tag"># Tools</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/12/04/技术债/" rel="prev" title="技术债">
+      <i class="fa fa-chevron-left"></i> 技术债
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/01/02/致2016，你好2017/" rel="next" title="致2016，你好2017">
+      致2016，你好2017 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#终端配置"><span class="nav-number">1.</span> <span class="nav-text">终端配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#配置SSH复用"><span class="nav-number">1.1.</span> <span class="nav-text">配置SSH复用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#终端工具iTerm2"><span class="nav-number">1.2.</span> <span class="nav-text">终端工具iTerm2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#选择Shell：ZSH"><span class="nav-number">1.3.</span> <span class="nav-text">选择Shell：ZSH</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#神器：Tmux"><span class="nav-number">1.4.</span> <span class="nav-text">神器：Tmux</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Vim-Tmux-iTerm2-剪贴板互通"><span class="nav-number">1.5.</span> <span class="nav-text">Vim Tmux iTerm2 剪贴板互通</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码片段管理"><span class="nav-number">2.</span> <span class="nav-text">代码片段管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#知识管理"><span class="nav-number">3.</span> <span class="nav-text">知识管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#开发工具"><span class="nav-number">4.</span> <span class="nav-text">开发工具</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#文本编辑器"><span class="nav-number">4.1.</span> <span class="nav-text">文本编辑器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Vim"><span class="nav-number">4.1.1.</span> <span class="nav-text">Vim</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Sublime-Text"><span class="nav-number">4.1.2.</span> <span class="nav-text">Sublime Text</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IDE"><span class="nav-number">4.2.</span> <span class="nav-text">IDE</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Eclipse"><span class="nav-number">4.2.1.</span> <span class="nav-text">Eclipse</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Jetbrains-全家桶（Intellij家族）"><span class="nav-number">4.2.2.</span> <span class="nav-text">Jetbrains 全家桶（Intellij家族）</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他"><span class="nav-number">5.</span> <span class="nav-text">其他</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据传输工具"><span class="nav-number">5.1.</span> <span class="nav-text">数据传输工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如果没有，请创造工具"><span class="nav-number">5.2.</span> <span class="nav-text">如果没有，请创造工具</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#工具栈"><span class="nav-number">6.</span> <span class="nav-text">工具栈</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">limuzhi</p>
+  <div class="site-description" itemprop="description">something about tech, android etc...</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muzhi1991" title="GitHub → https://github.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:muzhi1991@gmail.com" title="E-Mail → mailto:muzhi1991@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/muzhi1991" title="Twitter → https://twitter.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.chenyupeng.com/" title="https://www.chenyupeng.com/" rel="noopener" target="_blank">陈玉鹏的个人空间</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://macshuo.com/" title="http://macshuo.com/" rel="noopener" target="_blank">MacTalk</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">limuzhi</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'G5HLDFmPsllxIjax4F2JTLnl-gzGzoHsz',
+      appKey     : 'A5PTgbvpJwjPlcBJ3Brl8rDs',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="在搭建新项目的过程中，调研了一些常用的开发框架，恰好近日Google公布了一系列框架的梳理（未完成），对Android开发者给出了一些指导，颇有裨益。总结了如下几种模式：  纯MVP开发 MVP+Loader MVP+Databinding MVP+ContentProvider MVP+Dagger MVP+Clean构架  总体而言，基本涵盖了Android中的流行的开发构架方式。这些开发框架">
+<meta name="keywords" content="Android,主框架">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android构架系列之二--常见框架分析(一）">
+<meta property="og:url" content="http://limuzhi.com/2016/04/04/Android构架系列之二-常见框架分析/index.html">
+<meta property="og:site_name" content="Night Piece">
+<meta property="og:description" content="在搭建新项目的过程中，调研了一些常用的开发框架，恰好近日Google公布了一系列框架的梳理（未完成），对Android开发者给出了一些指导，颇有裨益。总结了如下几种模式：  纯MVP开发 MVP+Loader MVP+Databinding MVP+ContentProvider MVP+Dagger MVP+Clean构架  总体而言，基本涵盖了Android中的流行的开发构架方式。这些开发框架">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-02-25T09:44:15.465Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android构架系列之二--常见框架分析(一）">
+<meta name="twitter:description" content="在搭建新项目的过程中，调研了一些常用的开发框架，恰好近日Google公布了一系列框架的梳理（未完成），对Android开发者给出了一些指导，颇有裨益。总结了如下几种模式：  纯MVP开发 MVP+Loader MVP+Databinding MVP+ContentProvider MVP+Dagger MVP+Clean构架  总体而言，基本涵盖了Android中的流行的开发构架方式。这些开发框架">
+
+<link rel="canonical" href="http://limuzhi.com/2016/04/04/Android构架系列之二-常见框架分析/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>Android构架系列之二--常见框架分析(一） | Night Piece</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Night Piece</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">white && black</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tools">
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-wrench"></i>利器</a>
+
+  </li>
+        <li class="menu-item menu-item-read">
+
+    <a href="/read/" rel="section"><i class="fa fa-fw fa-book"></i>阅读</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://limuzhi.com/2016/04/04/Android构架系列之二-常见框架分析/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="limuzhi">
+      <meta itemprop="description" content="something about tech, android etc...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Night Piece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android构架系列之二--常见框架分析(一）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-04-04 10:09:42" itemprop="dateCreated datePublished" datetime="2016-04-04T10:09:42+08:00">2016-04-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-25 17:44:15" itemprop="dateModified" datetime="2020-02-25T17:44:15+08:00">2020-02-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2016/04/04/Android构架系列之二-常见框架分析/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2016/04/04/Android构架系列之二-常见框架分析/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>在搭建新项目的过程中，调研了一些常用的开发框架，恰好近日Google公布了<a href="https://github.com/googlesamples/android-architecture" target="_blank" rel="noopener">一系列框架的梳理</a>（未完成），对Android开发者给出了一些指导，颇有裨益。总结了如下几种模式：</p>
+<ol>
+<li>纯MVP开发</li>
+<li>MVP+Loader</li>
+<li>MVP+Databinding</li>
+<li>MVP+ContentProvider</li>
+<li>MVP+Dagger</li>
+<li>MVP+Clean构架</li>
+</ol>
+<p>总体而言，基本涵盖了Android中的流行的开发构架方式。这些开发框架是以MVP为基础，再结合其他工具，或者再次细分某些层，实现更好的复用。这里首先简介一下MVP，然后将上述6个框架按照我的理解（可能不完备）进行归类总结。</p>
+<h2 id="MVP分析"><a href="#MVP分析" class="headerlink" title="MVP分析"></a>MVP分析</h2><p>MVP是上述六个框架的基础，对于MVP的认识，最好结合MVC、MVVM这两个框架进行学习，一个基本的理解参考阮一峰先生的<a href="http://www.ruanyifeng.com/blog/2015/02/mvcmvp_mvvm.html" target="_blank" rel="noopener">这篇文章</a>。<br>我总结几点：</p>
+<ul>
+<li>M层，即<code>model</code>，负责数据部分，如网络请求、数据库，获取数据。</li>
+<li>V层，即<code>view</code>，负责数据展示，Android的View或者Fragemnt</li>
+<li>P层，即<code>presenter</code>,核心，负责从M获取数据，然后控制V更新。</li>
+<li><strong>核心：M与V不直接交互数据，必须通过P</strong></li>
+<li><p>具体而言：V实现某个UIController接口，暴露自己实现的UI功能，如显示Progress等，P持有V的接口。V同时也会持有P，他们相互依赖（最好V/P都是通过接口依赖）。</p>
+<blockquote>
+<p>流程是：V收到用户操作—&gt;调用P的某方法—&gt;P去M获取数据—&gt;获取成功—&gt;P调用V暴露的接口去更新界面<br>注意：有些框架可能把Activity看着<code>Presenter</code>，这可能导致Activity中有过多的代码，建议还是抽出一个Presenter类，Activity仅仅看做一个View层实体。</p>
+</blockquote>
+</li>
+</ul>
+<h2 id="构架分析"><a href="#构架分析" class="headerlink" title="构架分析"></a>构架分析</h2><h3 id="MVP-Loader-MVP-ContentProvider"><a href="#MVP-Loader-MVP-ContentProvider" class="headerlink" title="MVP+Loader/MVP+ContentProvider"></a>MVP+Loader/MVP+ContentProvider</h3><p>这两个构架都是在P层与数据M层之间进行优化，主要<strong>优化了P层从M层获取数据的方式</strong>，使用Android原生（3.0开始）提供的<code>Loader</code>异步加载机制，从数据库/网络等地方加载数据。<code>CotentProvider</code>思想类似，使用了<code>CotentProvider</code>方式，分离数据部分，实现解耦。</p>
+<h3 id="MVP-Databinding"><a href="#MVP-Databinding" class="headerlink" title="MVP+Databinding"></a>MVP+Databinding</h3><p>这个框架可以看着是MVVM框架了。Databinding是利用Android提供的一个库实现了数据绑定的功能，即某个<code>Entity</code>内容可以直接反应到<code>View</code>中，同样<code>View</code>一旦修改，<code>Entity</code>也会变换。<strong>本质上，这种方式简化了MVP中P层与V层的关系</strong>，P层处理完的数据，放入某个实体中就可以显示在界面上。当然也有其缺陷。</p>
+<h3 id="MVP-Dagger"><a href="#MVP-Dagger" class="headerlink" title="MVP+Dagger"></a>MVP+Dagger</h3><p>这就比较好理解了，将MVP中对象的构造使用Dagger2代替，是一种强制性解耦的措施，具体可以参加<a href="http://limuzhi.com/2016/03/06/Android%E6%B3%A8%E5%85%A5%E6%A1%86%E6%9E%B6Dagger2%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">之前的文章</a>。</p>
+<h3 id="MVP-Clean构架"><a href="#MVP-Clean构架" class="headerlink" title="MVP+Clean构架"></a>MVP+Clean构架</h3><p>这里主要讲解一下Clean构架，什么是Clean构架，这在网上有很多介绍的文章，其实就是一种基于MVP再次分层的构架，历史比较悠久了（2012年？）。下面详细介绍。</p>
+<h4 id="Clean学习"><a href="#Clean学习" class="headerlink" title="Clean学习"></a>Clean学习</h4><p>基本的学习看Clean构架的文章：</p>
+<ul>
+<li><a href="http://blog.8thlight.com/uncle-bob/2012/08/13/the-clean-architecture.html" target="_blank" rel="noopener">原始文章</a><br>：比较抽象，难以理解，不建议首先学习！</li>
+<li>Clean构架详细的解析文章，<a href="http://fernandocejas.com/2014/09/03/architecting-android-the-clean-way/" target="_blank" rel="noopener">原文</a>，<a href="http://zhuanlan.zhihu.com/p/20001838" target="_blank" rel="noopener">中文翻译</a>：可以直接学习这一篇文章，GitHub有详细的<a href="https://github.com/android10/Android-CleanArchitecture" target="_blank" rel="noopener">代码和讲解</a>，注意作者迭代了两个版本,第一版是没有依赖注入，RxJava那些框架的，相对比较好理解。</li>
+<li><a href="http://blog.chengdazhi.com/index.php/101" target="_blank" rel="noopener">国人讲解的Clean框架</a>：建议优先学习这篇文章，构架在在一个工程Module中，代码干净，比较好理解，但是可能对Clean的理解并不透彻。</li>
+</ul>
+<h4 id="Clean基本思想"><a href="#Clean基本思想" class="headerlink" title="Clean基本思想"></a>Clean基本思想</h4><p>总结一下Clean的基本思想：<br>首先，我们应该<strong>从MVP出发理解Clean构架</strong>。<br>Clean构架中，把整个项目分成3个模块，<code>presentation</code>（表现层），<code>domain</code>（领域层），<code>data</code>（数据层）。</p>
+<ul>
+<li>表现层中，就已经包含了完整的MVP构架，但是与传统的MVP不同的是：<ul>
+<li>这里的M，更加倾向于ViewModel，即仅仅用来存放展示数据的<code>Model</code>，与数据库等无关！『从数据源获取数据』的功能被剥离出去，形成了<code>data</code>层。</li>
+<li>这里的P，是不完整的P，它的核心功能，『调用M从数据源（真正的M）获取数据&amp;&amp;处理数据』的逻辑被剥离了出去！形成了<code>domain</code>层。</li>
+<li>这里的V，是完整意义上的<code>View</code></li>
+</ul>
+</li>
+<li>领域层中，即以前MVP中P剥离处理的调用M和数据处理的逻辑。在Clean种，一个<code>domain</code>中有n个<code>usecase</code>，一个<code>usecase</code>相对独立，处理单独的业务逻辑，其设计模式参考<strong>『命令模式』</strong>。</li>
+<li>数据层中，是真正的从数据源获取数据，<code>domain</code>层会调用它，获取数据，注意：<strong>domain层并不关心数据的来源（网络/本地文件/数据缓存）</strong>，至于内存cache的处理，是放在<code>domain</code>还是<code>data</code>，需要再研究。（server端看法：放在<code>domain</code>中，因为数据层更倾向于io操作）</li>
+</ul>
+<h4 id="Clean的数据流"><a href="#Clean的数据流" class="headerlink" title="Clean的数据流"></a>Clean的数据流</h4><p>presentation（V）—&gt; presentation（P）—&gt; domain(usecase) —&gt;data—&gt;domain(usecase,数据回调)—&gt; presentation(P，结果回调) —&gt;presentation（V,P调用V的UIController接口）</p>
+<h4 id="几个注意点与疑惑"><a href="#几个注意点与疑惑" class="headerlink" title="几个注意点与疑惑"></a>几个注意点与疑惑</h4><ul>
+<li>多个model实体，即<code>presentation</code>、<code>domain</code>、<code>data</code>需要三层独立的Model，思考：<strong>为什么，如何优化？</strong></li>
+<li><code>domain</code>层是纯java层，<strong>理想状态是纯java module</strong>，与android无关。如果多module项目，这需要考虑，使用纯<code>java module</code>后，<code>presentation</code>无法直接访问<code>data</code>（跨层访问），<code>domain</code>也无法访问<code>presentation</code>和<code>data</code>（<strong>只能通过放在domain层的接口来访问</strong>）。虽然也好处是强制解耦，开发人员也不会误操作，但是限制很大。这也直接导致了第一个问题。</li>
+<li><p>太多的接口，总结一下在尽量接口设计且<code>domain</code>是纯java层时，需要这些接口</p>
+<ul>
+<li><code>presentation</code>内部，VP之间一组（两个，ui，presenter）</li>
+<li><code>presentation</code>与<code>domain</code>之间一组（两个，调用<code>usecase</code>与回调，必须放在<code>domain</code>中）</li>
+<li><code>domain</code>与<code>data</code>之间一组（两个，调用repository与回调，必须放在domain中）</li>
+<li><p><code>data</code>内部，调用网络异步（一组）、数据库异步（一组）</p>
+<blockquote>
+<p>如何解决：1.通用接口设计，而不是更具业务不同（如各种callback）2.能不使用接口的地方直接调用，但会丧失Clean的优势（在纯domain，java层时有些接口不可避免） 3.<strong>用Rxjava不仅能减少接口，还能避免深层次的回调逻辑</strong></p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li>关于<code>domain</code>的理解，一个<code>usecase</code>的粒度是多大？只做一件事，然后通过usecase组合来实现新的<code>usecase</code>来完成业务？还是在一个<code>usecase</code>中写n个逻辑与回调，来实现（内存缓存数据处理大大方便，这也涉及内存缓存数据存放的问题）。尝试从『命令模式』角度思考。</li>
+<li>Clean的一大优势是，可以强制所有的<code>usecase</code>必须在非UI线程完成，只有<code>presentation</code>在UI线程，大大的减少了阻塞UI线程的可能性，即<code>domain</code>层在非UI完成，那么data层的接口是否还需要异步接口，还是直接使用同步接口？</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>上面介绍了Google推荐了几种构架，主要说明了MVP与Clean构架。基本上MVP是现在项目的标配，虽然Clean清晰，可维护性高，可复用性强，但是是否使用Clean，则看具体情况，也可能对其适当的简化后使用。<br>这里Clean构架的<a href="https://github.com/android10/Android-CleanArchitecture" target="_blank" rel="noopener">demo</a>是一个比较高级的样例，综合了Rxjava，Dagger2，OkHttp/Retrofit。混合使用这些技术学习曲线还是比较陡峭的，在实际的构架中，综合团队人员水平，往往用接口代替Rxjava，不使用Dagger2。<br>其次，Clean构架可能显得臃肿，<strong>尤其实际中业务逻辑复用的程度并不高</strong>，所以，我们需要简化Clean构架以符合我们的业务需求。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+            <div class="social-item">
+              <a target="_blank" class="social-link" href="https://t.me/mltalk">
+                <span class="icon">
+                  <i class="fa fa-telegram"></i>
+                </span>
+
+                <span class="label">机器学习碎碎念</span>
+              </a>
+            </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Android/" rel="tag"># Android</a>
+              <a href="/tags/主框架/" rel="tag"># 主框架</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/03/27/Android构架系列之一-工程结构与Gradle配置/" rel="prev" title="Android构架系列之一--工程结构与Gradle配置">
+      <i class="fa fa-chevron-left"></i> Android构架系列之一--工程结构与Gradle配置
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2016/04/10/Android构架系列之三-数据库ORM框架/" rel="next" title="Android构架系列之三--数据库ORM框架">
+      Android构架系列之三--数据库ORM框架 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#MVP分析"><span class="nav-number">1.</span> <span class="nav-text">MVP分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#构架分析"><span class="nav-number">2.</span> <span class="nav-text">构架分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MVP-Loader-MVP-ContentProvider"><span class="nav-number">2.1.</span> <span class="nav-text">MVP+Loader/MVP+ContentProvider</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MVP-Databinding"><span class="nav-number">2.2.</span> <span class="nav-text">MVP+Databinding</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MVP-Dagger"><span class="nav-number">2.3.</span> <span class="nav-text">MVP+Dagger</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MVP-Clean构架"><span class="nav-number">2.4.</span> <span class="nav-text">MVP+Clean构架</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Clean学习"><span class="nav-number">2.4.1.</span> <span class="nav-text">Clean学习</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Clean基本思想"><span class="nav-number">2.4.2.</span> <span class="nav-text">Clean基本思想</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Clean的数据流"><span class="nav-number">2.4.3.</span> <span class="nav-text">Clean的数据流</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#几个注意点与疑惑"><span class="nav-number">2.4.4.</span> <span class="nav-text">几个注意点与疑惑</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">limuzhi</p>
+  <div class="site-description" itemprop="description">something about tech, android etc...</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muzhi1991" title="GitHub → https://github.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:muzhi1991@gmail.com" title="E-Mail → mailto:muzhi1991@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/muzhi1991" title="Twitter → https://twitter.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.chenyupeng.com/" title="https://www.chenyupeng.com/" rel="noopener" target="_blank">陈玉鹏的个人空间</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://macshuo.com/" title="http://macshuo.com/" rel="noopener" target="_blank">MacTalk</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">limuzhi</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'G5HLDFmPsllxIjax4F2JTLnl-gzGzoHsz',
+      appKey     : 'A5PTgbvpJwjPlcBJ3Brl8rDs',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

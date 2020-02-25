@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一万个人心中有一万个MVP，对MVP的理解千差万别，似乎也没有一个最权威的Demo来说明什么是MVP，求其是Android平台上（如果有，请告知）。至今最权威的资料可以说是这些：  MVP的原始资料：微软在.NET中使用的技术，偏向于WEB技术，不一定完全适用于移动开发。 android mvp ：github上star很多的关于Android中的MVP例子，入门教程。  一个mvp框架的实现：一">
+<meta name="keywords" content="Android,主框架">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android构架系列之二--MVP&amp;&amp;Clean理解与实践之MVP">
+<meta property="og:url" content="http://limuzhi.com/2016/05/02/Android构架系列之二-MVP&&Clean理解与实践之MVP/index.html">
+<meta property="og:site_name" content="Night Piece">
+<meta property="og:description" content="一万个人心中有一万个MVP，对MVP的理解千差万别，似乎也没有一个最权威的Demo来说明什么是MVP，求其是Android平台上（如果有，请告知）。至今最权威的资料可以说是这些：  MVP的原始资料：微软在.NET中使用的技术，偏向于WEB技术，不一定完全适用于移动开发。 android mvp ：github上star很多的关于Android中的MVP例子，入门教程。  一个mvp框架的实现：一">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://limuzhi.com/images/arch_mvp_supervising_presenter.png">
+<meta property="og:image" content="http://limuzhi.com/images/arch_MVP_and_MVC.jpg">
+<meta property="og:updated_time" content="2020-02-25T09:44:15.464Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android构架系列之二--MVP&amp;&amp;Clean理解与实践之MVP">
+<meta name="twitter:description" content="一万个人心中有一万个MVP，对MVP的理解千差万别，似乎也没有一个最权威的Demo来说明什么是MVP，求其是Android平台上（如果有，请告知）。至今最权威的资料可以说是这些：  MVP的原始资料：微软在.NET中使用的技术，偏向于WEB技术，不一定完全适用于移动开发。 android mvp ：github上star很多的关于Android中的MVP例子，入门教程。  一个mvp框架的实现：一">
+<meta name="twitter:image" content="http://limuzhi.com/images/arch_mvp_supervising_presenter.png">
+
+<link rel="canonical" href="http://limuzhi.com/2016/05/02/Android构架系列之二-MVP&&Clean理解与实践之MVP/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>Android构架系列之二--MVP&&Clean理解与实践之MVP | Night Piece</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Night Piece</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">white && black</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tools">
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-wrench"></i>利器</a>
+
+  </li>
+        <li class="menu-item menu-item-read">
+
+    <a href="/read/" rel="section"><i class="fa fa-fw fa-book"></i>阅读</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://limuzhi.com/2016/05/02/Android构架系列之二-MVP&&Clean理解与实践之MVP/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="limuzhi">
+      <meta itemprop="description" content="something about tech, android etc...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Night Piece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android构架系列之二--MVP&&Clean理解与实践之MVP
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-05-02 20:43:26" itemprop="dateCreated datePublished" datetime="2016-05-02T20:43:26+08:00">2016-05-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-25 17:44:15" itemprop="dateModified" datetime="2020-02-25T17:44:15+08:00">2020-02-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2016/05/02/Android构架系列之二-MVP&&Clean理解与实践之MVP/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2016/05/02/Android构架系列之二-MVP&&Clean理解与实践之MVP/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>一万个人心中有一万个MVP，对MVP的理解千差万别，似乎也没有一个最权威的Demo来说明什么是MVP，求其是Android平台上（如果有，请告知）。至今最权威的资料可以说是这些：</p>
+<ul>
+<li><a href="https://msdn.microsoft.com/en-us/library/ff649571.aspx" target="_blank" rel="noopener">MVP的原始资料</a>：微软在.NET中使用的技术，偏向于WEB技术，不一定完全适用于移动开发。</li>
+<li><a href="http://antonioleiva.com/mvp-android" target="_blank" rel="noopener">android mvp</a> ：github上star很多的关于Android中的MVP例子，入门教程。 </li>
+<li><a href="https://github.com/konmik/konmik.github.io/wiki/Introduction-to-Model-View-Presenter-on-Android" target="_blank" rel="noopener">一个mvp框架的实现</a>：一个被引用很多的mvp示例，讲解了MVP的好处，强调了数据恢复的问题。</li>
+<li>Google的MVP的demo</li>
+</ul>
+<p>关于MVP的学习路径，我推荐按照上面的顺序。微软的MVP在.Net中的应用虽然不是Java语言讲解的，但是对MVP设计思想讲解十分清晰，为什么这样设计，有哪些设计的变形，设计带来的好处与劣势都写的十分清晰。后面的几篇文章更倾向于MVP思想在Android平台上的具体应用。另外一篇国内文章<a href="http://www.jianshu.com/p/9a6845b26856" target="_blank" rel="noopener">Android MVP 详解（上）</a>总结很全，可以参考。</p>
+<h2 id="首先，MVP不是构架模式"><a href="#首先，MVP不是构架模式" class="headerlink" title="首先，MVP不是构架模式"></a>首先，MVP不是构架模式</h2><p><strong>MVP不是整个软件的构架模式（Architectural Pattern），而仅仅是表现层（Presentation）的构架模式。</strong>叫他设计模式也不是很恰当。</p>
+<ul>
+<li>MVP is a <strong>user interface</strong> architectural pattern.  — <a href="https://en.wikipedia.org/wiki/Model–view–presenter" target="_blank" rel="noopener">Wiki</a></li>
+<li>First thing to clarify is that MVP is not an architectural pattern, it’s only responsible for the presentation layer . — <a href="http://antonioleiva.com/mvp-android" target="_blank" rel="noopener">mvp-android</a></li>
+<li>MVP的命名中P即Presenter，往往翻译『主持者』，我觉得翻译成<strong>『展示者』或者『表现者』</strong>更恰当。</li>
+</ul>
+<h2 id="什么是MVP"><a href="#什么是MVP" class="headerlink" title="什么是MVP"></a>什么是MVP</h2><p>这个问题建议通读微软关于MVP讲解的文章。学习前可以先参考阮一峰先生的<a href="http://www.ruanyifeng.com/blog/2015/02/mvcmvp_mvvm.html" target="_blank" rel="noopener">这篇文章</a>。<br>之前我的理解：</p>
+<ul>
+<li>M层，即<code>model</code>，这里的Model理解成业务层，不仅仅负责数据部分，如网络请求、数据库，获取数据，还有<strong>业务逻辑</strong>。由于轻客户端的设计趋势，Model应当很薄。</li>
+<li>V层，即<code>view</code>，负责数据展示，Android的View或者Fragemnt</li>
+<li>P层，即<code>presenter</code>,<strong>是一切的主宰，是Master角色，它控制Model获取数据处理业务，再控制View的变化。</strong>即它本身不含业务逻辑，会去<strong>调用</strong>业务逻辑(Model)。</li>
+<li><strong>核心：M与V不直接交互数据，必须通过P</strong></li>
+<li>具体而言：V实现某个UIController接口，暴露自己实现的UI功能，如显示Progress等，P持有V的接口。V同时也会持有P，他们相互依赖（最好V/P都是通过接口依赖?）。</li>
+</ul>
+<p>现在理解，核心角度：<strong>哪里需要重用，哪里需要测试！</strong>。在MVP中，业务逻辑M，展示逻辑P需要测试，而View自身往往不是测试的主要目标，View更多的目标是可以重用。既开发中很多界面具有相似性。</p>
+<blockquote>
+<p>重用：一个View往往用在多个不同的模块中，比如ListView，自定义控件等。而Model与Presenter就不太会重用，开发新的模块往往是新写业务逻辑和展示逻辑，或者直接修改原来的业务逻辑达到目标。因而可测试对他们尤其重要！（使用Clean构架，业务逻辑也可以尽量重用）</p>
+</blockquote>
+<p>为什么这样设计：</p>
+<ul>
+<li>分离业务逻辑，代码清晰，分离的目的也是方便测试。</li>
+<li><strong>测试需要</strong>，这是强制的，MVP的核心思想，分离出业务逻辑方便测试，却是我一直忽略的，接口的设计往往是为测试服务的：<ul>
+<li>测试的目标是：业务逻辑，既Presenter与Model，由于Model很薄，所以Presenter是测试的重点。</li>
+<li>所以<strong>View层必须是接口设计</strong>，目的是在测试P时，可以用mockView代替真实的View，实现测试与View无关。</li>
+<li>Model中推荐使用Repository模式设计Model中的<strong>数据获取部分</strong>，可以使用Mock数据来测试，在Clean构架尤其明显。</li>
+</ul>
+</li>
+<li><p><strong>重用/复用需要</strong>，这不是强制的，如果有需要，可以开发可复用的View，那么要求与View绑定的数据也是抽象的，如果View与Presenter绑定，Presenter也必须是抽象的。如果Presenter与Model绑定（可能是ViewModel，或者是在MVP的变种中）那么Model最好也是接口设计。可以参考<a href="https://drakeet.me/mvp-and-thinking-in-android" target="_blank" rel="noopener">此文</a>。</p>
+<blockquote>
+<p>一个常见的需求：相同的界面，加载不同的数据</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="一些缺陷"><a href="#一些缺陷" class="headerlink" title="一些缺陷"></a>一些缺陷</h3><p>在微软的文档中也提到了MVP的一下缺点，我们可以参考：</p>
+<ol>
+<li><p>最重要的一个问题，MVP是面向前端Web开发的，他们具有Model很薄的特点，即业务逻辑应当尽量都放到Server中，主要的场景都是request and response，且请求是没有状态的（即下一个请求如果需求之前的数据，需要重新请求这些数据）。所以，<strong>在MVP的设计中通知机制被忽略了</strong>，即model无法主动修改Presenter，或者说一个Presenter修改了Model，无法通知另外一个Presenter知晓！解决办法：使用Events机制实现通知，微软推荐的是<a href="https://msdn.microsoft.com/en-us/library/ms978753.aspx" target="_blank" rel="noopener">Observer设计模式</a></p>
+<blockquote>
+<p><strong>在移动开发中并不是这样的！</strong>虽然使用场景不多但是还是需要的这种机制的。可以参考文章：<a href="https://github.com/livoras/blog/issues/11" target="_blank" rel="noopener">界面之下：还原真实的MV*模式</a>。<br>参考MVC中的通知方法实现是在M与V之间使用Observer机制，但是MVP，M与V必须解耦（V不能引用M），可以在M与P之间实现Observer，或者M用Event来通知P。</p>
+</blockquote>
+</li>
+<li><p>Presenter过于繁重，它需要操控很多元素。解决方案：通过设计可以避免，记住，Presenter只操控Model获取结果数据，Clean的设计体现了这一点。</p>
+</li>
+<li>在哪里创建组合Presenter与View呢？Google的Demo中推荐Activity，而Fragment作为View。其他方案中多在View中构造Presenter。</li>
+</ol>
+<p>我个人觉得的一些问题：</p>
+<ul>
+<li>待补充</li>
+<li>虽然理论上应当是薄Model的，但是实际中Model还是有相当部分的代码，P与M过于耦合，Model层如何测试，应当通过接口分离出Model，类似Clean</li>
+</ul>
+<h3 id="MVP的两种变体"><a href="#MVP的两种变体" class="headerlink" title="MVP的两种变体"></a>MVP的两种变体</h3><p>了解这两种遍体更能帮助我们清晰MVP中各个部分的职责与关系。<strong>十分有利于实践中我们代码的设计！</strong>本质上也是编程实现层面的问题。</p>
+<h4 id="Supervising-Presenter"><a href="#Supervising-Presenter" class="headerlink" title="Supervising Presenter"></a>Supervising Presenter</h4><p>一些逻辑简单的UI操作操作可能不需要使用Presenter来完成，比如更新一个name，同时修改model中一个变量，之间没有复杂的展示逻辑（注意Presenter只管展示逻辑）。我们不需要Presenter参与。同时项目中也有一些的UI逻辑的操作，如显示name，同时刷新并展示用户相关信息，这就需要Presenter参与。<br>因此，<strong>为了避免在某些情况下Presenter的”多余”，该模式中添加了Model与View的直接通路</strong>，类似于DataBinding。但是，注意对应的使用情景，见下图。<br><img src="/images/arch_mvp_supervising_presenter.png" alt></p>
+<h4 id="Passive-View"><a href="#Passive-View" class="headerlink" title="Passive View"></a>Passive View</h4><p>其实在MVP中View就是被动的了，Presenter是Master，这里的被动View是什么呢？因为，<strong>MVP中的View还是被动的不够完全</strong>。一个简单的程序逻辑如下：</p>
+<blockquote>
+<p>View.init()—&gt;Presenter.loadData—&gt;操作View的showData(参数是List)</p>
+</blockquote>
+<p>但是在Passive View中逻辑如下：</p>
+<blockquote>
+<p>View的构造函数中构造Presenter并把自己传入其中—&gt;Presenter的构造函数中调用view.init()—&gt;Presenter.loadData—&gt;在presenter中循环调用view.addItem(参数是一个子view)添加数据。</p>
+</blockquote>
+<p>可以看到这里的View完全被动了，更宽泛的说，在普通的MVP中View自己还可以调用一些展示逻辑，如在OnClick中show个Toast，但是在Passive View模式中，View只要吧onclick的event告知Presenter，然后Presenter来根据事件弹出Toast。<br>参考文章是<a href="http://www.cnblogs.com/wucj/archive/2013/05/24/3098153.html" target="_blank" rel="noopener">这篇</a>。</p>
+<h3 id="MVP与MVC"><a href="#MVP与MVC" class="headerlink" title="MVP与MVC"></a>MVP与MVC</h3><p>这里的MVP与MVC都是指的是<strong>客户端</strong>的构架！</p>
+<blockquote>
+<p>MVP/MVC都是对于有GUI界面而言的。web服务端的GUI界面在Browser中，对服务端而言只是一个接口/模板的存在，<strong>他们所说的MVC</strong>基本上就是客户端的MVP（更确切的说不应当叫MVC，应当叫<strong>Model2构架</strong>，<a href="http://blog.turn.tw/?p=1539" target="_blank" rel="noopener">参考此文</a>），因为它不符合MVC中关于<strong>View必须直接订阅Model</strong>的关系，而MVP/Model2中数据必须经过X中转。</p>
+</blockquote>
+<p><img src="/images/arch_MVP_and_MVC.jpg" alt><br>一言以蔽之，MVP与MVC都是分层的方法，其中最大的不同就是数据流向。</p>
+<ul>
+<li>MVP:V -&gt; P -&gt; M -&gt; P -&gt; V</li>
+<li>MVC:1.V向M注册自己(注意：V不能直接修改M）  2.V -&gt; C -&gt; M 3.M通知V</li>
+</ul>
+<h3 id="那MVVM呢"><a href="#那MVVM呢" class="headerlink" title="那MVVM呢"></a>那MVVM呢</h3><p><a href="https://msdn.microsoft.com/en-us/library/hh848246.aspx" target="_blank" rel="noopener">MVVP</a>中是讲MVP中的P换成了VM即ViewModel，特点是ViewModel与View会双向绑定，当View变换时，ViewModel会收到Notification，当ViewModel中值被修改时，View会自动显示这个变换（即ViewModel中的内容被映射到View中）<br>ViewModel即视图Model，职责是负责保存View的属性和状态和更新Model。<br>MVVM可以看做MVP的一个实现？吧V与P部分的逻辑写入了框架中，减少了程序员的工作。</p>
+<h2 id="Android中的MVP"><a href="#Android中的MVP" class="headerlink" title="Android中的MVP"></a>Android中的MVP</h2><h3 id="为什么要用？"><a href="#为什么要用？" class="headerlink" title="为什么要用？"></a>为什么要用？</h3><ul>
+<li>可行性，Android本质上是薄Model的，View与Model直接可以是类似于Request/Reponse之间的关系，保持无状态。因此可以使用MVP。</li>
+<li>业务逻辑解耦，代码可读性需要，将业务逻辑放入Model，将视图逻辑放入P，是代码可读性的需要。</li>
+<li>测试需要，十分重要的一点，通过MVP各层的接口设计，可以实现测试Mock的使用，方便视图逻辑与业务逻辑的测试。</li>
+</ul>
+<h3 id="额外的一个好处-—-后台线程问题解决"><a href="#额外的一个好处-—-后台线程问题解决" class="headerlink" title="额外的一个好处 — 后台线程问题解决"></a>额外的一个好处 — 后台线程问题解决</h3><p>这一点值得单独拿出来说，在Android中有这么一类问题：在配置改变/Activity重启时Activity会重新构建（各种情况参考<a href="https://github.com/konmik/konmik.github.io/wiki/Introduction-to-Model-View-Presenter-on-Android" target="_blank" rel="noopener">一个mvp框架的实现</a>），如果后台线程持有Activity的引用会导致Activity泄露，最常见的代码是，<code>new Thread(runnable)</code>中Runnable是非静态内部类，默认会隐式持有外部的Activity的引用（更不要说我们有时会显示的持有了），不知不觉中内存泄漏了。。</p>
+<p>当使用MVP模式开发时，线程操作应当在P中（或者P使用的M中），只要我们<strong>在Activity的<code>onDestroy()</code>中，清空Presenter持有的View的引用即可。</strong>或者，<strong>Presenter干脆持有的是View的弱引用</strong>，可以杜绝此类问题。</p>
+<h3 id="要处理的一个问题-—-Presenter的保持"><a href="#要处理的一个问题-—-Presenter的保持" class="headerlink" title="要处理的一个问题 — Presenter的保持"></a>要处理的一个问题 — Presenter的保持</h3><p>同样，Activty的销毁与恢复，引来了另外一个问题，我有时需要：</p>
+<ul>
+<li>配置改变时，保持Presenter并重新与View绑定。</li>
+<li>Activity销毁重建（如打开不保留回收）时，保持一些值到Bundle</li>
+</ul>
+<blockquote>
+<p>这不是必须的，在大多数情况下，在Activity重建时重新构造一个新的Presenter并重新绑定View，这并没有什么问题。</p>
+</blockquote>
+<p>我们不希望重新构建Presenter，而继续使用之前的，这样的好处是不需要重新启动线程，重头开始一些操作。一些思路如下：</p>
+<ul>
+<li>最简单：使用xxActivity的静态变量保持Presenter，Activity重建时判空，如果Presenter非空，重新绑定Activity即可。问题是：<ul>
+<li>什么时候清空Presenter？不能在onDestroy中清空，容易泄露Presenter，正确方式参考nucleus框架。</li>
+<li>一个Activity类只能有一个Presenter（如果你要启动多个相同的Activity只能共享Presenter）</li>
+</ul>
+</li>
+<li><p><a href="https://github.com/konmik/nucleus" target="_blank" rel="noopener">nucleus框架</a>：本质上和第一个相同，但是解决了上面的问题，他会在一个全局的静态池中保留所有的Presenter，配置改变时，Activity会维护自己持有的Presenter的ID（通过onSaveInstance，解决了上面第二个问题）但是不清空池子中的Presenter。而Activity销毁时会清空池中Presenter，重建时会使用保存的Bundle构建新的Presenter（通过onSaveInstance，Presenter也会有自己的Bundle）。</p>
+<blockquote>
+<p>注意:在改框架中是通过<code>Activity##isChangingConfigurations()</code>来判断是否是配置改变的情况。</p>
+</blockquote>
+</li>
+<li><p>使用Activity的Fragment setRetainInstance(true)来在<strong>配置改变时</strong>保持Presenter，问题：必须是Fragment的成员变量，<strong>在Activity重建时无法保持Presenter</strong>，需要自己实现类似bundle的功能恢复Presneter。</p>
+</li>
+<li>使用Android Loader机制：本质上setRetainInstance内部就是使用的此方法，使用自定义Loader保持Presenter可以应用在Activity，View任何场合。问题：与上面的类似，在Activity重建时无法保持Presenter。</li>
+</ul>
+<p>综上，大部分情况下，可能Presenter并不需要保持，我们无需使用任何手段，只需确保Presenter的逻辑正确。对于有需要的场合（如含有后台线程，频繁转动屏幕引起问题），<strong>个人建议使用Fragment保持机制最为简单可行</strong>（这也是Google Demo的作法）。</p>
+<h3 id="争论：谁是P"><a href="#争论：谁是P" class="headerlink" title="争论：谁是P"></a>争论：谁是P</h3><p>由于Android中Activity等控件特殊性（如具有生命周期），有很多的MVP实现使用Activity、Fragment、Adapter作为Presenter。Android中其他的View（ViewGroup）作为V，这样的好处是Presenter自带生命周期，使用是否方便。<br>但是，个人认为这个方法有可借鉴之处，但是并不好理解，没有单独一个Presenter类更加直观，并不适合实际使用。同样我们参考Google demo中的实现，使用了另外一种方案：<strong>建议使用单独的Presenter类，Fragment作为View，而Activity是构建和结合他们的地方</strong>。（强调必须使用Fragment，即使只有一个页面）。这种方式是可选的，职责清晰，虽然所有的Activity必须有Fragment麻烦了一点，这个代价还是值得的。</p>
+<h2 id="纯MVP实践—参考Google代码"><a href="#纯MVP实践—参考Google代码" class="headerlink" title="纯MVP实践—参考Google代码"></a>纯MVP实践—参考Google代码</h2><p>并不想贴自己的代码，毕竟没有Google的优雅，尤其是在细节地方，建议大家都参考<a href="https://github.com/googlesamples/android-architecture" target="_blank" rel="noopener">google的官方demo</a>的MVP分支。总结一下：</p>
+<ul>
+<li>View — Fragment、View 与 xxxContract.View接口</li>
+<li>Presenter — xxxPresenter与xxxContract.Presenter接口</li>
+<li>Model — xxxRepository，Model的内部实现以后再讲，也是接口分离各个数据来源。</li>
+<li>Activity — <strong>组合器</strong>,the overall controller that creates and connects views and presenters.</li>
+<li>xxxContract — <strong>契约类</strong>，每个业务都有，里面有View和Presenter一对接口，这种设计逻辑十分清晰，可以借鉴。</li>
+</ul>
+<h2 id="遗留问题"><a href="#遗留问题" class="headerlink" title="遗留问题"></a>遗留问题</h2><p>listview Adapter的MVP设计 — 在疑问解答中说明<br>Model的内部实现与缓存设计 — 单独文章</p>
+<h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><ul>
+<li><p><a href="https://github.com/livoras/blog/issues/11" target="_blank" rel="noopener">界面之下：还原真实的MV*模式</a>：我见过的最清晰的描述MVX文章</p>
+<blockquote>
+<ul>
+<li>MVC中保持了依赖同一块Model的不同View显示数据的实时性和准确性</li>
+<li>总结了各个模式的优缺点</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>至此，MVP的问题基本说明白了，参考了原始资料，加入自己的理解。但是，还是建议以原始资料学习最佳，一万个人心中有一万个MVP，每个人的理解可能均不相同。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+            <div class="social-item">
+              <a target="_blank" class="social-link" href="https://t.me/mltalk">
+                <span class="icon">
+                  <i class="fa fa-telegram"></i>
+                </span>
+
+                <span class="label">机器学习碎碎念</span>
+              </a>
+            </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Android/" rel="tag"># Android</a>
+              <a href="/tags/主框架/" rel="tag"># 主框架</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/04/17/Android构架系列之二-MVP&&Clean理解与实践之疑问/" rel="prev" title="Android构架系列之二--MVP&&Clean理解与实践之疑问">
+      <i class="fa fa-chevron-left"></i> Android构架系列之二--MVP&&Clean理解与实践之疑问
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2016/05/08/Android构架系列之二-MVP&&Clean理解与实践之Clean/" rel="next" title="Android构架系列之二--MVP&&Clean理解与实践之Clean">
+      Android构架系列之二--MVP&&Clean理解与实践之Clean <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#首先，MVP不是构架模式"><span class="nav-number">1.</span> <span class="nav-text">首先，MVP不是构架模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是MVP"><span class="nav-number">2.</span> <span class="nav-text">什么是MVP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#一些缺陷"><span class="nav-number">2.1.</span> <span class="nav-text">一些缺陷</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MVP的两种变体"><span class="nav-number">2.2.</span> <span class="nav-text">MVP的两种变体</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Supervising-Presenter"><span class="nav-number">2.2.1.</span> <span class="nav-text">Supervising Presenter</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Passive-View"><span class="nav-number">2.2.2.</span> <span class="nav-text">Passive View</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MVP与MVC"><span class="nav-number">2.3.</span> <span class="nav-text">MVP与MVC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#那MVVM呢"><span class="nav-number">2.4.</span> <span class="nav-text">那MVVM呢</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Android中的MVP"><span class="nav-number">3.</span> <span class="nav-text">Android中的MVP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么要用？"><span class="nav-number">3.1.</span> <span class="nav-text">为什么要用？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#额外的一个好处-—-后台线程问题解决"><span class="nav-number">3.2.</span> <span class="nav-text">额外的一个好处 — 后台线程问题解决</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#要处理的一个问题-—-Presenter的保持"><span class="nav-number">3.3.</span> <span class="nav-text">要处理的一个问题 — Presenter的保持</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#争论：谁是P"><span class="nav-number">3.4.</span> <span class="nav-text">争论：谁是P</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#纯MVP实践—参考Google代码"><span class="nav-number">4.</span> <span class="nav-text">纯MVP实践—参考Google代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#遗留问题"><span class="nav-number">5.</span> <span class="nav-text">遗留问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#补充"><span class="nav-number">6.</span> <span class="nav-text">补充</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">7.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">limuzhi</p>
+  <div class="site-description" itemprop="description">something about tech, android etc...</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muzhi1991" title="GitHub → https://github.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:muzhi1991@gmail.com" title="E-Mail → mailto:muzhi1991@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/muzhi1991" title="Twitter → https://twitter.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.chenyupeng.com/" title="https://www.chenyupeng.com/" rel="noopener" target="_blank">陈玉鹏的个人空间</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://macshuo.com/" title="http://macshuo.com/" rel="noopener" target="_blank">MacTalk</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">limuzhi</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'G5HLDFmPsllxIjax4F2JTLnl-gzGzoHsz',
+      appKey     : 'A5PTgbvpJwjPlcBJ3Brl8rDs',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

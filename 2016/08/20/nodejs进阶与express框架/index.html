@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 3.9.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"limuzhi.com","root":"/","scheme":"Mist","version":"7.7.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="本篇介绍后台开发的常用技术与概念，以Node.js的Express框架为例，Express是Node.js上最流行的开发框架，十分轻量，提供了一套方便开发的工具方法。当前使用最多的是Express4.0版本。  Express太轻，叫他框架都有点不合适。个人认为框架的特点是我们编写的代码被框架调用，而Express只是提供了一套便捷的API与相关中间件。  学习资料：">
+<meta name="keywords" content="javascript,nodejs,后台开发">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Node.js进阶与Express框架及知识图谱">
+<meta property="og:url" content="http://limuzhi.com/2016/08/20/nodejs进阶与express框架/index.html">
+<meta property="og:site_name" content="Night Piece">
+<meta property="og:description" content="本篇介绍后台开发的常用技术与概念，以Node.js的Express框架为例，Express是Node.js上最流行的开发框架，十分轻量，提供了一套方便开发的工具方法。当前使用最多的是Express4.0版本。  Express太轻，叫他框架都有点不合适。个人认为框架的特点是我们编写的代码被框架调用，而Express只是提供了一套便捷的API与相关中间件。  学习资料：">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-02-25T09:44:15.468Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Node.js进阶与Express框架及知识图谱">
+<meta name="twitter:description" content="本篇介绍后台开发的常用技术与概念，以Node.js的Express框架为例，Express是Node.js上最流行的开发框架，十分轻量，提供了一套方便开发的工具方法。当前使用最多的是Express4.0版本。  Express太轻，叫他框架都有点不合适。个人认为框架的特点是我们编写的代码被框架调用，而Express只是提供了一套便捷的API与相关中间件。  学习资料：">
+
+<link rel="canonical" href="http://limuzhi.com/2016/08/20/nodejs进阶与express框架/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>Node.js进阶与Express框架及知识图谱 | Night Piece</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Night Piece</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">white && black</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-tools">
+
+    <a href="/tools/" rel="section"><i class="fa fa-fw fa-wrench"></i>利器</a>
+
+  </li>
+        <li class="menu-item menu-item-read">
+
+    <a href="/read/" rel="section"><i class="fa fa-fw fa-book"></i>阅读</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-fw fa-heartbeat"></i>公益 404</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://limuzhi.com/2016/08/20/nodejs进阶与express框架/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="limuzhi">
+      <meta itemprop="description" content="something about tech, android etc...">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Night Piece">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Node.js进阶与Express框架及知识图谱
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-08-20 16:00:12" itemprop="dateCreated datePublished" datetime="2016-08-20T16:00:12+08:00">2016-08-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-25 17:44:15" itemprop="dateModified" datetime="2020-02-25T17:44:15+08:00">2020-02-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/全栈/" itemprop="url" rel="index"><span itemprop="name">全栈</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2016/08/20/nodejs进阶与express框架/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2016/08/20/nodejs进阶与express框架/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>本篇介绍后台开发的常用技术与概念，以Node.js的Express框架为例，Express是Node.js上最流行的开发框架，十分轻量，提供了一套方便开发的工具方法。当前使用最多的是Express4.0版本。</p>
+<blockquote>
+<p>Express太轻，叫他框架都有点不合适。个人认为框架的特点是我们编写的代码被框架调用，而Express只是提供了一套便捷的API与相关中间件。</p>
+</blockquote>
+<p>学习资料：</p>
+<ul>
+<li><a href="http://javascript.ruanyifeng.com/nodejs/express.html" target="_blank" rel="noopener">Express教程</a></li>
+<li><a href="https://github.com/alsotang/node-lessons" target="_blank" rel="noopener">nodejs实践，包教不包会</a></li>
+<li><a href="http://expressjs.com/zh-cn/" target="_blank" rel="noopener">官网</a>：安全最佳实践和性能最佳实践两篇文章不错</li>
+</ul>
+<p>知识图谱：<a href="/files/nodejs进阶与express知识图谱.mindnode">nodejs进阶与Express知识图谱</a>，尽量在其他技术上也可以<strong>通用</strong>。</p>
+<h2 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h2><h3 id="生成项目—express-generator"><a href="#生成项目—express-generator" class="headerlink" title="生成项目—express-generator"></a>生成项目—express-generator</h3><p>该工具会自动生成Express工程目录，安装mvc的结构新建一些目录</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"> npm install express-generator -g</span><br><span class="line"> express myapp</span><br><span class="line"> </span><br><span class="line"> .</span><br><span class="line">├── app.js <span class="comment">// 主文件，设置中间件间，被www调用</span></span><br><span class="line">├── bin</span><br><span class="line">│   └── www <span class="comment">// 启动脚本，建立了一个server，监听了端口，不用这个启动就自己写在app.js中，更清晰。</span></span><br><span class="line">├── package.json</span><br><span class="line">├── public <span class="comment">// 静态资源</span></span><br><span class="line">│   ├── images</span><br><span class="line">│   ├── javascripts</span><br><span class="line">│   └── stylesheets</span><br><span class="line">│       └── style.css</span><br><span class="line">├── routes <span class="comment">// 路由，设置了一堆get post方法的路由</span></span><br><span class="line">│   ├── index.js</span><br><span class="line">│   └── users.js</span><br><span class="line">└── views <span class="comment">// html或者模板文件，这里用的jade</span></span><br><span class="line">    ├── error.jade</span><br><span class="line">    ├── index.jade</span><br><span class="line">    └── layout.jade</span><br></pre></td></tr></table></figure>
+<h3 id="启动服务"><a href="#启动服务" class="headerlink" title="启动服务"></a>启动服务</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> express = <span class="built_in">require</span>(<span class="string">'express'</span>);</span><br><span class="line"><span class="keyword">var</span> app = express();</span><br><span class="line"><span class="comment">// 一个内置的中间件，处理静态资源</span></span><br><span class="line">app.use(express.static(__dirname + <span class="string">'/public'</span>));</span><br><span class="line"><span class="comment">// 这里设置其他中间件。。</span></span><br><span class="line"><span class="comment">// 这里设置路由。。</span></span><br><span class="line"><span class="comment">// 监听端口</span></span><br><span class="line">app.listen(<span class="number">8080</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="路由设置"><a href="#路由设置" class="headerlink" title="路由设置"></a>路由设置</h3><p>本质也是中间件，安装路径分发请求</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">app.get(<span class="string">'/'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">req, res</span>) </span>&#123;</span><br><span class="line">  res.send(<span class="string">'Hello World!'</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h3 id="响应请求"><a href="#响应请求" class="headerlink" title="响应请求"></a>响应请求</h3><p>这里的req和res和Nodejs原生的<strong>相同</strong>，只是在我们添加了一些中间件之后，req中会多一些变量，帮助我们处理请求。可以在不涉及 Express 的情况下调用 <code>req.pipe()</code>、<code>req.on(&#39;data&#39;, callback)</code> 和要执行的其他任何函数，如<code>res.end()</code>等。</p>
+<p>Express添加了一些便捷方法</p>
+<ul>
+<li><a href="http://expressjs.com/zh-cn/api.html#req" target="_blank" rel="noopener">请求req</a>中：<ul>
+<li><code>req.params</code>：路由中定义的参数</li>
+<li><code>req.query</code>：问号后面参数</li>
+<li><code>req.body</code>：</li>
+<li><code>req.cookies</code></li>
+</ul>
+</li>
+<li><a href="http://expressjs.com/zh-cn/api.html#res" target="_blank" rel="noopener">返回res</a>中：<ul>
+<li><code>res.status(200)</code>设置header中的状态码的便捷方法。</li>
+<li><code>res.send(&quot;xxx&quot;);</code>返回json，text结果，比较常用，自动设置Content-Type，内部包含end。<a href="http://expressjs.com/zh-cn/api.html#res.send" target="_blank" rel="noopener">参考</a></li>
+<li><code>res.render();</code>:渲染视图，返回html，内部包含end。</li>
+<li><code>res.sendfile()</code>:依据文件扩展名设置Content-Type。如直接返回网页。内部包含end。</li>
+</ul>
+</li>
+</ul>
+<h3 id="一般中间件"><a href="#一般中间件" class="headerlink" title="一般中间件"></a>一般中间件</h3><p>中间件会被链式调用，处理请求</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 定义中间件</span></span><br><span class="line"><span class="keyword">var</span> myLogger = <span class="function"><span class="keyword">function</span> (<span class="params">req, res, next</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'LOGGED'</span>);</span><br><span class="line">  next(); <span class="comment">// 如果不调用，表示结束，不会启动下个中间件</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// next 带参数表示错误</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">uselessMiddleware</span>(<span class="params">req, res, next</span>) </span>&#123;</span><br><span class="line">  next(<span class="string">'出错了！'</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">uselessMiddleware</span>(<span class="params">req, res, next</span>) </span>&#123;</span><br><span class="line">  res.end(<span class="string">"ending..."</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 使用中间件</span></span><br><span class="line">app.use(someMiddleware);</span><br><span class="line">app.use(<span class="string">'/path'</span>, someMiddleware);</span><br><span class="line"><span class="comment">// 其他</span></span><br><span class="line">app.all(<span class="string">"*"</span>,someMiddleware);<span class="comment">// 所有请求都会调用</span></span><br><span class="line">app.get(<span class="string">"*"</span>,someMiddleware);<span class="comment">// get请求会调用，Express还提供post、put、delete方法</span></span><br><span class="line"><span class="comment">// 除了绝对匹配以外，Express允许模式匹配，参加文档</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用第三方库</span></span><br><span class="line"><span class="keyword">var</span> bodyParser = <span class="built_in">require</span>(<span class="string">'body-parser'</span>); </span><br><span class="line">app.use(bodyParser.json(&#123;<span class="attr">limit</span>: <span class="string">'1mb'</span>&#125;));</span><br></pre></td></tr></table></figure>
+<h3 id="错误处理"><a href="#错误处理" class="headerlink" title="错误处理"></a>错误处理</h3><p>在其他 <code>app.use()</code> 和路由调用之后，<strong>最后定义</strong>错误处理中间件</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 与其他中间件不同，它有四个参数，第一个是error</span></span><br><span class="line">app.use(<span class="function"><span class="keyword">function</span>(<span class="params">err, req, res, next</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.error(err.stack);</span><br><span class="line">  res.status(<span class="number">500</span>).send(<span class="string">'Something broke!'</span>);</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// 可以定义多个错误处理中间件</span></span><br></pre></td></tr></table></figure>
+<h3 id="模板引擎的使用"><a href="#模板引擎的使用" class="headerlink" title="模板引擎的使用"></a>模板引擎的使用</h3><ul>
+<li><code>views</code>：模板文件所在目录。例如：<code>app.set(&#39;views&#39;, &#39;./views&#39;)</code></li>
+<li><code>view engine</code>：要使用的模板引擎。例如：<code>app.set(&#39;view engine&#39;, &#39;jade&#39;)</code></li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 默认这个目录下面</span></span><br><span class="line"><span class="comment">// app.set('views', './views')</span></span><br><span class="line"><span class="comment">// 设置这个之后，下面的render不用在.jade的后缀了。同理，也可以设置html</span></span><br><span class="line">app.set(<span class="string">'view engine'</span>, <span class="string">'jade'</span>);</span><br><span class="line"></span><br><span class="line">app.get(<span class="string">'/'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">req, res</span>) </span>&#123;</span><br><span class="line">  res.render(<span class="string">'index'</span>, &#123; <span class="attr">title</span>: <span class="string">'Hey'</span>, <span class="attr">message</span>: <span class="string">'Hello there!'</span>&#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>jade是一种格式的模板引擎，注意是服务端渲染使用，它的语法与html不同，感觉不如ejs，还是保留原始的html比较好。</p>
+</blockquote>
+<h2 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h2><h3 id="中间件"><a href="#中间件" class="headerlink" title="中间件"></a>中间件</h3><p>这个概念在后台十分广泛，广义上的中间件是任何在系统中通用的组件，比如在分布式系统中的消息队列，缓存系统，配置管理系统，soa治理系统，都可以称之为中间件。这里的中间件也有通用的含义，如对http的结果的预处理（body解析，路由）。</p>
+<p>nodejs中的中间件是使用的connect库，深入学习<a href="https://github.com/alsotang/node-lessons/tree/master/lesson18" target="_blank" rel="noopener">https://github.com/alsotang/node-lessons/tree/master/lesson18</a></p>
+<h3 id="路由"><a href="#路由" class="headerlink" title="路由"></a>路由</h3><p>通俗的说就是对请求地址的分发，按照地址路由给某个方法来处理。因此需要一些正则表达式的知识。</p>
+<p>多个函数处理一个路由</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">app.get(<span class="string">'/example/b'</span>, <span class="function"><span class="keyword">function</span> <span class="params">(req, res, next)</span></span> &#123;</span><br><span class="line">  console.<span class="built_in">log</span>(<span class="string">'the response will be sent by the next function ...'</span>);</span><br><span class="line">  <span class="built_in">next</span>();</span><br><span class="line">&#125;, <span class="function"><span class="keyword">function</span> <span class="params">(req, res)</span></span> &#123;</span><br><span class="line">  res.send(<span class="string">'Hello from B!'</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>链式处理的便捷方法 app.route(‘/book’)</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">app.route(<span class="string">'/book'</span>)</span><br><span class="line">  .get(<span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123; <span class="comment">// 对book的get方法处理</span></span><br><span class="line">    res.send(<span class="string">'Get a random book'</span>);</span><br><span class="line">  &#125;)</span><br><span class="line">  .post(<span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123; <span class="comment">// 对book的post方法处理</span></span><br><span class="line">    res.send(<span class="string">'Add a book'</span>);</span><br><span class="line">  &#125;)</span><br><span class="line">  .put(<span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123; <span class="comment">// 对book的put方法处理</span></span><br><span class="line">    res.send(<span class="string">'Update the book'</span>);</span><br><span class="line">  &#125;);</span><br></pre></td></tr></table></figure>
+<p>Express的Router方法可以模块化的处理路由</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> express = <span class="built_in">require</span>(<span class="string">'express'</span>);</span><br><span class="line"><span class="keyword">var</span> router = express.Router();</span><br><span class="line"><span class="comment">// middleware that is specific to this router</span></span><br><span class="line">router.use(<span class="function"><span class="keyword">function</span> <span class="title">timeLog</span>(<span class="params">req, res, next</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'Time: '</span>, <span class="built_in">Date</span>.now());</span><br><span class="line">  next();</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// define the home page route</span></span><br><span class="line">router.get(<span class="string">'/'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123;</span><br><span class="line">  res.send(<span class="string">'Birds home page'</span>);</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// define the about route</span></span><br><span class="line">router.get(<span class="string">'/about'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">req, res</span>) </span>&#123;</span><br><span class="line">  res.send(<span class="string">'About birds'</span>);</span><br><span class="line">&#125;);</span><br><span class="line"><span class="built_in">module</span>.exports = router;</span><br><span class="line"></span><br><span class="line"><span class="comment">//////////////////////其他文件///////////////////////</span></span><br><span class="line"><span class="keyword">var</span> birds = <span class="built_in">require</span>(<span class="string">'./birds'</span>);</span><br><span class="line">app.use(<span class="string">'/birds'</span>, birds); <span class="comment">// 对/birds/xxx的路由</span></span><br></pre></td></tr></table></figure>
+<h3 id="模板引擎与render"><a href="#模板引擎与render" class="headerlink" title="模板引擎与render"></a>模板引擎与render</h3><p>渲染一个常用的概念，主要用来对前端界面（html）的填值处理。渲染分为<strong>服务端渲染</strong>和<strong>客户端渲染</strong>。</p>
+<ul>
+<li>服务端：有服务器处理模板文件，生成填值后的html文件，返回给客户端。优点是客户端一次请求就是结果，渲染工作在服务端，客户端性能较好。缺点也很明显，这些值只能一次更新的，<strong>如果要刷新，必须刷新整个页面</strong>。</li>
+<li>客户端：客户端请求的就是含义模板信息的html文件，使用ajax请求接口返回动态信息（类似app）。然后调用模块引擎库（客户端js工具方法）填值。有点是可以不刷新页面更新值，缺点是必须发起多此请求，需要做好过渡效果处理。</li>
+<li>两种结合：<strong>只有载入时更新的值用服务端渲染，动态更新的值用客户端渲染。</strong></li>
+</ul>
+<p>模板引擎是渲染填值的工具，如jade主要用于服务端，ejs两端通用，可以<strong>深入学习ejs的使用方法，和它的一些概念如layout模板</strong>等。</p>
+<h3 id="异步控制方法与回调地狱"><a href="#异步控制方法与回调地狱" class="headerlink" title="异步控制方法与回调地狱"></a>异步控制方法与回调地狱</h3><ul>
+<li>promise</li>
+<li>事件订阅与发布—eventproxy</li>
+<li>异步流程控制—async：要求用户传入待执行的函数列表，记为funlist。流程控制库的任务是让这些函数 <strong>顺序执行</strong> 。</li>
+</ul>
+<h2 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h2><p>下面的总结有些乱，可以参考知识图谱梳理。</p>
+<h3 id="登录"><a href="#登录" class="headerlink" title="登录"></a>登录</h3><h4 id="授权登录oAuth2-0（第三方登录）"><a href="#授权登录oAuth2-0（第三方登录）" class="headerlink" title="授权登录oAuth2.0（第三方登录）"></a>授权登录oAuth2.0（第三方登录）</h4><ul>
+<li>理解什么是：<ul>
+<li>oAuth流程，为什么是两步？<a href="http://www.tianmaying.com/tutorial/oAuth-login" target="_blank" rel="noopener">http://www.tianmaying.com/tutorial/oAuth-login</a></li>
+<li>各种oauth授权方式汇总：<a href="http://www.ruanyifeng.com/blog/2014/05/oauth_2_0.html" target="_blank" rel="noopener">http://www.ruanyifeng.com/blog/2014/05/oauth_2_0.html</a></li>
+</ul>
+</li>
+<li>理解oauth中的token：见jwt</li>
+</ul>
+<h4 id="jwt"><a href="#jwt" class="headerlink" title="jwt"></a><a href="http://blog.rainy.im/2015/06/10/react-jwt-pretty-good-practice/" target="_blank" rel="noopener">jwt</a></h4><ul>
+<li><a href="https://www.zhihu.com/question/20274730" target="_blank" rel="noopener">理解token</a><ul>
+<li>token本身只是某些信息的base64+rsa的验签（不防查看，防止修改）</li>
+<li>为了防止token泄露，传输需要加密（https）</li>
+</ul>
+</li>
+<li>区别token和sessionid，token包含信息（可查看，不可修改，思考应该包括什么，不应该包括什么，回放攻击），session就是会话id，信息在内存中，因此占内存。使用范围也不同，<strong>一个无状态（只负责授权）一个有状态（授权和关联会话信息）。</strong><ul>
+<li><a href="http://security.stackexchange.com/questions/81756/session-authentication-vs-token-authentication" target="_blank" rel="noopener">http://security.stackexchange.com/questions/81756/session-authentication-vs-token-authentication</a></li>
+</ul>
+</li>
+</ul>
+<h4 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h4><ul>
+<li>扩展：这是一个有意思的问题，是web与app跨界的地方，以前web（browser）是server为主的构架（可能是因为js不好用，browser只负责展示），所以用sessionId这种东西。现在App或者h5（RESTful），用更多主动权与业务逻辑，所有token这种客户端为主的技术广泛应用。xxx为主是谁维护状态，谁写业务逻辑。</li>
+<li>防止xxx泄露：指的是防止传输过程泄露，客户端泄露无能为力。<ul>
+<li>防止token泄露，参考oauth2.0的第二次请求（https传输）</li>
+<li>防止sessionId泄露，使用https</li>
+</ul>
+</li>
+</ul>
+<h3 id="MemCache-Redis"><a href="#MemCache-Redis" class="headerlink" title="MemCache Redis"></a>MemCache Redis</h3><p>memcache、redis为什么是必须的<br>由于应用程序实例作为单独的进程运行，因此它们不会<strong>共享同一内存空间</strong>。也就是说，对象位于应用程序每个实例的本地。因此，无法在应用程序代码中保存状态。然而，可以使用 Redis 之类的内存中数据存储器来存储与会话相关的数据和状态。此警告适用于几乎所有形式的水平扩展（无论是多个进程的集群还是多个物理服务器的集群）<br>对于负载均衡功能，可能必须确保与特定会话标识关联的请求连接到产生请求的进程。这称为会话亲缘关系或者粘性会话，可通过以上的建议来做到这一点：将 Redis 之类的数据存储器用于会话数据（取决于您的应用程序）。</p>
+<h3 id="数据库"><a href="#数据库" class="headerlink" title="数据库"></a>数据库</h3><p>mongodb hbase mysql 常见的数据库和应用场景<br>mongodb：不支持表 join，事务，schema-less(应用场景：log）<br>mongodb 和 mysql 要我选的话，无关紧要的应用我会选择 mongodb，就当个简单的存 json 数据的数据库来用；如果是线上应用，肯定还是会选择 mysql。毕竟 sql 比较成熟，而且各种常用场景的最佳实践都有先例了。</p>
+<ul>
+<li>数据库存储方式：<a href="https://www.ibm.com/developerworks/community/blogs/IBMi/entry/database?lang=en" target="_blank" rel="noopener">行存储与列存储</a></li>
+<li>数据库分片：sharding</li>
+</ul>
+<h3 id="多进程与进程管理"><a href="#多进程与进程管理" class="headerlink" title="多进程与进程管理"></a>多进程与进程管理</h3><p>nodejs是单线程的，一个进程中只有一个主线程，因此无法发挥多核CPU的优势。解决方法是<strong>启动多个nodejs实例</strong>，即一个程序启动多个相同的进程。这就需要一个中介来<strong>分发请求</strong>和<strong>管理进程的生命周期</strong>。常用的管理方式有</p>
+<ul>
+<li>最原始：使用nodejs的cluster模块写代码自己管理</li>
+<li>第三方工具<ul>
+<li>PM2</li>
+<li><a href="http://expressjs.com/zh-cn/advanced/pm.html#sl" target="_blank" rel="noopener">StrongLoop Process Manager</a> 供全面的运行时和部署解决方案的唯一工具？</li>
+</ul>
+</li>
+</ul>
+<p>多进程带来的问题，如何进程间通讯，共享内存变量（如session），这就引入了redis或者memcache这些分布式缓存。</p>
+<blockquote>
+<p>一个典型的场景：登录请求第一次被分配到A实例，缓存了一些值（如sessionId和对应的值，如登录成功），第二次请求被分配到B实例，由于它没有缓存的值，sessionId找不到，又被判定为未登录</p>
+</blockquote>
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><ul>
+<li>开发测试—测试驱动开发<ul>
+<li>服务端js mocha，should，istanbul（测试覆盖率）</li>
+<li>客户端js mocha，chai，phantomjs</li>
+</ul>
+</li>
+<li>性能测试 benchmark  <ul>
+<li>benchmark.js 库</li>
+</ul>
+</li>
+</ul>
+<h3 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h3><ul>
+<li>线上部署，一些pass云平台部署应用</li>
+<li>持续集成travis—代码提交后自动运行测试和构建，并生成报告</li>
+</ul>
+<h3 id="cookie与session"><a href="#cookie与session" class="headerlink" title="cookie与session"></a><a href="https://github.com/alsotang/node-lessons/tree/master/lesson16" target="_blank" rel="noopener">cookie与session</a></h3><p>HTTP 是一个无状态协议，所以客户端每次发出请求时，Server下一次请求无法得知上一次请求所包含的状态数据。两种方案解决这个问题。（重点：<strong>Server需要这些信息，来逻辑处理</strong>）</p>
+<ul>
+<li>cookies 在请求header中暂存这些信息，传给Client后，<strong>原封不动</strong>的回传给Server。（以前一直认为cookie是客户端用的）达到记录状态的目的<ul>
+<li>优势：方便，逻辑简单</li>
+<li>问题：1.值被篡改。2.关键数据来回传送不安全。3.非流量，占网速。4.回放攻击问题。</li>
+</ul>
+</li>
+<li>session cookie中只传输一个ID，类似于临时用户的概念，代表了与之相关的一组信息。<ul>
+<li>优势：相对安全，不用来回传关键数据，流量少，无回放攻击</li>
+<li>问题：sessionID泄露，还是会泄露信息。</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>这两种技术都是在服务端解决http无状态的问题的方案，且主要用在浏览器中（有cookies实现），其思想可以通用，</p>
+<p>另外一种是Token授权，主要是客户端的授权。这个技术往往用在由客户端维持状态，服务端仅仅提供无状态的服务的场景。（客户端凭token获取服务）</p>
+</blockquote>
+<ul>
+<li>sessionId最重要特征：不可修改性！，最担心的问题session泄露（劫持）</li>
+<li>signedCookies：对cookie进行加盐算hash，那么cookies可查看但是防止修改。</li>
+</ul>
+<h3 id="安全"><a href="#安全" class="headerlink" title="安全"></a>安全</h3><ul>
+<li>常见的攻击：<ul>
+<li>回放攻击</li>
+<li><a href="http://www.cnblogs.com/hyddd/archive/2009/04/09/1432744.html" target="_blank" rel="noopener">csrf攻击</a>：跨站请求伪造（Cross-site request forgery）</li>
+<li><a href="http://blog.csdn.net/ghsau/article/details/17027893" target="_blank" rel="noopener">XSS</a>：跨站脚本（Cross-site scripting），在网页输入中嵌入脚本<ul>
+<li>dom based</li>
+<li>stored xss：发帖存储相关代码</li>
+</ul>
+</li>
+<li>中间人攻击：实现会话劫持</li>
+</ul>
+</li>
+<li>攻击的基本思想<ul>
+<li>利用cookies：<ul>
+<li>非法获取：xss可以读取cookies，获取用户信息</li>
+<li>模拟某个请求浏览器会自动带上cookies（csrf）</li>
+</ul>
+</li>
+<li>在外部（恶意）网站模拟被攻击网站<ul>
+<li>虽然浏览器禁止跨域访问，但是还是可以通过其他方法访问<ul>
+<li><code>&lt;img/&gt;</code>的src</li>
+<li><code>&lt;scropt&gt;</code>的src</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>预防<ul>
+<li>保护好cookies<ul>
+<li>使用http-only</li>
+</ul>
+</li>
+<li>防止非法代码注入xss<ul>
+<li>对输入校验</li>
+<li>统一对输入encode，防止嵌入<code>&lt;/script&gt;</code></li>
+</ul>
+</li>
+<li>防止csrf<ul>
+<li>对请求来源进行验证—下发表单时加入hide input包含csrf token，确保以后提交的表单是自己下发的，不是伪造的。</li>
+</ul>
+</li>
+<li>中间人攻击：https</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+            <div class="social-item">
+              <a target="_blank" class="social-link" href="https://t.me/mltalk">
+                <span class="icon">
+                  <i class="fa fa-telegram"></i>
+                </span>
+
+                <span class="label">机器学习碎碎念</span>
+              </a>
+            </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/javascript/" rel="tag"># javascript</a>
+              <a href="/tags/nodejs/" rel="tag"># nodejs</a>
+              <a href="/tags/后台开发/" rel="tag"># 后台开发</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/08/07/nodejs基础学习与知识图谱/" rel="prev" title="Node.js基础学习与知识图谱">
+      <i class="fa fa-chevron-left"></i> Node.js基础学习与知识图谱
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2016/08/28/nodejs&&express实践-nodeclub项目分析/" rel="next" title="Node.js&&Express实践-nodeclub项目分析">
+      Node.js&&Express实践-nodeclub项目分析 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本使用"><span class="nav-number">1.</span> <span class="nav-text">基本使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#生成项目—express-generator"><span class="nav-number">1.1.</span> <span class="nav-text">生成项目—express-generator</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#启动服务"><span class="nav-number">1.2.</span> <span class="nav-text">启动服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#路由设置"><span class="nav-number">1.3.</span> <span class="nav-text">路由设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#响应请求"><span class="nav-number">1.4.</span> <span class="nav-text">响应请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一般中间件"><span class="nav-number">1.5.</span> <span class="nav-text">一般中间件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#错误处理"><span class="nav-number">1.6.</span> <span class="nav-text">错误处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#模板引擎的使用"><span class="nav-number">1.7.</span> <span class="nav-text">模板引擎的使用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#核心概念"><span class="nav-number">2.</span> <span class="nav-text">核心概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#中间件"><span class="nav-number">2.1.</span> <span class="nav-text">中间件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#路由"><span class="nav-number">2.2.</span> <span class="nav-text">路由</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#模板引擎与render"><span class="nav-number">2.3.</span> <span class="nav-text">模板引擎与render</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#异步控制方法与回调地狱"><span class="nav-number">2.4.</span> <span class="nav-text">异步控制方法与回调地狱</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实践"><span class="nav-number">3.</span> <span class="nav-text">实践</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#登录"><span class="nav-number">3.1.</span> <span class="nav-text">登录</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#授权登录oAuth2-0（第三方登录）"><span class="nav-number">3.1.1.</span> <span class="nav-text">授权登录oAuth2.0（第三方登录）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#jwt"><span class="nav-number">3.1.2.</span> <span class="nav-text">jwt</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#思考"><span class="nav-number">3.1.3.</span> <span class="nav-text">思考</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MemCache-Redis"><span class="nav-number">3.2.</span> <span class="nav-text">MemCache Redis</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据库"><span class="nav-number">3.3.</span> <span class="nav-text">数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多进程与进程管理"><span class="nav-number">3.4.</span> <span class="nav-text">多进程与进程管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#测试"><span class="nav-number">3.5.</span> <span class="nav-text">测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#部署"><span class="nav-number">3.6.</span> <span class="nav-text">部署</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cookie与session"><span class="nav-number">3.7.</span> <span class="nav-text">cookie与session</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安全"><span class="nav-number">3.8.</span> <span class="nav-text">安全</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">limuzhi</p>
+  <div class="site-description" itemprop="description">something about tech, android etc...</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/muzhi1991" title="GitHub → https://github.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:muzhi1991@gmail.com" title="E-Mail → mailto:muzhi1991@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/muzhi1991" title="Twitter → https://twitter.com/muzhi1991" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title">
+      <i class="fa fa-fw fa-link"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://www.chenyupeng.com/" title="https://www.chenyupeng.com/" rel="noopener" target="_blank">陈玉鹏的个人空间</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="http://macshuo.com/" title="http://macshuo.com/" rel="noopener" target="_blank">MacTalk</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">limuzhi</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://mist.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script>
+<script src="/js/schemes/muse.js"></script>
+<script src="/js/next-boot.js"></script>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : true,
+      appId      : 'G5HLDFmPsllxIjax4F2JTLnl-gzGzoHsz',
+      appKey     : 'A5PTgbvpJwjPlcBJ3Brl8rDs',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
